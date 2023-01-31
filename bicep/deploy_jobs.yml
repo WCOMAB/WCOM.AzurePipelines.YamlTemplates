@@ -1,0 +1,20 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
+    displayName: ${{ format('{0} Deploy', parameters.name) }}
+    environment: ${{ parameters.name }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: Download $(Build.Repository.Name) Artifact
+              artifact: $(Build.Repository.Name)
+
+            - task: AzureCLI@2
+              displayName: Deploy $(Build.Repository.Name) Artifact to "${{ parameters.resourceGroup }}"
+              inputs:
+                azureSubscription: '${{ parameters.azureSubscription }}'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript:  |
+                  az deployment group create --name "az-deployment-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(Pipeline.Workspace)/$(Build.Repository.Name)/azuredeploy.json" --parameters env="${{ parameters.env }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
