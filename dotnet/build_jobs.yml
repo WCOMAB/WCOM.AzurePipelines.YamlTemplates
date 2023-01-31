@@ -1,0 +1,48 @@
+jobs:
+  - job: Build
+    displayName: ${{ format('{0} Build', parameters.name) }}
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK (global.json)'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+
+    - script: |
+        dotnet nuget update source "${{ parameters.source }}" -u "vsts" -p "$(System.AccessToken)" --store-password-in-clear-text --configfile ./nuget.config
+      displayName: Authenticate with Azure DevOps NuGet Feed
+
+    - ${{ if eq(parameters.packAsTool, true) }}:
+      - script: dotnet build src /p:Version=$(Build.BuildNumber) /p:PackAsTool=true /p:ToolCommandName=dotnet-helloworld
+        displayName: 'DotNet Build'
+    - ${{ else }}:
+      - script: dotnet build src /p:Version=$(Build.BuildNumber)
+        displayName: 'DotNet Build'
+
+    - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.13
+      displayName: Installing Report Generator
+
+    - script: dotnet test src --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+      displayName: 'DotNet Test'
+
+    - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/coverage.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
+      displayName: 'Merge code coverage reports'
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage results'
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(build.artifactstagingdirectory)/Report/Cobertura.xml'
+
+    - task: PublishTestResults@2
+      displayName: 'Publish VSTest logs'
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx'
+
+    - script: dotnet pack src --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber)
+      displayName: 'DotNet Package'
+
+    - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
+      displayName: 'Publish $(Build.Repository.Name) Artifact'
+      artifact: $(Build.Repository.Name)

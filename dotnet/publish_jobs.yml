@@ -1,0 +1,27 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
+    displayName: ${{ parameters.name}} Deploy
+    environment: ${{ parameters.name}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+              displayName: Checkout $(Build.Repository.Name)
+
+            - task: UseDotNet@2
+              displayName: 'Use .NET SDK (global.json)'
+              inputs:
+                packageType: sdk
+                useGlobalJson: true
+
+            - script: |
+                dotnet nuget update source "${{ parameters.source }}" -u "vsts" -p "$(System.AccessToken)" --store-password-in-clear-text --configfile ./nuget.config
+              displayName: Authenticate with Azure DevOps NuGet Feed
+
+            - download: current
+              displayName: Download $(Build.Repository.Name) Artifact
+              artifact: $(Build.Repository.Name)
+
+            - script: dotnet nuget push --api-key "$(System.AccessToken)" --source "${{ parameters.source }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
+              displayName: 'Publish to Artifact Feed'
