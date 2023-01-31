@@ -1,0 +1,24 @@
+jobs:
+- job: Publish
+  displayName: ${{ format('{0} Build', parameters.name) }}
+  steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET SDK (global.json)'
+    inputs:
+      packageType: sdk
+      useGlobalJson: true
+
+  - script: dotnet publish src --output "$(build.artifactstagingdirectory)" 
+    displayName: Publish DotNet App
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: "$(build.artifactstagingdirectory)"
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)-$(env)-$(Build.BuildNumber).zip"
+      replaceExistingArchive: true
+
+  - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)-$(env)-$(Build.BuildNumber).zip"
+    displayName: 'Publish $(Build.Repository.Name) Zip Artifact'
+    artifact: $(Build.Repository.Name)

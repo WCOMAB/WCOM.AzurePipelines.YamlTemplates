@@ -1,0 +1,10 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.name, parameters.build) }}:
+      - stage: ${{ format('Build_{0}', environment.name) }}
+        displayName: ${{ format('Build {0}', environment.name) }}
+        jobs:
+          - template: publish_jobs.yml
+            parameters:
+              name: ${{ environment.name }}
+              env: ${{ environment.env }}
