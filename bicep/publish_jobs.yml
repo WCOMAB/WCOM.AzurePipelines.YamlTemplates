@@ -5,7 +5,7 @@ jobs:
     - download: current
       artifact: modules
       displayName: Download modules
-      
+
     - task: AzureCLI@2
       displayName: Publish Bicep modules to registry
       inputs:
@@ -52,7 +52,7 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: |
-          dotnet tool install --global BRI --version 2023.1.24.15
+          dotnet tool install --global BRI --version 2023.1.30.17
           bri inventory ${{ parameters.acr }}.azurecr.io " $(build.artifactstagingdirectory)"
 
     - task: ArchiveFiles@2
