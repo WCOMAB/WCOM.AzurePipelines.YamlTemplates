@@ -1,0 +1,69 @@
+jobs:
+  - job: Publish
+    displayName: ${{ format('{0} Publish', parameters.name) }}
+    steps:
+    - download: current
+      artifact: modules
+      displayName: Download modules
+      
+    - task: AzureCLI@2
+      displayName: Publish Bicep modules to registry
+      inputs:
+        powerShellErrorActionPreference: 'continue'
+        azureSubscription: '${{ parameters.azureSubscription }}'
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript:  |
+          az bicep upgrade
+          [string] $version = '$(Build.BuildNumber)'
+          [string] $RegistryName = '${{ parameters.acr}}'
+          [string] $Path = '$(Pipeline.Workspace)/modules'
+          [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
+          Push-Location
+          Set-Location $Path
+          Get-ChildItem -Path $Path -Recurse -Include *.bicep | `
+              ForEach-Object -Parallel {
+                  [string] $moduleBaseName = [string]::Concat(
+                                                [system.IO.Path]::GetDirectoryName((Resolve-Path -Relative $_.FullName)),
+                                                '/',
+                                                $_.BaseName
+                                              ).Replace(
+                                                '\',
+                                                '/'
+                                              ).TrimStart(
+                                                '.',
+                                                '/'
+                                              ).ToLowerInvariant()
+                  Write-Host "Publishing $moduleBaseName to br:$using:RegistryName.azurecr.io/bicep/modules/${moduleBaseName}:$using:version..."
+                  az bicep publish --verbose --file $_.FullName --target br:$using:RegistryName.azurecr.io/bicep/modules/${moduleBaseName}:$using:version | Write-Host
+                  ($using:ExitCodes).Add($LASTEXITCODE)
+                  Write-Host "Published $moduleBaseName."
+              }
+          Pop-Location
+          EXIT ($ExitCodes | Measure-Object -Sum).Sum
+
+    - script: dotnet tool restore
+      displayName: .NET Tool Restore
+
+    - task: AzureCLI@2
+      displayName: Install and Run BRI Tool
+      inputs:
+        azureSubscription: '${{ parameters.azureSubscription }}'
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: |
+          dotnet tool install --global BRI --version 2023.1.24.15
+          bri inventory ${{ parameters.acr }}.azurecr.io " $(build.artifactstagingdirectory)"
+
+    - task: ArchiveFiles@2
+      displayName: Zip BRI generated files
+      inputs:
+        rootFolderOrFile: "$(build.artifactstagingdirectory)"
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)Docs-$(Build.BuildNumber).zip"
+        replaceExistingArchive: true
+
+    - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)Docs-$(Build.BuildNumber).zip"
+      displayName: 'Publish $(Build.Repository.Name)Docs Zip Artifact'
+      artifact: "$(Build.Repository.Name)Docs"
