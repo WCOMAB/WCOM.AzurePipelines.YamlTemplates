@@ -1,0 +1,19 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
+    displayName: ${{ parameters.name}} Deploy
+    environment: ${{ parameters.name}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: $(Build.Repository.Name)
+              displayName: Download $(Build.Repository.Name) artifact
+
+            - task: AzureRmWebAppDeployment@4
+              displayName: Deploy to app service
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                appType: 'webApp'
+                WebAppName: ${{ parameters.webAppName }}
+                packageForLinux: '$(Pipeline.Workspace)/$(Build.Repository.Name)/*.zip'
