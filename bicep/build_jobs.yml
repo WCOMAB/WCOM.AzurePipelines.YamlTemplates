@@ -1,0 +1,30 @@
+jobs:
+  - job: Build
+    displayName: ${{ format('{0} Build', parameters.name) }}
+    steps:
+    - task: AzureCLI@2
+      displayName: Bicep Build $(Build.Repository.Name) Arm Template
+      inputs:
+        azureSubscription: '${{ parameters.azureSubscription }}'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript:  |
+          az bicep build --file main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
+
+    - task: AzureCLI@2
+      displayName: Validate $(Build.Repository.Name) Arm Template
+      inputs:
+        azureSubscription: '${{ parameters.azureSubscription }}'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript:  |
+          az deployment group validate --name "az-validate-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(build.artifactstagingdirectory)/azuredeploy.json" --parameters env="${{ parameters.env }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
+
+    - publish: $(build.artifactstagingdirectory)/azuredeploy.json
+      displayName: 'Publish $(Build.Repository.Name) Artifact'
+      artifact: $(Build.Repository.Name)
+
+    - publish: ./modules
+      condition: eq('${{ parameters.publish }}', true)
+      displayName: Publish Bicep Modules Artifact
+      artifact: modules
