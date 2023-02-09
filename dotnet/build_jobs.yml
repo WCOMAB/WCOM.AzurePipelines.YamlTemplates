@@ -8,9 +8,9 @@ jobs:
         packageType: sdk
         useGlobalJson: true
 
-    - script: |
-        dotnet nuget update source "${{ parameters.source }}" -u "vsts" -p "$(System.AccessToken)" --store-password-in-clear-text --configfile ./nuget.config
-      displayName: Authenticate with Azure DevOps NuGet Feed
+    - template: ../dotnetcommon/dotnet_auth.yml
+      parameters:
+        sources: ${{ parameters.sources }}
 
     - ${{ if eq(parameters.packAsTool, true) }}:
       - script: dotnet build src /p:Version=$(Build.BuildNumber) /p:PackAsTool=true /p:ToolCommandName=dotnet-helloworld
