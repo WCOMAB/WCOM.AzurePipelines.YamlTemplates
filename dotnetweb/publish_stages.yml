@@ -8,3 +8,4 @@ stages:
             parameters:
               name: ${{ environment.name }}
               env: ${{ environment.env }}
+              sources: ${{ parameters.sources }}
