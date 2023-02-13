@@ -16,3 +16,4 @@ stages:
               name: ${{ environment.name }}
               azureSubscription: ${{ parameters.azureSubscription }}
               WebAppName: ${{ parameters.webAppName }}
+              sources: ${{ parameters.sources }}
