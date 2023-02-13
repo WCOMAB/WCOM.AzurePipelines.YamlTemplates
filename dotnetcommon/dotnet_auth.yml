@@ -1,0 +1,5 @@
+steps:
+- ${{ each source in parameters.sources }}:
+  - script: |
+      dotnet nuget update source "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
+    displayName: Authenticate with Azure DevOps NuGet Feed
