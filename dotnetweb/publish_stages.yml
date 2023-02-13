@@ -8,4 +8,4 @@ stages:
             parameters:
               name: ${{ environment.name }}
               env: ${{ environment.env }}
-              sources: ${{ parameters.sources }}
+              sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
