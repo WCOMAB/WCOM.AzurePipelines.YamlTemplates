@@ -8,7 +8,12 @@ jobs:
       packageType: sdk
       useGlobalJson: true
 
-  - script: dotnet publish src --output "$(build.artifactstagingdirectory)" 
+  #Does nothing right now.
+  - template: ../dotnetcommon/dotnet_auth.yml
+      parameters:
+        sources: ${{ parameters.sources }}
+
+  - script: dotnet publish src --output "$(build.artifactstagingdirectory)"
     displayName: Publish DotNet App
 
   - task: ArchiveFiles@2
