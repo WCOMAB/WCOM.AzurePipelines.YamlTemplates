@@ -18,15 +18,15 @@ jobs:
                   appType: 'webApp'
                   WebAppName: ${{ parameters.webAppName }}
                   packageForLinux: '$(Pipeline.Workspace)/$(Build.Repository.Name)/*.zip'
-            - ${{ else }}:
-              - ${{ if ne(length(parameters.storage.account), 0) }}:
-                - task: AzureCLI@2
-                  displayName: Upload Blob to storage container
-                  inputs:
-                    powerShellErrorActionPreference: 'continue'
-                    azureSubscription: '${{ parameters.azureSubscription }}'
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript:  |
-                      az storage blob upload-batch --source "$(Pipeline.Workspace)/$(Build.Repository.Name)" --account-name ${{ parameters.storage.account }} --destination ${{ parameters.storage.container }} --destination-path ${{ parameters.storage.destinationPath }} --overwrite
+
+            - ${{ if ne(length(parameters.storage.account), 0) }}:
+              - task: AzureCLI@2
+                displayName: Upload Blob to storage container
+                inputs:
+                  powerShellErrorActionPreference: 'continue'
+                  azureSubscription: '${{ parameters.azureSubscription }}'
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript:  |
+                    az storage blob upload-batch --source "$(Pipeline.Workspace)/$(Build.Repository.Name)" --account-name ${{ parameters.storage.account }} --destination ${{ parameters.storage.container }} --destination-path ${{ parameters.storage.destinationPath }} --overwrite
 
