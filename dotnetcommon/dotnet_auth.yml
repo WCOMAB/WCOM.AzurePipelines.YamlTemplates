@@ -1,5 +1,6 @@
 steps:
-- ${{ each source in parameters.sources }}:
-  - script: |
-      dotnet nuget update source "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
-    displayName: Authenticate ${{ source.name }} Feed
+- ${{ if ne(length(parameters.sources), 0) }}:
+  - ${{ each source in parameters.sources }}:
+    - script: |
+        dotnet nuget update source "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
+      displayName: Authenticate ${{ source.name }} Feed
