@@ -10,8 +10,8 @@ jobs:
 
   #Does nothing right now.
   - template: ../dotnetcommon/dotnet_auth.yml
-      parameters:
-        sources: ${{ parameters.sources }}
+    parameters:
+      sources: ${{ parameters.sources }}
 
   - script: dotnet publish src --output "$(build.artifactstagingdirectory)"
     displayName: Publish DotNet App
