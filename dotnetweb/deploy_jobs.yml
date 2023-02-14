@@ -10,10 +10,23 @@ jobs:
               artifact: $(Build.Repository.Name)
               displayName: Download $(Build.Repository.Name) artifact
 
-            - task: AzureRmWebAppDeployment@4
-              displayName: Deploy to app service
-              inputs:
-                azureSubscription: ${{ parameters.azureSubscription }}
-                appType: 'webApp'
-                WebAppName: ${{ parameters.webAppName }}
-                packageForLinux: '$(Pipeline.Workspace)/$(Build.Repository.Name)/*.zip'
+            - ${{ if ne(length(parameters.webAppName), 0) }}:
+              - task: AzureRmWebAppDeployment@4
+                displayName: Deploy to app service
+                inputs:
+                  azureSubscription: ${{ parameters.azureSubscription }}
+                  appType: 'webApp'
+                  WebAppName: ${{ parameters.webAppName }}
+                  packageForLinux: '$(Pipeline.Workspace)/$(Build.Repository.Name)/*.zip'
+            - ${{ else }}:
+              - ${{ if ne(length(parameters.storage.account), 0) }}:
+                - task: AzureCLI@2
+                  displayName: Upload Blob to storage container
+                  inputs:
+                    powerShellErrorActionPreference: 'continue'
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript:  |
+                      az storage blob upload-batch --source "$(Pipeline.Workspace)/$(Build.Repository.Name)" --account-name ${{ parameters.storage.account }} --destination ${{ parameters.storage.container }} --destination-path ${{ parameters.storage.destinationPath }} --overwrite
+
