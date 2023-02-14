@@ -19,7 +19,7 @@ jobs:
       displayName: Installing Report Generator
 
     - ${{ if ne(parameters.skipTests, true) }}:
-      - script: dotnet test src --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+      - script: dotnet test src --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
         displayName: 'DotNet Test'
 
       - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/coverage.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
