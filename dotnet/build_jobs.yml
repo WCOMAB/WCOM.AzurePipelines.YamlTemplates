@@ -37,7 +37,7 @@ jobs:
           testResultsFormat: 'VSTest'
           testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx'
 
-    - script: dotnet pack src --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
+    - script: dotnet pack src --no-build --no-restore --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Package'
 
     - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
