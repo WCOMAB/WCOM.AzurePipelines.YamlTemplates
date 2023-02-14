@@ -12,12 +12,8 @@ jobs:
       parameters:
         sources: ${{ parameters.sources }}
 
-    - ${{ if eq(parameters.packAsTool, true) }}:
-      - script: dotnet build src /p:Version=$(Build.BuildNumber) /p:PackAsTool=true /p:ToolCommandName=dotnet-helloworld
-        displayName: 'DotNet Build'
-    - ${{ else }}:
-      - script: dotnet build src /p:Version=$(Build.BuildNumber)
-        displayName: 'DotNet Build'
+    - script: dotnet build src /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
+      displayName: 'DotNet Build'
 
     - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.13
       displayName: Installing Report Generator
@@ -41,7 +37,7 @@ jobs:
           testResultsFormat: 'VSTest'
           testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx'
 
-    - script: dotnet pack src --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber)
+    - script: dotnet pack src --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Package'
 
     - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"

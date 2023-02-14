@@ -9,6 +9,6 @@ stages:
               name: ${{ environment.name }}
               env: ${{ environment.env }}
               sources: ${{ parameters.sources }}
-              packAsTool: ${{ parameters.packAsTool }}
+              buildParameters: ${{ parameters.buildParameters }}
               skipTests: ${{ parameters.skipTests }}
               toolCommandName: ${{ parameters.toolCommandName }}
