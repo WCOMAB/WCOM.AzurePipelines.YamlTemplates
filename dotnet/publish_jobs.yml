@@ -1,6 +1,6 @@
 jobs:
-  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
-    displayName: ${{ parameters.name}} Deploy
+  - deployment: ${{ format('{0}_Publish', parameters.name) }}
+    displayName: ${{ parameters.name}} Publish
     environment: ${{ parameters.name}}
     strategy:
       runOnce:
@@ -15,13 +15,15 @@ jobs:
                 packageType: sdk
                 useGlobalJson: true
 
-            - script: |
-                dotnet nuget update source "${{ parameters.source }}" -u "vsts" -p "$(System.AccessToken)" --store-password-in-clear-text --configfile ./nuget.config
-              displayName: Authenticate with Azure DevOps NuGet Feed
+            - template: ../dotnetcommon/dotnet_auth.yml
+              parameters:
+                sources: ${{ parameters.sources }}
 
             - download: current
               displayName: Download $(Build.Repository.Name) Artifact
               artifact: $(Build.Repository.Name)
 
-            - script: dotnet nuget push --api-key "$(System.AccessToken)" --source "${{ parameters.source }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
-              displayName: 'Publish to Artifact Feed'
+            - ${{ each source in parameters.sources }}:
+              - ${{ if ne(source.publish, true) }}:
+                - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
+                  displayName: 'Publish to Artifact Feed'
