@@ -11,4 +11,4 @@ stages:
               sources: ${{ parameters.sources }}
               buildParameters: ${{ parameters.buildParameters }}
               skipTests: ${{ parameters.skipTests }}
-              toolCommandName: ${{ parameters.toolCommandName }}
+              projectSrc: ${{ coalesce(parameters.projectSrc, '', 'src') }}
