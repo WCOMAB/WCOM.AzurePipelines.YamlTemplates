@@ -1,19 +1,20 @@
 stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.publish, true) }}:
-      - stage: ${{ format('PublishModule_{0}', environment.name) }}
-        condition: and(succeeded(), eq('${{ parameters.shouldDeploy }}', 'true'), eq('${{ parameters.publish }}', 'true'))
-        dependsOn:
-          - ${{ each env in parameters.environments }}:
-              - ${{ if eq(env.name, parameters.build) }}:
-                - ${{ format('Build_{0}', env.name) }}
-          - ${{ format('Deploy_{0}', environment.name)}}
-        displayName: ${{ format('Publish Modules to {0} ACR', environment.name) }}
-        jobs:
-          - template: publish_jobs.yml
-            parameters:
-              name: ${{ environment.name }}
-              env: ${{ environment.env }}
-              azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
-              resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
-              acr: ${{ format('{0}acr{1}{2}', parameters.system, environment.env, parameters.suffix) }}
+      - ${{ if eq(environment.shouldDeploy, true) }}:
+        - stage: ${{ format('PublishModule_{0}', environment.name) }}
+          condition: succeeded()
+          dependsOn:
+            - ${{ each env in parameters.environments }}:
+                - ${{ if eq(env.name, parameters.build) }}:
+                  - ${{ format('Build_{0}', env.name) }}
+            - ${{ format('Deploy_{0}', environment.name)}}
+          displayName: ${{ format('Publish Modules to {0} ACR', environment.name) }}
+          jobs:
+            - template: publish_jobs.yml
+              parameters:
+                name: ${{ environment.name }}
+                env: ${{ environment.env }}
+                azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
+                resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
+                acr: ${{ format('{0}acr{1}{2}', parameters.system, environment.env, parameters.suffix) }}

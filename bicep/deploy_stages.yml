@@ -1,21 +1,22 @@
 stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.deploy, true) }}:
-      - stage: ${{ format('Deploy_{0}', environment.name) }}
-        condition: and(succeeded(), eq('${{ parameters.shouldDeploy }}', 'true'))
-        dependsOn:
-          - ${{ each env in parameters.environments }}:
-              - ${{ if eq(env.name, parameters.build) }}:
-                - ${{ format('Build_{0}', env.name) }}
-          - ${{ each after in environment.deployAfter }}:
-            - ${{ format('Deploy_{0}', after) }}
-        displayName: ${{ format('Deploy to {0}', environment.name) }}
-        jobs:
-          - template: deploy_jobs.yml
-            parameters:
-              name: ${{ environment.name }}
-              env: ${{ environment.env }}
-              azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
-              resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
-              extraParameters : ${{ environment.extraParameters }}
+      - ${{ if eq(environment.shouldDeploy, true) }}:
+        - stage: ${{ format('Deploy_{0}', environment.name) }}
+          condition: succeeded()
+          dependsOn:
+            - ${{ each env in parameters.environments }}:
+                - ${{ if eq(env.name, parameters.build) }}:
+                  - ${{ format('Build_{0}', env.name) }}
+            - ${{ each after in environment.deployAfter }}:
+              - ${{ format('Deploy_{0}', after) }}
+          displayName: ${{ format('Deploy to {0}', environment.name) }}
+          jobs:
+            - template: deploy_jobs.yml
+              parameters:
+                name: ${{ environment.name }}
+                env: ${{ environment.env }}
+                azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
+                resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
+                extraParameters : ${{ environment.extraParameters }}
 
