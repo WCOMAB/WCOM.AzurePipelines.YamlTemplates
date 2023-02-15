@@ -1,6 +1,6 @@
 stages:
   - ${{ each environment in parameters.environments }}:
-    - ${{ if eq(environment.publish, true) }}:
+    - ${{ if eq(parameters.publish, true) }}:
       - ${{ if eq(parameters.shouldDeploy, true) }}:
         - stage: ${{ format('PublishModule_{0}', environment.name) }}
           condition: succeeded()
