@@ -2,7 +2,7 @@ stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.publish, true) }}:
       - stage: ${{ format('PublishModule_{0}', environment.name) }}
-        condition: and(succeeded(), eq('${{ parameters.shouldDeploy }}', 'true'))
+        condition: and(succeeded(), eq('${{ parameters.shouldDeploy }}', 'true'), eq('${{ parameters.publish }}', 'true'))
         dependsOn:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:
