@@ -2,7 +2,7 @@ stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.publish, true) }}:
       - stage: ${{ format('PublishModule_{0}', environment.name) }}
-        condition: and(succeeded(), eq('${{ variables['Build.SourceBranch'] }}', 'refs/heads/main'))
+        condition: and(succeeded(), eq('${{ parameters.shouldDeploy }}', 'true'))
         dependsOn:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:
