@@ -1,7 +1,7 @@
 stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.deploy, true) }}:
-      - ${{ if eq(environment.shouldDeploy, true) }}:
+      - ${{ if eq(parameters.shouldDeploy, true) }}:
         - stage: ${{ format('Deploy_{0}', environment.name) }}
           condition: succeeded()
           dependsOn:
