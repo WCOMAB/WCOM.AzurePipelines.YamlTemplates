@@ -52,7 +52,7 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: |
-          dotnet tool install --global BRI --version 2023.1.30.17
+          dotnet tool install --global BRI --version 2023.2.24.31
           bri inventory ${{ parameters.acr }}.azurecr.io " $(build.artifactstagingdirectory)"
 
     - task: ArchiveFiles@2
