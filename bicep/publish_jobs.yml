@@ -42,9 +42,6 @@ jobs:
           Pop-Location
           EXIT ($ExitCodes | Measure-Object -Sum).Sum
 
-    - script: dotnet tool restore
-      displayName: .NET Tool Restore
-
     - task: AzureCLI@2
       displayName: Install and Run BRI Tool
       inputs:
