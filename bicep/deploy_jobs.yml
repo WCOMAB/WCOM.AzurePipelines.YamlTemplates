@@ -17,4 +17,4 @@ jobs:
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript:  |
-                  az deployment group create --name "az-deployment-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(Pipeline.Workspace)/$(Build.Repository.Name)/azuredeploy.json" --parameters env="${{ parameters.env }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
+                  az deployment group create --name "az-deployment-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(Pipeline.Workspace)/$(Build.Repository.Name)/azuredeploy.json" --parameters env="${{ parameters.env }}" suffix="${{ parameters.suffix }}" system="${{ parameters.system }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
