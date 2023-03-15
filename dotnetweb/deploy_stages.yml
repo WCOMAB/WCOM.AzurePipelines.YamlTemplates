@@ -14,6 +14,6 @@ stages:
           - template: deploy_jobs.yml
             parameters:
               name: ${{ environment.name }}
-              azureSubscription: ${{ parameters.azureSubscription }}
-              WebAppName: ${{ parameters.webAppName }}
+              azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
+              WebAppName: ${{ format('{0}-{1}-web-{2}-{3}', parameters.system, parameters.webAppName, environment.env, parameters.suffix) }}
               sources: ${{ parameters.sources }}
