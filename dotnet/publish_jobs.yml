@@ -18,6 +18,7 @@ jobs:
             - template: ../dotnetcommon/dotnet_auth.yml
               parameters:
                 sources: ${{ parameters.sources }}
+                onlyPublish: true
 
             - download: current
               displayName: Download $(Build.Repository.Name) Artifact
