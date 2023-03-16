@@ -15,5 +15,5 @@ stages:
             parameters:
               name: ${{ environment.name }}
               azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
-              WebAppName: ${{ format('{0}-{1}-web-{2}-{3}', parameters.system, parameters.webAppName, environment.env, parameters.suffix) }}
+              WebAppName: ${{ coalesce(environment.webAppName, format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'web'), environment.env, parameters.suffix)) }}
               sources: ${{ parameters.sources }}
