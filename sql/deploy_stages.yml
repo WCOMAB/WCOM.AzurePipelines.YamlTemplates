@@ -1,0 +1,19 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.deploy, true) }}:
+      - stage: ${{ format('Deploy_{0}', environment.name) }}
+        condition: ${{ parameters.shouldDeploy }}
+        dependsOn:
+          - ${{ each env in parameters.environments }}:
+              - ${{ if eq(env.name, parameters.build) }}:
+                - ${{ format('Publish_{0}', env.name) }}
+          - ${{ each after in environment.deployAfter }}:
+            - ${{ format('Deploy_{0}', after) }}
+        displayName: ${{ format('Deploy to {0}', environment.name) }}
+        jobs:
+          - template: deploy_jobs.yml
+            parameters:
+              name: ${{ environment.name }}
+              azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
+              WebAppName: ${{ coalesce(environment.webAppName, format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'web'), environment.env, parameters.suffix)) }}
+              sources: ${{ parameters.sources }}
