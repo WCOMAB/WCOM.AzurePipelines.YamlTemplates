@@ -37,18 +37,18 @@ jobs:
 
       - ${{ each site in parameters.sites }}:
         - pwsh: |
-            dotnet wcomsite -i ./input/theme -i ./input/${{ site }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
+            dotnet wcomsite -i ./input/theme -i ./input/${{ site.name }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
             [int] $Result = $LASTEXITCODE
             $LASTEXITCODE
             exit $LASTEXITCODE
           env:
-            SiteName: ${{ site }}
-          displayName: Build ${{ site }} HTML
+            SiteName: ${{ site.name }}
+          displayName: Build ${{ site.name }} HTML
 
         - script: |
             cp ./input/staticwebapp.config.json "$(build.artifactstagingdirectory)/output/staticwebapp.config.json"
           displayName: Copy static web app config
 
         - publish: $(build.artifactstagingdirectory)/output
-          displayName: Publish $(Build.Repository.Name).${{ site }} Static Site Artifact
-          artifact: $(Build.Repository.Name).${{ site }}
+          displayName: Publish $(Build.Repository.Name).${{ site.name }} Static Site Artifact
+          artifact: $(Build.Repository.Name).${{ site.name }}

@@ -8,15 +8,15 @@ jobs:
           steps:
             - ${{ each site in parameters.sites }}:
               - download: current
-                artifact: $(Build.Repository.Name).${{ site }}
-                displayName: Download $(Build.Repository.Name).${{ site }} artifact
+                artifact: $(Build.Repository.Name).${{ site.name }}
+                displayName: Download $(Build.Repository.Name).${{ site.name }} artifact
 
               - script: |
                   npm install -g @azure/static-web-apps-cli
                 displayName: Install SWA CLI
 
               - task: AzureCLI@2
-                displayName: Deploy '${{ site }} in ${{ parameters.name }} environment' using SWA CLI
+                displayName: Deploy '${{ site.name }} in ${{ parameters.name }} environment' using SWA CLI
                 inputs:
                   azureSubscription: '${{ parameters.azureSubscription }}'
                   scriptType: pscore
