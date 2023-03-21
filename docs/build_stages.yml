@@ -11,4 +11,4 @@ stages:
               sources: ${{ parameters.sources }}
               assembly_pipelines: ${{ parameters.assembly_pipelines }}
               devopsOrg: ${{ format('{0}-{1}', parameters.devopsOrg, coalesce(parameters.devopsOrgSuffix, 'devops')) }}
-              siteName: ${{ parameters.siteName }}
+              sites: ${{ parameters.sites }}

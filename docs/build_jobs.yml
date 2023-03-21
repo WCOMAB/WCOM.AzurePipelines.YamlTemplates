@@ -35,19 +35,20 @@ jobs:
           WCOM_DOCS_DEVOPS_ORG: ${{ parameters.devopsOrg }}
         displayName: Download Generated Content Artifacts
 
-      - pwsh: |
-          dotnet wcomsite -i ./input/theme -i ./input/${{ parameters.siteName }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
-          [int] $Result = $LASTEXITCODE
-          $LASTEXITCODE
-          exit $LASTEXITCODE
-        env:
-          SiteName: ${{ parameters.siteName }}
-        displayName: Build Documentation HTML
+      - ${{ each site in parameters.sites }}:
+        - pwsh: |
+            dotnet wcomsite -i ./input/theme -i ./input/${{ site }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
+            [int] $Result = $LASTEXITCODE
+            $LASTEXITCODE
+            exit $LASTEXITCODE
+          env:
+            SiteName: ${{ site }}
+          displayName: Build ${{ site }} HTML
 
-      - script: |
-          cp ./input/staticwebapp.config.json "$(build.artifactstagingdirectory)/output/staticwebapp.config.json"
-        displayName: Copy static web app config
+        - script: |
+            cp ./input/staticwebapp.config.json "$(build.artifactstagingdirectory)/output/staticwebapp.config.json"
+          displayName: Copy static web app config
 
-      - publish: $(build.artifactstagingdirectory)/output
-        displayName: Publish $(Build.Repository.Name) Static Site Artifact
-        artifact: $(Build.Repository.Name).${{ parameters.siteName }}
+        - publish: $(build.artifactstagingdirectory)/output
+          displayName: Publish $(Build.Repository.Name).${{ site }} Static Site Artifact
+          artifact: $(Build.Repository.Name).${{ site }}
