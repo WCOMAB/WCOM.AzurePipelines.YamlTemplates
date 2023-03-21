@@ -7,7 +7,7 @@ jobs:
         deploy:
           steps:
             - download: current
-              artifact: $(Build.Repository.Name)
+              artifact: $(Build.Repository.Name).${{ parameters.siteName }}
               displayName: Download $(Build.Repository.Name) artifact
 
             - script: |

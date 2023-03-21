@@ -36,7 +36,7 @@ jobs:
         displayName: Download Generated Content Artifacts
 
       - pwsh: |
-          dotnet wcomsite -i ./input/theme -i ./input/DevOps -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
+          dotnet wcomsite -i ./input/theme -i ./input/${{ parameters.siteName }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
           [int] $Result = $LASTEXITCODE
           $LASTEXITCODE
           exit $LASTEXITCODE
@@ -50,4 +50,4 @@ jobs:
 
       - publish: $(build.artifactstagingdirectory)/output
         displayName: Publish $(Build.Repository.Name) Static Site Artifact
-        artifact: $(Build.Repository.Name)
+        artifact: $(Build.Repository.Name).${{ parameters.siteName }}
