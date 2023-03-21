@@ -1,0 +1,54 @@
+jobs:
+  - job: Generate_Site
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        displayName: Checkout $(Build.Repository.Name)
+
+      - task: UseDotNet@2
+        displayName: 'Use .NET SDK 6.0.x'
+        inputs:
+          packageType: sdk
+          version: '6.0.x'
+
+      - task: UseDotNet@2
+        displayName: Use .NET Core from global.json
+        inputs:
+          useGlobalJson: true
+
+      - template: ../dotnetcommon/dotnet_auth.yml
+        parameters:
+          sources: ${{ parameters.sources }}
+
+      - script: dotnet tool restore
+        displayName: .NET Tool Restore
+
+      - pwsh: dotnet wcom-docs-buildartifactdownloader download '$(Build.Repository.LocalPath)/input/.assemblies/*.yaml'
+        env:
+          WCOM_DOCS_DEVOPS_PAT: $(System.AccessToken)
+          WCOM_DOCS_DEVOPS_ORG: ${{ parameters.devopsOrg }}
+        displayName: Download Assembly Artifacts
+
+      - pwsh: dotnet wcom-docs-buildartifactdownloader download '$(Build.Repository.LocalPath)/input/.generated/*.yaml' --output '$(Build.Repository.LocalPath)/input/generated'
+        env:
+          WCOM_DOCS_DEVOPS_PAT: $(System.AccessToken)
+          WCOM_DOCS_DEVOPS_ORG: ${{ parameters.devopsOrg }}
+        displayName: Download Generated Content Artifacts
+
+      - ${{ each site in parameters.sites }}:
+        - pwsh: |
+            dotnet wcomsite -i ./input/theme -i ./input/${{ site.name }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output"
+            [int] $Result = $LASTEXITCODE
+            $Result
+            exit $Result
+          env:
+            SiteName: ${{ site.name }}
+          displayName: Build ${{ site.name }} HTML
+
+        - script: |
+            cp ./input/staticwebapp.config.json "$(build.artifactstagingdirectory)/output/staticwebapp.config.json"
+          displayName: Copy static web app config
+
+        - publish: $(build.artifactstagingdirectory)/output
+          displayName: Publish $(Build.Repository.Name).${{ site.name }} Static Site Artifact
+          artifact: $(Build.Repository.Name).${{ site.name }}
