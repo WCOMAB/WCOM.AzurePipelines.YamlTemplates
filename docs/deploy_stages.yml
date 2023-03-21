@@ -2,7 +2,7 @@ stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.deploy, true) }}:
       - stage: ${{ format('Deploy_{0}', environment.name) }}
-        condition: ${{ parameters.shouldDeploy }}
+        condition: and(succeeded(), eq(${{ parameters.shouldDeploy }}, true))
         dependsOn:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:
