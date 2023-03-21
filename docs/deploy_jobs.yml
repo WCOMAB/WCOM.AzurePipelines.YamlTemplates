@@ -25,7 +25,7 @@ jobs:
                     $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
                     $ENV:SWA_CLI_APP_NAME='${{ parameters.webAppName }}'
                     $ENV:SWA_CLI_DEPLOYMENT_TOKEN=(az staticwebapp secrets list --resource-group $ENV:AZURE_RESOURCE_GROUP --name $ENV:SWA_CLI_APP_NAME --query "properties.apiKey" -o tsv)
-                    swa deploy $(Pipeline.Workspace)/$(Build.Repository.Name) --env Production
+                    swa deploy $(Pipeline.Workspace)/$(Build.Repository.Name).${{ site.name }} --env Production
                     [int] $Result = $LASTEXITCODE
                     $Result
                     exit $Result
