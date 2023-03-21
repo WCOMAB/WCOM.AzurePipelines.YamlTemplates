@@ -1,6 +1,0 @@
-jobs:
-  - job:
-    steps:
-      - download: "${{ parameters.pipeline }}"
-        artifact: ${{ parameters.pipeline }}
-        displayName: Downloading ${{ parameters.pipeline }} Artifact
