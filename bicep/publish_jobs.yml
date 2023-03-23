@@ -6,6 +6,10 @@ jobs:
       artifact: modules
       displayName: Download modules
 
+    - download: current
+      artifact: internal
+      displayName: Download internal modules
+
     - task: AzureCLI@2
       displayName: Publish Bicep modules to registry
       inputs:
@@ -14,13 +18,16 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript:  |
+          Write-Host "Ensuring bicep installed..."
           az bicep upgrade
+          az bicep version
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
           [string] $Path = '$(Pipeline.Workspace)/modules'
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
           Push-Location
           Set-Location $Path
+          Write-Host "Publishing modules..."
           Get-ChildItem -Path $Path -Recurse -Include *.bicep | `
               ForEach-Object -Parallel {
                   [string] $moduleBaseName = [string]::Concat(
@@ -40,6 +47,7 @@ jobs:
                   Write-Host "Published $moduleBaseName."
               }
           Pop-Location
+          Write-Host "Done publishing modules."
           EXIT ($ExitCodes | Measure-Object -Sum).Sum
 
     - task: AzureCLI@2
