@@ -9,8 +9,8 @@ jobs:
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript:  |
-          mkdir -p $(build.artifactstagingdirectory/modules
-          mkdir -p $(build.artifactstagingdirectory/internal
+          [ -d $(build.artifactstagingdirectory)/modules ] || mkdir -p $(build.artifactstagingdirectory)/modules
+          [ -d $(build.artifactstagingdirectory)/internal ] || mkdir -p $(build.artifactstagingdirectory)/internal
           az bicep build --file main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
 
     - task: AzureCLI@2
