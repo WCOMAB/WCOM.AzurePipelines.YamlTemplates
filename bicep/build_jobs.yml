@@ -9,6 +9,8 @@ jobs:
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript:  |
+          [ -d ./modules ] || mkdir -p ./modules
+          [ -d ./internal ] || mkdir -p ./internal
           az bicep build --file main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
 
     - task: AzureCLI@2
@@ -28,3 +30,8 @@ jobs:
       condition: eq('${{ parameters.publish }}', true)
       displayName: Publish Bicep Modules Artifact
       artifact: modules
+
+    - publish: ./internal
+      condition: eq('${{ parameters.publish }}', true)
+      displayName: Publish Bicep Internal Modules Artifact
+      artifact: internal

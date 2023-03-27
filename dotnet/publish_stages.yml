@@ -2,7 +2,7 @@ stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.name, parameters.build) }}:
       - stage: ${{ format('PublishTo_{0}', environment.name) }}
-        condition: ${{ parameters.shouldPush }}
+        condition: and(succeeded(), ${{ parameters.shouldPublish }})
         displayName: ${{ format('Publish to {0}', environment.name) }}
         jobs:
           - template: publish_jobs.yml

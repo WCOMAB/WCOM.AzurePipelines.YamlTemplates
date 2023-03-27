@@ -1,0 +1,31 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
+    displayName: ${{ parameters.name}} Deploy
+    environment: ${{ parameters.name}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - ${{ each site in parameters.sites }}:
+              - download: current
+                artifact: $(Build.Repository.Name).${{ site.name }}
+                displayName: Download $(Build.Repository.Name).${{ site.name }} artifact
+
+              - script: |
+                  npm install -g @azure/static-web-apps-cli
+                displayName: Install SWA CLI
+
+              - task: AzureCLI@2
+                displayName: Deploy '${{ site.name }} in ${{ parameters.name }} environment' using SWA CLI
+                inputs:
+                  azureSubscription: '${{ parameters.azureSubscription }}'
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
+                    $ENV:SWA_CLI_APP_NAME='${{ parameters.webAppName }}'
+                    $ENV:SWA_CLI_DEPLOYMENT_TOKEN=(az staticwebapp secrets list --resource-group $ENV:AZURE_RESOURCE_GROUP --name $ENV:SWA_CLI_APP_NAME --query "properties.apiKey" -o tsv)
+                    swa deploy $(Pipeline.Workspace)/$(Build.Repository.Name).${{ site.name }} --env Production
+                    [int] $Result = $LASTEXITCODE
+                    $Result
+                    exit $Result
