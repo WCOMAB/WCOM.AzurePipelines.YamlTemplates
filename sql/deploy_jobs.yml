@@ -1,6 +1,10 @@
+variables:
+  azureFirewallRule: '$(Build.Repository.Name)-$(Build.BuildNumber)'
+  connectionString: coalesce({{ parameters.connectionString }}, 'Server=tcp:${{ parameters.serverName }}.database.windows.net,1433;Initial Catalog=${{ parameters.databaseName }};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')
+
 jobs:
   - deployment: ${{ format('{0}_Deploy', parameters.name) }}
-    displayName: ${{ parameters.name}} Deploy
+    displayName: ${{ parameters.name}} Deploy SSDT
     environment: ${{ parameters.name}}
     strategy:
       runOnce:
@@ -10,8 +14,31 @@ jobs:
               artifact: $(Build.Repository.Name)
               displayName: Download $(Build.Repository.Name) artifact
 
+            - bash: |
+                echo "##vso[task.setvariable variable=AgentPublicIP;]$(curl checkip.amazonaws.com)"
+              displayName: 'Get Agent Public IP'
+
+            - bash: |
+                [ -f ./tools/sqlpackage ] || [ -f ./tools/sqlpackage.exe ] || dotnet tool install --tool-path ./tools microsoft.sqlpackage
+              displayName: Install SqlPackage
+
             - script: dotnet tool install -g microsoft.sqlpackage
               displayName: Install SqlPackage
+
+            - task: AzureCLI@2
+              displayName: Deploy $(Build.Repository.Name) Artifact to environment."
+              inputs:
+                azureSubscription: '${{ parameters.azureSubscription }}'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript:  |
+                  az sql server firewall-rule create -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "$(azureFirewallRule)" --start-ip-address $(AgentPublicIP) --end-ip-address  $(AgentPublicIP)
+                  ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/$(Build.Repository.Name)/$(deployProject).dacpac" /TargetConnectionString:"${{ parameters.connectionString }}/Profile:"$(Pipeline.Workspace)/$(Build.Repository.Name)/$(deployProject).publish.xml"
+                  result=$?
+                  az sql server firewall-rule delete -g $(targetResourceGroup) -s $(targetSqlServer) -n "$(azureFirewallRule)"
+                  exit $result
+
+
 
             - task: AzureCLI@2
               displayName: Deploy $(Build.Repository.Name) Artifact to "${{ parameters.name }} environment."

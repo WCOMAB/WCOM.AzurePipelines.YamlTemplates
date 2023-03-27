@@ -1,0 +1,16 @@
+jobs:
+  - job: Build
+    displayName: ${{ format('{0} Build SSDT', parameters.name) }}
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK (global.json)'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+
+    - script: dotnet build -maxcpucount:1 -p:NetCoreBuild=true -p:Version=$(Build.BuildNumber) -p:GenerateSmartDefaults=true ${{parameters.buildParameters}} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name) src/
+      displayName: 'DotNet Build'
+
+    - publish: "$(build.ArtifactStagingDirectory)/$(Build.Repository.Name)"
+      displayName: 'Publish $(Build.Repository.Name) Artifact'
+      artifact: $(Build.Repository.Name)
