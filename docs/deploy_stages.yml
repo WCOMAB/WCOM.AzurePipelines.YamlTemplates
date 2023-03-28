@@ -19,4 +19,5 @@ stages:
               resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
               WebAppName: ${{ coalesce(environment.webAppName, format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'stapp'), environment.env, parameters.suffix)) }}
               sites: ${{ parameters.sites }}
+              searchServiceName: ${{ format('{0}-srch-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
 

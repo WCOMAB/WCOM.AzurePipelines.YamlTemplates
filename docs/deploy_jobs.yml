@@ -15,6 +15,24 @@ jobs:
                   npm install -g @azure/static-web-apps-cli
                 displayName: Install SWA CLI
 
+              - script: dotnet tool install --global WCOM.Docs.Tools.SearchIndexUploader --version 2023.3.27.2
+                displayName: Installing SearchIndex tool
+
+              - task: AzureCLI@2
+                displayName: Upload Search Index
+                inputs:
+                  azureSubscription: '${{ parameters.azureSubscription }}'
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
+                    $ENV:SEARCH_SERVICE_NAME='${{ parameters.searchServiceName }}'
+                    $ENV:SEARCH_SERVICE_API_KEY=(az search admin-key show --resource-group $ENV:AZURE_RESOURCE_GROUP --service-name $ENV:SEARCH_SERVICE_NAME --query "primaryKey" --output tsv)
+                    dotnet wcom-docs-searchindexuploader upload $(Pipeline.Workspace)/$(Build.Repository.Name).${{ site.name }}/searchIndex.json
+                    [int] $Result = $LASTEXITCODE
+                    $Result
+                    exit $Result
+
               - task: AzureCLI@2
                 displayName: Deploy '${{ site.name }} in ${{ parameters.name }} environment' using SWA CLI
                 inputs:
