@@ -37,14 +37,3 @@ jobs:
                   result=$?
                   az sql server firewall-rule delete -g $(targetResourceGroup) -s $(targetSqlServer) -n "$(azureFirewallRule)"
                   exit $result
-
-
-
-            - task: AzureCLI@2
-              displayName: Deploy $(Build.Repository.Name) Artifact to "${{ parameters.name }} environment."
-              inputs:
-                azureSubscription: '${{ parameters.azureSubscription }}'
-                scriptType: pscore
-                scriptLocation: inlineScript
-                inlineScript:  |
-                  SqlPackage /Action:Publish /SourceFile:"$(Pipeline.Workspace)/$(Build.Repository.Name)/**.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}"
