@@ -17,6 +17,7 @@ stages:
               env: ${{ environment.env }}
               azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
               resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
+              sources: ${{ parameters.sources }}
               WebAppName: ${{ coalesce(environment.webAppName, format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'stapp'), environment.env, parameters.suffix)) }}
               sites: ${{ parameters.sites }}
               searchServiceName: ${{ format('{0}-srch-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
