@@ -18,6 +18,7 @@ stages:
               suffix: ${{ parameters.suffix }}
               azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
               connectionString: ${{ environment.connectionString }}
+              connectionStringFormat: ${{ environment.connectionStringFormat }}
               resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
               serverName: ${{ coalesce(environment.serverName, format(coalesce(parameters.serverNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.serverName, coalesce(parameters.sqlType, 'sql'), environment.env, parameters.suffix)) }}
               databases: ${{ parameters.databases }}
