@@ -1,7 +1,7 @@
 jobs:
-  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
-    displayName: ${{ parameters.name}} Deploy SSDT
-    environment: ${{ parameters.name}}
+  - deployment: ${{ format('{0}_Deploy', parameters.env) }}
+    displayName: ${{ parameters.env }} Deploy SSDT
+    environment: ${{ parameters.env }}
     strategy:
       runOnce:
         deploy:
