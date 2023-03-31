@@ -28,7 +28,7 @@ jobs:
                   resourceGroup: ${{ parameters.resourceGroup }}
                   serverName: ${{ parameters.serverName }}
                   agentPublicIP: $(AgentPublicIP)
-                  databaseName: ${{ format(coalesce(parameters.databaseFormat, '{0}'), database.name, parameters.system, environment.env, parameters.suffix) }}
+                  databaseName: ${{ format(coalesce(parameters.databaseFormat, '{0}'), database.name, parameters.system, parameters.env, parameters.suffix) }}
                   connectionString: ${{ parameters.connectionString }}
                   connectionStringFormat: ${{ parameters.connectionStringFormat }}
                   env: ${{ parameters.env }}
