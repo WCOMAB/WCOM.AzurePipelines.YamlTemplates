@@ -31,3 +31,6 @@ jobs:
                   databaseName: ${{ format(coalesce(parameters.databaseFormat, '{0}'), database.name, parameters.system, environment.env, parameters.suffix) }}
                   connectionString: ${{ parameters.connectionString }}
                   connectionStringFormat: ${{ parameters.connectionStringFormat }}
+                  env: ${{ parameters.env }}
+                  system: ${{ parameters.system }}
+                  suffix: ${{ parameters.suffix }}

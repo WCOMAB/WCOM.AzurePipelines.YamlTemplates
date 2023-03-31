@@ -1,6 +1,6 @@
 variables:
   azureFirewallRule: '$(Build.Repository.Name)-$(Build.BuildNumber)'
-  connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, parameters.databaseName)) }}
+  connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, parameters.databaseName, parameters.system, parameters.env, parameters.suffix)) }}
 
 steps:
 - task: AzureCLI@2
