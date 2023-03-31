@@ -1,0 +1,25 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.deploy, true) }}:
+      - stage: ${{ format('Deploy_{0}', environment.name) }}
+        condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+        dependsOn:
+          - ${{ each env in parameters.environments }}:
+              - ${{ if eq(env.name, parameters.build) }}:
+                - ${{ format('Build_{0}', env.name) }}
+          - ${{ each after in environment.deployAfter }}:
+            - ${{ format('Deploy_{0}', after) }}
+        displayName: ${{ format('Deploy to {0}', environment.name) }}
+        jobs:
+          - template: deploy_jobs.yml
+            parameters:
+              env: ${{ environment.name }}
+              system: ${{ parameters.system }}
+              suffix: ${{ parameters.suffix }}
+              azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
+              connectionString: ${{ environment.connectionString }}
+              connectionStringFormat: ${{ environment.connectionStringFormat }}
+              resourceGroup: ${{ format('{0}-{1}-{2}', parameters.system, environment.env, parameters.suffix) }}
+              serverName: ${{ coalesce(environment.serverName, format(coalesce(parameters.serverNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.serverName, coalesce(parameters.sqlType, 'sql'), environment.env, parameters.suffix)) }}
+              databases: ${{ parameters.databases }}
+              databaseFormat: ${{ parameters.databaseFormat }}
