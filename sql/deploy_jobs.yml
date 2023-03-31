@@ -18,9 +18,6 @@ jobs:
                 [ -f ./tools/sqlpackage ] || [ -f ./tools/sqlpackage.exe ] || dotnet tool install --tool-path ./tools microsoft.sqlpackage
               displayName: Install SqlPackage
 
-            - script: dotnet tool install -g microsoft.sqlpackage
-              displayName: Install SqlPackage
-
             - ${{ each database in parameters.databases }}:
               - template: deploy_database.yml
                 parameters:
@@ -28,8 +25,8 @@ jobs:
                   resourceGroup: ${{ parameters.resourceGroup }}
                   serverName: ${{ parameters.serverName }}
                   agentPublicIP: $(AgentPublicIP)
-                  connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, format(coalesce(parameters.databaseFormat, '{0}'), database.name, parameters.system, parameters.env, parameters.suffix), parameters.system, parameters.env, parameters.suffix)) }}
-                  databaseName: ${{ format(coalesce(parameters.databaseFormat, '{0}'), database.name, parameters.system, parameters.env, parameters.suffix) }}
+                  connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix), parameters.system, parameters.env, parameters.suffix)) }}
+                  databaseName: ${{ format(coalesce(parameters.databaseFormat, '{0}'), parameters.system, database.name, parameters.env, parameters.suffix) }}
                   azureFirewallRule: '$(Build.Repository.Name)-$(Build.BuildNumber)'
                   env: ${{ parameters.env }}
                   system: ${{ parameters.system }}
