@@ -6,6 +6,19 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - checkout: self
+              fetchDepth: 0
+              displayName: Checkout $(Build.Repository.Name)
+
+            - task: UseDotNet@2
+              displayName: Use .NET Core from global.json
+              inputs:
+                useGlobalJson: true
+              
+            - template: ../dotnetcommon/dotnet_auth.yml
+              parameters:
+                sources: ${{  parameters.sources  }}
+
             - ${{ each site in parameters.sites }}:
               - download: current
                 artifact: $(Build.Repository.Name).${{ site.name }}
