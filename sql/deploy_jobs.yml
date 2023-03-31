@@ -1,0 +1,36 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
+    displayName: ${{ parameters.name}} Deploy SSDT
+    environment: ${{ parameters.name}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: $(Build.Repository.Name)
+              displayName: Download $(Build.Repository.Name) artifact
+
+            - bash: |
+                echo "##vso[task.setvariable variable=AgentPublicIP;]$(curl checkip.amazonaws.com)"
+              displayName: 'Get Agent Public IP'
+
+            - bash: |
+                [ -f ./tools/sqlpackage ] || [ -f ./tools/sqlpackage.exe ] || dotnet tool install --tool-path ./tools microsoft.sqlpackage
+              displayName: Install SqlPackage
+
+            - script: dotnet tool install -g microsoft.sqlpackage
+              displayName: Install SqlPackage
+
+            - ${{ each database in parameters.databases }}:
+              - template: deploy_database.yml
+                parameters:
+                  azureSubscription: ${{ parameters.azureSubscription }}
+                  resourceGroup: ${{ parameters.resourceGroup }}
+                  serverName: ${{ parameters.serverName }}
+                  agentPublicIP: $(AgentPublicIP)
+                  databaseName: ${{ format(coalesce(parameters.databaseFormat, '{0}'), database.name, parameters.system, environment.env, parameters.suffix) }}
+                  connectionString: ${{ parameters.connectionString }}
+                  connectionStringFormat: ${{ parameters.connectionStringFormat }}
+                  env: ${{ parameters.env }}
+                  system: ${{ parameters.system }}
+                  suffix: ${{ parameters.suffix }}
