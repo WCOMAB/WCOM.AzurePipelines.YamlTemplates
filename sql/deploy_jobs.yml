@@ -7,8 +7,8 @@ jobs:
         deploy:
           steps:
             - download: current
-              artifact: $(Build.Repository.Name)
-              displayName: Download $(Build.Repository.Name) artifact
+              artifact: $(Build.Repository.Name).Dacpac
+              displayName: Download $(Build.Repository.Name) Dacpac artifact
 
             - bash: |
                 echo "##vso[task.setvariable variable=AgentPublicIP;]$(curl checkip.amazonaws.com)"
