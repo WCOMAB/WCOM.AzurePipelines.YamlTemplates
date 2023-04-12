@@ -11,7 +11,7 @@ jobs:
     #- script: dotnet build -maxcpucount:1 -p:NetCoreBuild=true -p:Version=$(Build.BuildNumber) -p:GenerateSmartDefaults=true ${{ parameters.buildParameters }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name) src/
      # displayName: 'DotNet Build'
 
-    - script: dotnet pack .\src\Data.Database.sln -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
+    - script: dotnet pack src/ -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
       displayName: 'DotNet Pack'
 
     - publish: "$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac"
