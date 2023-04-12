@@ -31,3 +31,4 @@ jobs:
                   env: ${{ parameters.env }}
                   envName: ${{ parameters.envName }}}
                   suffix: ${{ parameters.suffix }}
+                  system: ${{ parameters.system }}
