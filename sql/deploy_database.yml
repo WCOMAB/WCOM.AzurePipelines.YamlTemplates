@@ -1,6 +1,6 @@
 steps:
 - task: AzureCLI@2
-  displayName: Deploy $(Build.Repository.Name) Artifact to environment."
+  displayName: Deploy $(Build.Repository.Name) Artifact to environment ${{ parameters.envName }}."
   inputs:
     azureSubscription: '${{ parameters.azureSubscription }}'
     scriptType: bash

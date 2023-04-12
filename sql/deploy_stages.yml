@@ -13,7 +13,8 @@ stages:
         jobs:
           - template: deploy_jobs.yml
             parameters:
-              env: ${{ environment.name }}
+              env: ${{ environment.env }}
+              envName: ${{ environment.name }}
               system: ${{ parameters.system }}
               suffix: ${{ parameters.suffix }}
               azureSubscription: ${{ format('azdo-{0}-{1}-{2}-{3}', parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
