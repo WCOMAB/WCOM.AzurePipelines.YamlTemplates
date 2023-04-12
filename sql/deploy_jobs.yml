@@ -1,7 +1,7 @@
 jobs:
-  - deployment: ${{ format('{0}_Deploy', parameters.env) }}
-    displayName: ${{ parameters.env }} Deploy SSDT
-    environment: ${{ parameters.env }}
+  - deployment: ${{ format('{0}_Deploy', parameters.envName) }}
+    displayName: ${{ parameters.envName }} Deploy SSDT
+    environment: ${{ parameters.envName }}
     strategy:
       runOnce:
         deploy:
@@ -29,5 +29,5 @@ jobs:
                   databaseName: ${{ format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix) }}
                   azureFirewallRule: '$(Build.Repository.Name)-$(Build.BuildNumber)'
                   env: ${{ parameters.env }}
-                  system: ${{ parameters.system }}
+                  envName: ${{ parameters.envName }}}
                   suffix: ${{ parameters.suffix }}
