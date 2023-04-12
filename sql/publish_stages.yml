@@ -1,15 +1,18 @@
 stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.name, parameters.build) }}:
-      - ${{ if parameters.shouldDeploy }}:
-        - stage: ${{ format('PublishTo_{0}', environment.name) }}
-          condition: and(succeeded(), ${{ parameters.shouldPublish }})
-          displayName: ${{ format('Publish to {0}', environment.name) }}
-          jobs:
-            - template: publish_jobs.yml
-              parameters:
-                env: ${{ environment.name }}
-                system: ${{ parameters.system }}
-                suffix: ${{ parameters.suffix }}
-                sources: ${{ parameters.sources }}
-                databases: ${{ parameters.databases }}
+      - stage: ${{ format('PublishTo_{0}', environment.name) }}
+        condition: and(succeeded(), ${{ parameters.shouldPublish }})
+        dependsOn:
+          - ${{ each env in parameters.environments }}:
+              - ${{ if eq(env.name, parameters.build) }}:
+                - ${{ format('Build_{0}', env.name) }}
+        displayName: ${{ format('Publish to {0}', environment.name) }}
+        jobs:
+          - template: publish_jobs.yml
+            parameters:
+              env: ${{ environment.name }}
+              system: ${{ parameters.system }}
+              suffix: ${{ parameters.suffix }}
+              sources: ${{ parameters.sources }}
+              databases: ${{ parameters.databases }}
