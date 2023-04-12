@@ -9,3 +9,4 @@ stages:
               name: ${{ environment.name }}
               env: ${{ environment.env }}
               buildParameters: ${{ parameters.buildParameters }}
+              sources: ${{ parameters.sources }}

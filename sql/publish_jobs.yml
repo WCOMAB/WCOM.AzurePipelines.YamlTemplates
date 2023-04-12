@@ -1,0 +1,31 @@
+jobs:
+  - deployment: ${{ format('{0}_Publish', parameters.env) }}
+    displayName: ${{ parameters.env }} Publish
+    environment: ${{ parameters.env }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+              displayName: Checkout $(Build.Repository.Name)
+
+            - task: UseDotNet@2
+              displayName: 'Use .NET SDK (global.json)'
+              inputs:
+                packageType: sdk
+                useGlobalJson: true
+
+            - template: ../dotnetcommon/dotnet_auth.yml
+              parameters:
+                sources: ${{ parameters.sources }}
+                onlyPublish: true
+
+            - download: current
+              displayName: Download $(Build.Repository.Name) NuGet Artifact
+              artifact: $(Build.Repository.Name).NuGet
+
+            - ${{ each source in parameters.sources }}:
+              - ${{ if eq(source.publish, true) }}:
+                - ${{ each database in parameters.databases }}:
+                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/${{ database.name }}.$(Build.BuildNumber).nupkg"
+                    displayName: 'Publish to ${{ source.name }} Feed'

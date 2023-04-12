@@ -8,9 +8,16 @@ jobs:
         packageType: sdk
         useGlobalJson: true
 
-    - script: dotnet build -maxcpucount:1 -p:NetCoreBuild=true -p:Version=$(Build.BuildNumber) -p:GenerateSmartDefaults=true ${{ parameters.buildParameters }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name) src/
-      displayName: 'DotNet Build'
+    #- script: dotnet build -maxcpucount:1 -p:NetCoreBuild=true -p:Version=$(Build.BuildNumber) -p:GenerateSmartDefaults=true ${{ parameters.buildParameters }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name) src/
+     # displayName: 'DotNet Build'
 
-    - publish: "$(build.ArtifactStagingDirectory)/$(Build.Repository.Name)"
-      displayName: 'Publish $(Build.Repository.Name) Artifact'
-      artifact: $(Build.Repository.Name)
+    - script: dotnet pack src/ -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
+      displayName: 'DotNet Pack'
+
+    - publish: "$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac"
+      displayName: 'Publish $(Build.Repository.Name) Dacpac Artifact'
+      artifact: $(Build.Repository.Name).Dacpac
+
+    - publish: "$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet"
+      displayName: 'Publish $(Build.Repository.Name) NuGet Artifact'
+      artifact: $(Build.Repository.Name).NuGet
