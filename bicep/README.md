@@ -1,6 +1,6 @@
 # Overview
 
-This is the overview for the documentation relating Bicep templates, used to publish bicep modules to the Azure Container Registry.
+Azure DevOps Pipelines YAML template used to Build, validate, and deploy resources to Azure using bicep templates. Publish bicep modules to an Azure Container Registry.
 
 ## Parameters
 
@@ -21,8 +21,10 @@ This is the overview for the documentation relating Bicep templates, used to pub
                    |          |              |                                                                |
 
 ## Examples
+
 ### Minimum needed
-```
+
+```yaml
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 pool:
   vmImage: vmImage
@@ -51,7 +53,8 @@ stages:
 ```
 
 ### Optional parameters
-```
+
+```yaml
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 pool:
   vmImage: vmImage
@@ -77,6 +80,7 @@ stages:
     environments:
       - env: env
         name: envName
+        extraParameters: 'secretGreeting="$(SECRET_GREETING)" sqladminGroupId="$(sqladminGroupId)" sqladminGroupName="$(sqladminGroupName)"'
         deploy: True/False
         publish: True/False
 ```
