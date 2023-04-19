@@ -25,7 +25,7 @@ This is the overview for the documentation relating Bicep templates, used to pub
 ```
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 pool:
-  vmImage: ubuntu-latest
+  vmImage: vmImage
 trigger:
 - main
 
@@ -54,7 +54,7 @@ stages:
 ```
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 pool:
-  vmImage: ubuntu-latest
+  vmImage: vmImage
 trigger:
 - main
 
