@@ -13,7 +13,7 @@ jobs:
     parameters:
       sources: ${{ parameters.sources }}
 
-  - script: dotnet publish src --output "$(build.artifactstagingdirectory)"
+  - script: dotnet publish src --output "$(build.artifactstagingdirectory)" -p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
     displayName: Publish DotNet App
 
   - task: ArchiveFiles@2
