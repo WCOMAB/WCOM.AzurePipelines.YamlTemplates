@@ -8,3 +8,4 @@ stages:
             parameters:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
+              buildParameters: ${{ parameters.buildParameters }}
