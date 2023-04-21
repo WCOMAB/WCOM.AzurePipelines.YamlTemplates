@@ -8,14 +8,14 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 -----------------|----------|--------------|-------------------|-------------------------------------------
  name            | string   | Yes          |                   | The target environment name.              
  env             | string   | Yes          |                   | The target environment.                   
- sources         | object   | Yes          |                   | Authenticate source feed.                 
+ sources         | object   | Yes          |                   | NuGet feeds to authenticate against and optionally push to.                  
  buildParameters | object   | No           |                   | Build Parameters.                         
  toolCommandName | string   | No           |                   | Tool command name.                        
  packAsTool      | bool     | No           |                   | Allow pack as tool.                       
  publish         | bool     | No           |                   | Allow publish to Feed.                    
  skipTests       | bool     | No           |                   | Allow tests to be skipped.                
  build           | string   | Yes          |                   | The environment to build.                 
- onlyPublish     | bool     | No           | true              | Allow update to source feed               
+ onlyPublish     | bool     | No           | true              | Allow update to source feed.               
  projectSrc      | string   | No           | src               | Source folder to build, pack and publish. 
 
 ## Examples
@@ -76,8 +76,14 @@ stages:
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     sources:
-      - name: sourceName
-        publish: true/false
+        - name: authenticateSourceName
+        - name: authenticateAndPushSourceName
+            publish: true
+        - name: authenticateUsingTokenSourceName
+            token: $(CustomerNugetFeedToken)
+        - name: authenticateUsingTokenAndPushSourceName
+            publish: true
+            token: $(CustomerNugetFeedToken)
     buildParameters:
       - '-p:PackAsTool=true/false'
       - '-p:ToolCommandName=ToolCommandName'
