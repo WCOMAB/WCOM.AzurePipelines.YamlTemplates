@@ -1,22 +1,22 @@
 # Overview
 
-Azure DevOps Pipelines YAML template used to Build, install, pack and publish reportgenerator tool.
+Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET libraries or applications.
 
 ## Parameters
 
-     **Parameter**   | **Type** | **Required** | **Default value** | **Description**              
------------------|----------|--------------|-------------------|------------------------------
- name            | string   | Yes          |                   | The target environment name. 
- env             | string   | Yes          |                   | The target environment.      
- sources         | object   | Yes          |                   | Authenticate source feed.    
- buildParameters | object   | No           |                   | Build Parameters.            
- toolCommandName | string   | No           |                   | Tool command name.           
- packAsTool      | bool     | No           |                   | Allow pack as tool.          
- publish         | bool     | No           |                   | Allow publish to Feed.       
- skipTests       | bool     | No           |                   | Allow tests to be skipped.   
- build           | string   | Yes          |                   | The environment to build.    
- onlyPublish     | bool     | No           | true              | Allow update to source feed  
- projectSrc      | string   | No           | src               | Project source. 
+**Parameter**   | **Type** | **Required** | **Default value** | **Description**                           
+-----------------|----------|--------------|-------------------|-------------------------------------------
+ name            | string   | Yes          |                   | The target environment name.              
+ env             | string   | Yes          |                   | The target environment.                   
+ sources         | object   | Yes          |                   | Authenticate source feed.                 
+ buildParameters | object   | No           |                   | Build Parameters.                         
+ toolCommandName | string   | No           |                   | Tool command name.                        
+ packAsTool      | bool     | No           |                   | Allow pack as tool.                       
+ publish         | bool     | No           |                   | Allow publish to Feed.                    
+ skipTests       | bool     | No           |                   | Allow tests to be skipped.                
+ build           | string   | Yes          |                   | The environment to build.                 
+ onlyPublish     | bool     | No           | true              | Allow update to source feed               
+ projectSrc      | string   | No           | src               | Source folder to build, pack and publish. 
 
 ## Examples
 
