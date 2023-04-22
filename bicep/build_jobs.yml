@@ -36,7 +36,7 @@ jobs:
       displayName: Publish Bicep Internal Modules Artifact
       artifact: internal
 
-    - task: AzureCLI
+    - task: AzureCLI@2
       displayName: Test building Bicep Modules
       inputs:
         azureSubscription: ${{ parameters.azureSubscription }}
