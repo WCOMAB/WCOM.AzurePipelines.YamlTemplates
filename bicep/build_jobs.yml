@@ -43,10 +43,10 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: |
+          [string] $Path = './modules'
           Write-Host "Ensuring bicep installed..."
           az bicep upgrade
           az bicep version
-          [string] $Path = '$(Pipeline.Workspace)/modules'
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
           Push-Location
           Set-Location $Path
