@@ -43,7 +43,7 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: |
-          [string] $Path = './modules'
+          [string] $Path = "$PWD/modules"
           Write-Host "Ensuring bicep installed..."
           az bicep upgrade
           az bicep version
