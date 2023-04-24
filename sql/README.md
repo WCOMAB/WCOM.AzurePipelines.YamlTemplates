@@ -12,7 +12,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  suffix                 | string   | Yes          |                                                                       | The resource name suffix.                                   
  devopsOrg              | string   | Yes          |                                                                       | The devops organisation.                                    
  buildParameters        | object   | No           |                                                                       | Build Parameters.                                           
- sources                | object   | Yes          |                                                                       | NuGet feeds to authenticate against and optionally push to. 
+ sources                | object   | No           |                                                                       | NuGet feeds to authenticate against and optionally push to. 
  deploy                 | bool     | No           |                                                                       | Allow deploy to resource group.                             
  azureSubscription      | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix)        | The Azure Subscription name.                                
  resourceGroup          | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                            | The resource group name.                                    
