@@ -4,7 +4,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
 
 ## Parameters
 
- **Parameter**          | **Type** | **Required** | **Default value**                                                                                                                                                       | **Description**                                             
+  **Parameter**          | **Type** | **Required** | **Default value**                                                                                                                                                       | **Description**                                             
 ------------------------|----------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------
  envName                | string   | Yes          |                                                                                                                                                                         | The target environment name.                                
  env                    | string   | Yes          |                                                                                                                                                                         | The target environment.                                     
@@ -18,11 +18,11 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  resourceGroup          | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                                                                                                                              | The resource group name.                                    
  connectionString       | string   | No           | format(connectionStringFormat, serverName, databaseFormat, system, env, suffix)                                                                                         | String to connect to Azure Sql database.                    
  connectionStringFormat | string   | No           | 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' | Format of connection string.                                
- serverName             | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, serverName, 'sql', env, suffix)                                                                                                   | Server name.                                                
- sqlType                | string   | No           | sql                                                                                                                                                                     |                                                             
+ serverName             | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, serverName, 'sql', env, suffix)                                                                                                   | The server name.                                            
+ sqlType                | string   | No           | sql                                                                                                                                                                     | The sql type.                                               
  serverNameFormat       | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, serverName, 'sql', env, suffix)                                                                                                   | Format of server name.                                      
  databases              | array    | Yes          |                                                                                                                                                                         | Array of databases.                                         
- databaseFormat         | string   | No           | Format('{1}', system, databaseName, env, suffix)                                                                                                                        | Format of database name. 
+ databaseFormat         | string   | No           | Format('{1}', system, databaseName, env, suffix)                                                                                                                        | Format of database name.
 
 ## Examples
 
