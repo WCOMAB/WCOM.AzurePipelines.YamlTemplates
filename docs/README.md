@@ -1,6 +1,6 @@
 # Overview
 
-Azure DevOps Pipelines YAML template used to Build, validate and deploy resources to Azure using bicep templates. Publish bicep modules to an Azure Container Registry.
+Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure.
 
 ## Parameters
 
