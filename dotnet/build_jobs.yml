@@ -12,6 +12,32 @@ jobs:
       parameters:
         sources: ${{ parameters.sources }}
 
+    - ${{ if parameters.preBuildScript }}:
+      - ${{ if eq(parameters.preBuildScript, 'pscore') }}:
+        - task: Powershell@2
+          displayName: Pre-Build Powershell Script
+          inputs:
+            targetType: 'filePath'
+            filePath: ${{ parameters.preBuildScript.filePath }}
+            arguments: ${{ parameters.preBuildScript.arguments }}
+            failOnStderr: ${{ parameters.preBuildScript.failOnStderr }}
+            showWarnings: ${{ parameters.preBuildScript.showWarnings }}
+            pwsh: ${{ parameters.preBuildScript.pwsh }}
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+      - ${{ if eq(parameters.preBuildScript, 'pscore') }}:
+        - task: Bash@3
+          displayName: Pre-Build Bash Script
+          inputs:
+            targetType: 'filePath'
+            filePath: ${{ parameters.preBuildScript.filePath }}
+            arguments: ${{ parameters.preBuildScript.arguments }}
+            failOnStderr: ${{ parameters.preBuildScript.failOnStderr }}
+            workingDirectory: ${{ parameters.preBuildScript.workingDirectory }}
+            bashEnvValue: ${{ parameters.preBuildScript.bashEnvValue }}
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
     - script: dotnet build ${{ parameters.projectSrc }} /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Build'
 
