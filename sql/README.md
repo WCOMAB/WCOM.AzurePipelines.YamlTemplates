@@ -4,7 +4,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
 
 ## Parameters
 
-**Parameter**          | **Type** | **Required** | **Default value**                                                     | **Description**                                             
+ **Parameter**          | **Type** | **Required** | **Default value**                                                     | **Description**                                             
 ------------------------|----------|--------------|-----------------------------------------------------------------------|-------------------------------------------------------------
  envName                | string   | Yes          |                                                                       | The target environment name.                                
  env                    | string   | Yes          |                                                                       | The target environment.                                     
