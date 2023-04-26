@@ -12,25 +12,27 @@ jobs:
       parameters:
         sources: ${{ parameters.sources }}
 
-    - ${{ if parameters.preBuildScript }}:
-      - ${{ if eq(parameters.preBuildScript, 'pscore') }}:
+    - ${{ if in(parameters.preBuildScript.scriptType, 'pscore', 'bash') }}:
+      - ${{ if eq(parameters.preBuildScript.scriptType, 'pscore') }}:
         - task: Powershell@2
           displayName: Pre-Build Powershell Script
           inputs:
-            targetType: 'filePath'
+            targetType: ${{ parameters.preBuildScript.targetType }}
             filePath: ${{ parameters.preBuildScript.filePath }}
+            script: ${{ parameters.preBuildScript.script }}
             arguments: ${{ parameters.preBuildScript.arguments }}
             failOnStderr: ${{ parameters.preBuildScript.failOnStderr }}
             showWarnings: ${{ parameters.preBuildScript.showWarnings }}
             pwsh: ${{ parameters.preBuildScript.pwsh }}
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-      - ${{ if eq(parameters.preBuildScript, 'pscore') }}:
+      - ${{ if eq(parameters.preBuildScript.scriptType, 'bash') }}:
         - task: Bash@3
           displayName: Pre-Build Bash Script
           inputs:
-            targetType: 'filePath'
+            targetType: ${{ parameters.preBuildScript.targetType }}
             filePath: ${{ parameters.preBuildScript.filePath }}
+            script: ${{ parameters.preBuildScript.script }}
             arguments: ${{ parameters.preBuildScript.arguments }}
             failOnStderr: ${{ parameters.preBuildScript.failOnStderr }}
             workingDirectory: ${{ parameters.preBuildScript.workingDirectory }}
