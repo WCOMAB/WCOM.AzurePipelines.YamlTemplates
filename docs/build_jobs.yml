@@ -38,11 +38,7 @@ jobs:
 
       - ${{ each site in parameters.sites }}:
         - pwsh: |
-            if (!(Test-Path ./input/generated))
-            {
-              New-Item -Path ./input/generate -ItemType Directory
-            }
-            dotnet wcomsite -i ./input/theme -i ./input/${{ site.name }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output/${{ site.name }}"
+            dotnet wcomsite -i ./input/theme -i ./input/generated -i ./input/${{ site.name }} -o "$(build.artifactstagingdirectory)/output/${{ site.name }}"
             [int] $Result = $LASTEXITCODE
             $Result
             exit $Result
