@@ -39,11 +39,11 @@ resources:
 stages:
 - template: docs/stages.yml@templates
   parameters:
-    system: 'lab'
-    devopsOrg: 'wcom-intern'
-    suffix: 'ecdo'
-    build: Development
-    source: 'wcom-intern-ecdevops'
+    system: system
+    devopsOrg: devopsOrg
+    suffix: suffix
+    build: envName
+    source: source
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: dev
