@@ -4,21 +4,23 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
 
 ## Parameters
 
- **Parameter**     | **Type** | **Required** | **Default value**                                              | **Description**                                    
--------------------|----------|--------------|----------------------------------------------------------------|----------------------------------------------------
- name              | string   | Yes          |                                                                | The target environment name.                       
- env               | string   | Yes          |                                                                | The target environment.                            
- system            | string   | Yes          |                                                                | The target system.                                 
- suffix            | string   | Yes          |                                                                | The resource name suffix.                          
- devopsOrg         | string   | Yes          |                                                                | The devps organisation.                            
- build             | string   | Yes          |                                                                | The environment to build.                          
- azureSubscription | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.                       
- resourceGroup     | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                     | The resource group name.                           
- acr               | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.                                 
- extraParameters   | string   | No           |                                                                | Used for passing extra parameters to the template. 
- deploy            | bool     | No           | true                                                           | Allow deploy to resource group.                    
- publish           | bool     | No           | true                                                           | Allow publish of modules to container registry.    
-                   |          |              |                                                                |
+ **Parameter**           | **Type** | **Required** | **Default value**                                              | **Description**                                    
+-------------------------|----------|--------------|----------------------------------------------------------------|----------------------------------------------------
+ envName                 | string   | Yes          |                                                                | The target environment name.                       
+ env                     | string   | Yes          |                                                                | The target environment.                            
+ system                  | string   | Yes          |                                                                | The target system.                                 
+ suffix                  | string   | Yes          |                                                                | The resource name suffix.                          
+ devopsOrg               | string   | Yes          |                                                                | The devops organisation.                           
+ build                   | string   | Yes          |                                                                | The environment to build.                          
+ azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.                       
+ azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.              
+ resourceGroup           | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                     | The resource group name.                           
+ resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                  | The format for the resourceGroup name.             
+ acr                     | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.                                 
+ extraParameters         | string   | No           |                                                                | Used for passing extra parameters to the template. 
+ deploy                  | bool     | No           | true                                                           | Allow deploy to resource group.                    
+ publish                 | bool     | No           | true                                                           | Allow publish of modules to container registry.
+
 
 ## Examples
 
@@ -75,6 +77,8 @@ stages:
     system: system
     devopsOrg: devopsOrg
     suffix: suffix
+    azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+    resourceGroupFormat: '{0}-{1}-{2}-{3}'
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
