@@ -54,6 +54,8 @@ stages:
     suffix: suffix
     devopsOrg: devopsOrg
     build: envName
+    sites:
+      - name: 'siteName'
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: envName
