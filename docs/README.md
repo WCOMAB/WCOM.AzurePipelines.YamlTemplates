@@ -10,8 +10,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  env                     | string   | Yes          |                                                                         | The target environment.                                     
  system                  | string   | Yes          |                                                                         | The target system.                                          
  suffix                  | string   | Yes          |                                                                         | The resource name suffix.                                   
- devopsOrg               | string   | Yes          | format('{0}-{1}', devopsOrg, 'devops')                                  | The devops organisation.                                    
- devopsOrgSuffix         | string   | No           |                                                                         | Suffix for the devops organisation.                         
+ devopsOrg               | string   | Yes          |                                                                         | The devops organisation.                                    
  build                   | string   | Yes          |                                                                         | The environment to build.                                   
  sources                 | object   | No           |                                                                         | NuGet feeds to authenticate against and optionally push to. 
  sites                   | array    | Yes          |                                                                         | Array of sites.                                             
@@ -36,7 +35,7 @@ name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 trigger:
   - main
-  
+
 pool:
   vmImage: vmImage
 

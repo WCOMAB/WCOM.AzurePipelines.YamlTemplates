@@ -9,5 +9,5 @@ stages:
               name: ${{ environment.name }}
               env: ${{ environment.env }}
               sources: ${{ parameters.sources }}
-              devopsOrg: ${{ format('{0}-{1}', parameters.devopsOrg, coalesce(parameters.devopsOrgSuffix, 'devops')) }}
+              devopsOrg: ${{ parameters.devopsOrg }}
               sites: ${{ parameters.sites }}
