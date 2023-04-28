@@ -14,7 +14,7 @@ jobs:
               displayName: Use .NET Core from global.json
               inputs:
                 useGlobalJson: true
-              
+
             - template: ../dotnetcommon/dotnet_auth.yml
               parameters:
                 sources: ${{  parameters.sources  }}

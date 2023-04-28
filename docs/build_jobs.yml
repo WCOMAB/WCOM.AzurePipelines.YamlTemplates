@@ -3,6 +3,7 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 0
+        fetchTags: true
         displayName: Checkout $(Build.Repository.Name)
 
       - task: UseDotNet@2
@@ -37,7 +38,7 @@ jobs:
 
       - ${{ each site in parameters.sites }}:
         - pwsh: |
-            dotnet wcomsite -i ./input/theme -i ./input/${{ site.name }} -i ./input/generated -o "$(build.artifactstagingdirectory)/output/${{ site.name }}"
+            dotnet wcomsite -i ./input/theme -i ./input/generated -i ./input/${{ site.name }} -o "$(build.artifactstagingdirectory)/output/${{ site.name }}"
             [int] $Result = $LASTEXITCODE
             $Result
             exit $Result
