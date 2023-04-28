@@ -51,8 +51,8 @@ stages:
 - template: docs/stages.yml@templates
   parameters:
     system: system
-    devopsOrg: devopsOrg
     suffix: suffix
+    devopsOrg: devopsOrg
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
@@ -87,8 +87,8 @@ stages:
 - template: docs/stages.yml@templates
   parameters:
     system: system
-    devopsOrg: devopsOrg
     suffix: suffix
+    devopsOrg: devopsOrg
     WebAppName: WebAppName
     webAppNameFormat: '{0}-{1}-{2}-{3}-{4}-{5}'
     webAppType: webAppType
@@ -107,6 +107,8 @@ stages:
       - name: authenticateUsingTokenAndPushSourceName
           publish: true
           token: $(CustomerNugetFeedToken)
+    sites:
+      - name: 'siteName'
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: dev
