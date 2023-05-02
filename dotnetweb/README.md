@@ -4,18 +4,22 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 
 ## Parameters
 
- **Parameter**     | **Type** | **Required** | **Default value**                                              | **Description**
--------------------|----------|--------------|----------------------------------------------------------------|----------------------------------------------------
- name              | string   | Yes          |                                                                | The target environment name.
- env               | string   | Yes          |                                                                | The target environment.
- system            | string   | Yes          |                                                                | The target system.
- suffix            | string   | Yes          |                                                                | The resource name suffix.
- devopsOrg         | string   | Yes          |                                                                | The devops organisation.
- build             | string   | Yes          |                                                                | The environment to build.
- azureSubscription | string   | No           | format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) | The Azure Subscription name.
- sources           | object   | Yes          |                                                                | NuGet feeds to authenticate against and optionally push to.
- webAppName        | string   | No           | format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'web'), environment.env, parameters.suffix) | The Web App Name
- webAppType        | string   | No           | 'web'                                                          | Typ of web app
+ **Parameter**           | **Type** | **Required** | **Default value**                                                     | **Description**                                             
+-------------------------|----------|--------------|-----------------------------------------------------------------------|-------------------------------------------------------------
+ envName                 | string   | Yes          |                                                                       | The target environment name.                                
+ env                     | string   | Yes          |                                                                       | The target environment.                                     
+ system                  | string   | Yes          |                                                                       | The target system.                                          
+ suffix                  | string   | Yes          |                                                                       | The resource name suffix.                                   
+ devopsOrg               | string   | Yes          |                                                                       | The devops organisation.                                    
+ build                   | string   | Yes          |                                                                       | The environment to build.                                   
+ sources                 | object   | No           |                                                                       | NuGet feeds to authenticate against and optionally push to. 
+ buildParameters         | object   | No           |                                                                       | Build Parameters.                                           
+ WebAppName              | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'web', env, suffix) | The Web App name.                                           
+ webAppNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                                 | The format for the web app name.                            
+ webAppType              | string   | No           | 'web'                                                                 | The type/abbreviation for the web app.                      
+ azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix)        | The Azure Subscription name.                                
+ azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                                | The format for the azureSubscription.                       
+ deploy                  | bool     | No           | true                                                                  | Allow deploy.
 
 ## Examples
 
@@ -25,7 +29,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: vmImage
 
 trigger:
 - main
@@ -41,20 +45,17 @@ resources:
 stages:
 - template: dotnetweb/stages.yml@templates
   parameters:
-    devopsOrg: devopsOrg
     system: system
     suffix: suffix
-    webAppName: webAppName
+    devopsOrg: devopsOrg
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    sources:
-      - name: wcom-intern-ecdevops
     environments:
-      - env: dev
+      - env: env
         name: Development
-      - env: stg
+      - env: env
         name: Staging
-      - env: prd
+      - env: env
         name: Production
  ```
 
@@ -64,7 +65,7 @@ stages:
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: vmImage
 
 trigger:
 - main
@@ -80,25 +81,39 @@ resources:
 stages:
 - template: dotnetweb/stages.yml@templates
   parameters:
-    devopsOrg: devopsOrg
     system: system
     suffix: suffix
-    webAppNameFormat: webAppName
+    devopsOrg: devopsOrg
+    webAppNameFormat: '{0}-{1}-{2}-{3}-{4}'
+    webAppType: webAppType
+    azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+    sources:
+        - name: authenticateSourceName
+        - name: authenticateAndPushSourceName
+            publish: true
+        - name: authenticateUsingTokenSourceName
+            token: $(CustomerNugetFeedToken)
+        - name: authenticateUsingTokenAndPushSourceName
+            publish: true
+            token: $(CustomerNugetFeedToken)
+    buildParameters:
+      - '-p:buildParameter=buildParameterValue'
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    sources:
-      - name: wcom-intern-ecdevops
     environments:
-      - env: dev
+      - env: env
         name: Development
+        webAppName: webAppName
         deploy: true/false
-      - env: stg
+      - env: env
         name: Staging
+        webAppName: webAppName
         deploy: true/false
         deployAfter:
           - Development
-      - env: prd
+      - env: env
         name: Production
+        webAppName: webAppName
         deploy: true/false
         deployAfter:
           - Staging
