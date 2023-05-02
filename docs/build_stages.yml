@@ -9,6 +9,5 @@ stages:
               name: ${{ environment.name }}
               env: ${{ environment.env }}
               sources: ${{ parameters.sources }}
-              assembly_pipelines: ${{ parameters.assembly_pipelines }}
               devopsOrg: ${{ parameters.devopsOrg }}
               sites: ${{ parameters.sites }}

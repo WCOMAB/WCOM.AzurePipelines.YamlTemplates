@@ -1,0 +1,12 @@
+name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+- develop
+- main
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'

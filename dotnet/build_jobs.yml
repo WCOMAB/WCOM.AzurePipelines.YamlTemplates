@@ -40,6 +40,9 @@ jobs:
     - script: dotnet pack ${{ parameters.projectSrc }} --no-build --no-restore --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Package'
 
-    - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish $(Build.Repository.Name) Artifact'
-      artifact: $(Build.Repository.Name)
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/'
+        archiveFilePatterns: '**/*.$(Build.BuildNumber).nupkg'
+        artifactName: '$(Build.Repository.Name)'
