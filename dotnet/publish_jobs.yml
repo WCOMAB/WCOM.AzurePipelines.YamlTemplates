@@ -26,5 +26,5 @@ jobs:
 
             - ${{ each source in parameters.sources }}:
               - ${{ if eq(source.publish, true) }}:
-                - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/$(Build.Repository.Name).$(Build.BuildNumber).nupkg"
+                - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/*.$(Build.BuildNumber).nupkg"
                   displayName: 'Publish to ${{ source.name }} Feed'
