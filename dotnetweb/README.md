@@ -4,21 +4,22 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 
 ## Parameters
 
- **Parameter**     | **Type** | **Required** | **Default value**                                              | **Description**                                             
--------------------|----------|--------------|----------------------------------------------------------------|----------------------------------------------------         
- name              | string   | Yes          |                                                                | The target environment name.                                
- env               | string   | Yes          |                                                                | The target environment.                                     
- system            | string   | Yes          |                                                                | The target system.                                          
- suffix            | string   | Yes          |                                                                | The resource name suffix.                                   
- devopsOrg         | string   | Yes          |                                                                | The devops organisation.                                    
- build             | string   | Yes          |                                                                | The environment to build.                                   
- azureSubscription | string   | No           | format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) | The Azure Subscription name.                                
- sources           | object   | Yes          |                                                                | NuGet feeds to authenticate against and optionally push to. 
- WebAppName        | string   | No           | format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'web'), environment.env, parameters.suffix) | The Web App Name
+ **Parameter**     | **Type** | **Required** | **Default value**                                              | **Description**
+-------------------|----------|--------------|----------------------------------------------------------------|----------------------------------------------------
+ name              | string   | Yes          |                                                                | The target environment name.
+ env               | string   | Yes          |                                                                | The target environment.
+ system            | string   | Yes          |                                                                | The target system.
+ suffix            | string   | Yes          |                                                                | The resource name suffix.
+ devopsOrg         | string   | Yes          |                                                                | The devops organisation.
+ build             | string   | Yes          |                                                                | The environment to build.
+ azureSubscription | string   | No           | format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) | The Azure Subscription name.
+ sources           | object   | Yes          |                                                                | NuGet feeds to authenticate against and optionally push to.
+ webAppName        | string   | No           | format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'web'), environment.env, parameters.suffix) | The Web App Name
+ webAppType        | string   | No           | 'web'                                                          | Typ of web app
 
- ## Examples
+## Examples
 
- ### Minimum needed
+### Minimum needed
 
  ```yaml
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
@@ -43,7 +44,7 @@ stages:
     devopsOrg: devopsOrg
     system: system
     suffix: suffix
-    webAppNameFormat: webAppName
+    webAppName: webAppName
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     sources:
@@ -57,7 +58,7 @@ stages:
         name: Production
  ```
 
- ### Optional parameters
+### Optional parameters
 
  ```yaml
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
