@@ -6,8 +6,6 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 
  **Parameter**           | **Type** | **Required** | **Default value**                                              | **Description**                                             
 -------------------------|----------|--------------|----------------------------------------------------------------|-------------------------------------------------------------
- envName                 | string   | Yes          |                                                                | The target environment name.                                
- env                     | string   | Yes          |                                                                | The target environment.                                     
  system                  | string   | Yes          |                                                                | The target system.                                          
  suffix                  | string   | Yes          |                                                                | The resource name suffix.                                   
  devopsOrg               | string   | Yes          |                                                                | The devops organisation.                                    
@@ -25,7 +23,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 
  **Parameters** | **Type** | **Required** | **Default value**          | **Description**  
 ----------------|----------|--------------|----------------------------|------------------
- name           | string   | No           |                            | The source name.
+ name           | string   | Yes          |                            | The source name.
  token          | string   | No           |                            | Access token.
 
 
@@ -33,6 +31,8 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 
  **Parameters** | **Type** | **Required** | **Default value**                                                     | **Description**                              
 ----------------|----------|--------------|-----------------------------------------------------------------------|----------------------------------------------
+ env            | array    | Yes          |                                                                       | The target environment.
+ name           | string   | Yes          |                                                                       | The target environment name.
  WebAppName     | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'web', env, suffix) | The Web App name.                            
  deploy         | bool     | No           | true                                                                  | Allow deploy to Resource group.              
  deployAfter    | array    | No           |                                                                       | Object will be deployed after following env.
