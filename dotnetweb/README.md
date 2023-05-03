@@ -12,7 +12,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  suffix                  | string   | Yes          |                                                                | The resource name suffix.                                   
  devopsOrg               | string   | Yes          |                                                                | The devops organisation.                                    
  build                   | string   | Yes          |                                                                | The environment to build.                                   
- sources                 | object   | No           |                                                                | NuGet feeds to authenticate against and optionally push to. 
+ sources                 | array    | No           |                                                                | NuGet feeds to authenticate against. 
  buildParameters         | object   | No           |                                                                | Build Parameters.                                           
  shouldDeploy            | bool     | No           |                                                                | Check if deploy stage should run.                           
  webAppNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                          | The format for the web app name.                            
@@ -21,7 +21,16 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
 
+## Source
+
+ **Parameters** | **Type** | **Required** | **Default value**          | **Description**  
+----------------|----------|--------------|----------------------------|------------------
+ name           | string   | No           |                            | The source name.
+ token          | string   | No           |                            | Access token.
+
+
 ## Per environment
+
  **Parameters** | **Type** | **Required** | **Default value**                                                     | **Description**                              
 ----------------|----------|--------------|-----------------------------------------------------------------------|----------------------------------------------
  WebAppName     | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'web', env, suffix) | The Web App name.                            
@@ -96,11 +105,9 @@ stages:
     azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
     sources:
       - name: authenticateSourceName
-      - name: authenticateAndPushSourceName
       - name: authenticateUsingTokenSourceName
         token: $(CustomerNugetFeedToken)
-      - name: authenticateUsingTokenAndPushSourceName
-        token: $(CustomerNugetFeedToken)
+
     buildParameters:
       - '-p:buildParameter=buildParameterValue'
     build: envName
