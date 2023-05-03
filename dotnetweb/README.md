@@ -20,7 +20,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.                                
  azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.
 
-## Environment
+## Per environment
  **Parameters** | **Type** | **Required** | **Default value**                                                     | **Description**                              
 ----------------|----------|--------------|-----------------------------------------------------------------------|----------------------------------------------
  WebAppName     | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'web', env, suffix) | The Web App name.                            
