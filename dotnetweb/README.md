@@ -14,7 +14,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  build                   | string   | Yes          |                                                                | The environment to build.                                   
  sources                 | object   | No           |                                                                | NuGet feeds to authenticate against and optionally push to. 
  buildParameters         | object   | No           |                                                                | Build Parameters.                                           
- shouldDeploy            | string   | No           |                                                                | Check if deploy stage should run.                           
+ shouldDeploy            | bool     | No           |                                                                | Check if deploy stage should run.                           
  webAppNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                          | The format for the web app name.                            
  webAppType              | string   | No           | 'web'                                                          | The type/abbreviation for the web app.                      
  azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.                                
