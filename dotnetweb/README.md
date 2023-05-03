@@ -107,7 +107,6 @@ stages:
       - name: authenticateSourceName
       - name: authenticateUsingTokenSourceName
         token: $(CustomerNugetFeedToken)
-
     buildParameters:
       - '-p:buildParameter=buildParameterValue'
     build: envName
