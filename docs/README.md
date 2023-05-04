@@ -30,7 +30,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  name           | string   | Yes          |                   | The source name.
  token          | string   | No           |                   | Access token.
 
- ## Per environment
+## Per environment
 
  **Parameters** | **Type** | **Required** | **Default value**                                                       | **Description**                              
 ----------------|----------|--------------|-------------------------------------------------------------------------|----------------------------------------------

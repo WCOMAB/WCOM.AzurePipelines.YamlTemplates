@@ -16,7 +16,7 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
  resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                  | The format for the resourceGroup name.
  acr                     | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.                    
 
- ## Per environment
+## Per environment
 
  **Parameters**  | **Type** | **Required** | **Default value** | **Description**                                   
 -----------------|----------|--------------|-------------------|---------------------------------------------------
