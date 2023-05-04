@@ -29,8 +29,6 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 ----------------|----------|--------------|-------------------|---------------------------------------------
  env            | array    | Yes          |                   | The target environment.
  name           | string   | Yes          |                   | The target environment name.
- deploy         | bool     | No           | true              | Allow deploy to Resource group.             
- deployAfter    | array    | No           |                   | Object will be deployed after following env.
 
 ## Examples
 
@@ -58,12 +56,12 @@ stages:
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     sources:
-      - name: sourceName
-        publish: true/false
+      - name: authenticateUsingTokenSourceName
+        token: $(CustomerNugetFeedToken)
     build: envName
     environments:
-      - env: env
-        name: envName
+      - env: dev
+        name: Development
 ```
 
 ### Optional parameters
@@ -90,14 +88,14 @@ stages:
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     sources:
-        - name: authenticateSourceName
-        - name: authenticateAndPushSourceName
-            publish: true
-        - name: authenticateUsingTokenSourceName
-            token: $(CustomerNugetFeedToken)
-        - name: authenticateUsingTokenAndPushSourceName
-            publish: true
-            token: $(CustomerNugetFeedToken)
+      - name: authenticateSourceName
+      - name: authenticateAndPushSourceName
+        publish: true
+      - name: authenticateUsingTokenSourceName
+        token: $(CustomerNugetFeedToken)
+      - name: authenticateUsingTokenAndPushSourceName
+        token: $(CustomerNugetFeedToken)
+        publish: true
     buildParameters:
       - '-p:PackAsTool=true/false'
       - '-p:ToolCommandName=ToolCommandName'
@@ -105,6 +103,6 @@ stages:
     projectSrc: projectSrc
     build: envName
     environments:
-      - env: env
-        name: envName
+      - env: dev
+        name: Development
 ```

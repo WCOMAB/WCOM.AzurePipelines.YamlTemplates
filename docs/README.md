@@ -25,10 +25,10 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
 
 ## Source
 
- **Parameters** | **Type** | **Required** | **Default value**          | **Description**  
-----------------|----------|--------------|----------------------------|------------------
- name           | string   | Yes          |                            | The source name.
- token          | string   | No           |                            | Access token.
+ **Parameters** | **Type** | **Required** | **Default value** | **Description**  
+----------------|----------|--------------|-------------------|------------------
+ name           | string   | Yes          |                   | The source name.
+ token          | string   | No           |                   | Access token.
 
  ## Per environment
 
@@ -72,11 +72,11 @@ stages:
       - name: 'siteName'
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
-      - env: envName
+      - env: dev
         name: Development
-      - env: envName
+      - env: stg
         name: Staging
-      - env: envName
+      - env: prd
         name: Production
 ```
 
@@ -115,13 +115,8 @@ stages:
     build: envName
     sources:
       - name: authenticateSourceName
-      - name: authenticateAndPushSourceName
-        publish: true
       - name: authenticateUsingTokenSourceName
         token: $(CustomerNugetFeedToken)
-      - name: authenticateUsingTokenAndPushSourceName
-        token: $(CustomerNugetFeedToken)
-        publish: true
     sites:
       - name: 'siteName'
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
