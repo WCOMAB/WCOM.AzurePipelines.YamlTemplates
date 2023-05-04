@@ -6,17 +6,31 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 
  **Parameter**   | **Type** | **Required** | **Default value** | **Description**                           
 -----------------|----------|--------------|-------------------|-------------------------------------------
- name            | string   | Yes          |                   | The target environment name.              
- env             | string   | Yes          |                   | The target environment.                   
  sources         | object   | Yes          |                   | NuGet feeds to authenticate against and optionally push to.                  
  buildParameters | object   | No           |                   | Build Parameters.                         
  toolCommandName | string   | No           |                   | Tool command name.                        
- packAsTool      | bool     | No           |                   | Allow pack as tool.                       
  publish         | bool     | No           |                   | Allow publish to Feed.                    
  skipTests       | bool     | No           |                   | Allow tests to be skipped.                
  build           | string   | Yes          |                   | The environment to build.                 
  onlyPublish     | bool     | No           | true              | Allow update to source feed.               
  projectSrc      | string   | No           | src               | Source folder to build, pack and publish. 
+
+## Source
+
+ **Parameters** | **Type** | **Required** | **Default value** | **Description**  
+----------------|----------|--------------|-------------------|------------------
+ name           | string   | Yes          |                   | The source name.
+ token          | string   | No           |                   | Access token.
+ publish        | bool     | No           |                   | Allow update to NuGet source.
+
+## Per environment
+
+ **Parameters** | **Type** | **Required** | **Default value** | **Description**                             
+----------------|----------|--------------|-------------------|---------------------------------------------
+ env            | array    | Yes          |                   | The target environment.
+ name           | string   | Yes          |                   | The target environment name.
+ deploy         | bool     | No           | true              | Allow deploy to Resource group.             
+ deployAfter    | array    | No           |                   | Object will be deployed after following env.
 
 ## Examples
 
