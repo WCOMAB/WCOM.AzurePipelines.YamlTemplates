@@ -14,6 +14,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  build           | string   | Yes          |                   | The environment to build.                 
  onlyPublish     | bool     | No           | true              | Allow update to source feed.               
  projectSrc      | string   | No           | src               | Source folder to build, pack and publish. 
+ environments    | array    | Yes          |                   | Array of environments and environment specific parameters.
 
 ## Source
 
