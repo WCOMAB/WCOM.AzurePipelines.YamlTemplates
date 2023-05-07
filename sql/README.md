@@ -4,42 +4,50 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
 
 ## Parameters
 
- **Parameter**           | **Type** | **Required** | **Default value**                                              | **Description**                                             
+ **Parameter**           | **Type** | **Required** | **Default value**                                              | **Description**
 -------------------------|----------|--------------|----------------------------------------------------------------|-------------------------------------------------------------
- system                  | string   | Yes          |                                                                | The target system.                                          
- suffix                  | string   | Yes          |                                                                | The resource name suffix.                                   
- devopsOrg               | string   | Yes          |                                                                | The devops organisation.                                    
- build                   | string   | Yes          |                                                                | The environment to build.                                   
- buildParameters         | string   | No           |                                                                | Build Parameters.                                           
- sources                 | object   | No           |                                                                | NuGet feeds to authenticate against and optionally push to. 
- azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.                                
- azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.                       
- resourceGroup           | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                     | The resource group name.                                    
- resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                  | The format for the resourceGroup name.                      
- serverNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                          | Format of server name.                                      
- sqlType                 | string   | No           | 'sql'                                                          | The sql type.                                               
- databases               | array    | No           |                                                                | 	Array of databases.                                        
+ system                  | string   | Yes          |                                                                | The target system.
+ suffix                  | string   | Yes          |                                                                | The resource name suffix.
+ devopsOrg               | string   | Yes          |                                                                | The devops organisation.
+ build                   | string   | Yes          |                                                                | The environment to build.
+ buildParameters         | string   | No           |                                                                | Build Parameters.
+ sources                 | object   | No           |                                                                | NuGet feeds to authenticate against and optionally push to.
+ azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.
+ azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.
+ resourceGroup           | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                     | The resource group name.
+ resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                  | The format for the resourceGroup name.
+ serverNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                          | Format of server name.
+ sqlType                 | string   | No           | 'sql'                                                          | The sql type.
+ databases               | array    | No           |                                                                | Array of databases.
  databaseFormat          | string   | No           | '{1}'                                                          | Format of database name.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
 
 ## Source
 
- **Parameters** | **Type** | **Required** | **Default value** | **Description**              
+ **Parameters** | **Type** | **Required** | **Default value** | **Description**
 ----------------|----------|--------------|-------------------|------------------------------
- name           | string   | Yes          |                   | The source name.             
- token          | string   | No           |                   | Access token.                
+ name           | string   | Yes          |                   | The source name.
+ token          | string   | No           |                   | Access token.
  publish        | bool     | No           |                   | Allow update to NuGet source.
+
+## Database
+
+ **Parameters**   | **Type** | **Required** | **Default value** | **Description**
+------------------|----------|--------------|-------------------|------------------------------
+ name             | string   | Yes          |                   | The database name.
+ deployParameters | array    | No           |                   | Optional string array of per database, for all environments additional deploy parameters.
 
 ## Per environment
 
- **Parameters**          | **Type** | **Required** | **Default value**                                                                                                                                                       | **Description**                         
+ **Parameters**          | **Type** | **Required** | **Default value**                                                                                                                                                       | **Description**
 -------------------------|----------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------
- env                     | array    | Yes          |                                                                                                                                                                         | The target environment.                 
- name                    | string   | Yes          |                                                                                                                                                                         | The target environment name.            
- deploy                  | bool     | No           | true                                                                                                                                                                    | Allow deploy to Resource group.         
+ env                     | array    | Yes          |                                                                                                                                                                         | The target environment.
+ name                    | string   | Yes          |                                                                                                                                                                         | The target environment name.
+ deploy                  | bool     | No           | true                                                                                                                                                                    | Allow deploy to Resource group.
  connectionString        | string   | No           | format(connectionStringFormat, serverName, databaseFormat, system, env, suffix)                                                                                         | String to connect to Azure Sql database.
- connectionStringFormat  | string   | No           | 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' | Format of connection string.            
- serverName              | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, serverName, 'sql', env, suffix)                                                                                                   | The server name.                        
+ connectionStringFormat  | string   | No           | 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' | Format of connection string.
+ serverName              | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, serverName, 'sql', env, suffix)                                                                                                   | The server name.
+ deployParameters        | array    | No           |                                                                                                                                                                         | Optional string array of per environment, for all databases additional deploy parameters.
 
 ## Examples
 
