@@ -32,3 +32,4 @@ jobs:
                   envName: ${{ parameters.envName }}}
                   suffix: ${{ parameters.suffix }}
                   system: ${{ parameters.system }}
+                  deployParameters : ${{ join(' ', parameters.deployParameters) }} ${{ join(' ', database.deployParameters) }}
