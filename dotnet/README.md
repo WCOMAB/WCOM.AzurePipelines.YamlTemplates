@@ -57,8 +57,8 @@ stages:
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     sources:
-      - name: authenticateUsingTokenSourceName
-        token: $(CustomerNugetFeedToken)
+      - name: sourceName
+        publish: true/false
     build: envName
     environments:
       - env: dev
