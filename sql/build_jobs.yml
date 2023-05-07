@@ -8,8 +8,9 @@ jobs:
         packageType: sdk
         useGlobalJson: true
 
-    #- script: dotnet build -maxcpucount:1 -p:NetCoreBuild=true -p:Version=$(Build.BuildNumber) -p:GenerateSmartDefaults=true ${{ parameters.buildParameters }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name) src/
-     # displayName: 'DotNet Build'
+    - template: ../dotnetcommon/dotnet_auth.yml
+      parameters:
+        sources: ${{ parameters.sources }}
 
     - script: dotnet pack src/ -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
       displayName: 'DotNet Pack'
