@@ -26,7 +26,6 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  name           | string   | Yes          |                            | The source name.
  token          | string   | No           |                            | Access token.
 
-
 ## Per environment
 
  **Parameters** | **Type** | **Required** | **Default value**                                                     | **Description**                              
