@@ -12,3 +12,4 @@ stages:
               buildParameters: ${{ parameters.buildParameters }}
               skipTests: ${{ parameters.skipTests }}
               projectSrc: ${{ coalesce(parameters.projectSrc, '', 'src') }}
+              preBuildScript: ${{ parameters.preBuildScript }}

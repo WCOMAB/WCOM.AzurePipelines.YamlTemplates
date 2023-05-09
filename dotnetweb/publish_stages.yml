@@ -9,3 +9,5 @@ stages:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
               buildParameters: ${{ parameters.buildParameters }}
+              projectSrc: ${{ coalesce(parameters.projectSrc, 'src') }}
+              preBuildScript: ${{ parameters.preBuildScript }}
