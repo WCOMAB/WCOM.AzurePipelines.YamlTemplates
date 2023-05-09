@@ -12,7 +12,7 @@ jobs:
       parameters:
         sources: ${{ parameters.sources }}
 
-    - script: dotnet pack src/ -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
+    - script: dotnet pack ${{ parameters.projectSrc }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
       displayName: 'DotNet Pack'
 
     - publish: "$(Build.ArtifactStagingDirectory)/$(Build.Repository.Name)/artifacts/Dacpac"
