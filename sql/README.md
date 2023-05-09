@@ -20,6 +20,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  sqlType                 | string   | No           | 'sql'                                                          | The sql type.
  databases               | array    | No           |                                                                | Array of databases.
  databaseFormat          | string   | No           | '{1}'                                                          | Format of database name.
+ projectSrc	             | string	  | No	         | src	                                                          | Source folder to build, pack and publish.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
 
 ## Source
