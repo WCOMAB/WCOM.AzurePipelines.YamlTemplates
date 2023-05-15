@@ -9,7 +9,7 @@ trigger:
 
 stages:
   #DotNet Intregration Test
-- template: dotnet/stages.yml@templates
+- template: dotnet/stages.yml
   parameters:
     shouldPublish: false
     sources:
@@ -20,7 +20,7 @@ stages:
       - env: dev
         name: Development
   #DotNet Web Intregration Test
-- template: dotnetweb/stages.yml@templates
+- template: dotnetweb/stages.yml
   parameters:
     system: test
     suffix: ""
@@ -31,7 +31,7 @@ stages:
       - env: env
         name: Development
   #SQL Intregration Test
-- template: sql/stages.yml@templates
+- template: sql/stages.yml
   parameters:
     system: test
     suffix: ""
