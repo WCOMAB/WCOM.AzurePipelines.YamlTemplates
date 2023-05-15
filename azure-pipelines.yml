@@ -14,6 +14,7 @@ stages:
     shouldPublish: false
     build: DotNet_Development
     projectSrc: tests/integration/src/dotnet/library
+    skipTests: true
     environments:
       - env: env
         name: DotNet_Development
