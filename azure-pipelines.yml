@@ -13,6 +13,7 @@ stages:
   parameters:
     shouldPublish: false
     build: DotNet_Development
+    projectSrc: tests/integration/src/dotnet/library
     environments:
       - env: env
         name: DotNet_Development
@@ -23,6 +24,7 @@ stages:
     suffix: do
     devopsOrg: wcom-public
     build: DotNetWeb_Development
+    projectSrc: tests/integration/src/dotnet/web
     shouldDeploy: false
     environments:
       - env: env
@@ -33,7 +35,7 @@ stages:
     system: test
     suffix: do
     devopsOrg: wcom-public
-    projectSrc: integrationtests/sql/src
+    projectSrc: integrationtests/src/sql
     serverName: 'devops'
     build: SQL_Development
     shouldDeploy: false
