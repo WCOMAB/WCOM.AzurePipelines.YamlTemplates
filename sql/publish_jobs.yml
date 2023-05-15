@@ -24,8 +24,9 @@ jobs:
               displayName: Download $(Build.Repository.Name) NuGet Artifact
               artifact: $(Build.Repository.Name).NuGet
 
-            - ${{ each source in parameters.sources }}:
-              - ${{ if eq(source.publish, true) }}:
-                - ${{ each database in parameters.databases }}:
-                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name).NuGet/${{ database.name }}.$(Build.BuildNumber).nupkg"
-                    displayName: 'Publish to ${{ source.name }} Feed'
+            - ${{ if parameters.sources }}:
+              - ${{ each source in parameters.sources }}:
+                - ${{ if eq(source.publish, true) }}:
+                  - ${{ each database in parameters.databases }}:
+                    - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name).NuGet/${{ database.name }}.$(Build.BuildNumber).nupkg"
+                      displayName: 'Publish to ${{ source.name }} Feed'
