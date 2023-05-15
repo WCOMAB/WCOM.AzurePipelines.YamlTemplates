@@ -12,9 +12,6 @@ stages:
 - template: dotnet/stages.yml
   parameters:
     shouldPublish: false
-    sources:
-      - name: wcom-intern-ecdevops
-        publish: false
     build: Development
     environments:
       - env: dev
@@ -23,7 +20,7 @@ stages:
 - template: dotnetweb/stages.yml
   parameters:
     system: test
-    suffix: ""
+    suffix: do
     devopsOrg: wcom-public
     build: Development
     shouldDeploy: false
@@ -34,12 +31,13 @@ stages:
 - template: sql/stages.yml
   parameters:
     system: test
-    suffix: ""
+    suffix: do
     devopsOrg: wcom-public
     projectSrc: integrationtests/sql/src
     serverName: 'devops'
     build: Development
     shouldDeploy: false
+    shouldPublish: false
     databases:
       - name: DevOps
     environments:
