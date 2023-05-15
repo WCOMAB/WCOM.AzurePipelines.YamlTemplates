@@ -36,7 +36,7 @@ stages:
     system: test
     suffix: do
     devopsOrg: wcom-public
-    projectSrc: integrationtests/src/sql
+    projectSrc: tests/integration/src/sql
     serverName: 'devops'
     build: SQL_Development
     shouldDeploy: false
