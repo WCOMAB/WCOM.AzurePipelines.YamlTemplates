@@ -12,3 +12,4 @@ stages:
               buildParameters: ${{ parameters.buildParameters }}
               projectSrc: ${{ coalesce(parameters.projectSrc, 'src') }}
               preBuildScript: ${{ parameters.preBuildScript }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}

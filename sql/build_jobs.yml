@@ -16,13 +16,13 @@ jobs:
       parameters:
         preBuildScript: ${{ parameters.preBuildScript }}
 
-    - script: dotnet pack ${{ parameters.projectSrc }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/$(Build.DefinitionName)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/$(Build.DefinitionName)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
+    - script: dotnet pack ${{ parameters.projectSrc }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
       displayName: 'DotNet Pack'
 
-    - publish: "$(Build.ArtifactStagingDirectory)/$(Build.DefinitionName)/artifacts/Dacpac"
-      displayName: 'Publish $(Build.DefinitionName) Dacpac Artifact'
-      artifact: $(Build.DefinitionName).Dacpac
+    - publish: "$(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/Dacpac"
+      displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Dacpac Artifact'
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac
 
-    - publish: "$(Build.ArtifactStagingDirectory)/$(Build.DefinitionName)/artifacts/NuGet"
-      displayName: 'Publish $(Build.DefinitionName) NuGet Artifact'
-      artifact: $(Build.DefinitionName).NuGet
+    - publish: "$(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/NuGet"
+      displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) NuGet Artifact'
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).NuGet

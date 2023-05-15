@@ -10,3 +10,4 @@ stages:
             parameters:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
