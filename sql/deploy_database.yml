@@ -1,13 +1,13 @@
 steps:
 - task: AzureCLI@2
-  displayName: Deploy $(Build.Repository.Name) Artifact to environment ${{ parameters.envName }}."
+  displayName: Deploy $(Build.DefinitionName) Artifact to environment ${{ parameters.envName }}."
   inputs:
     azureSubscription: '${{ parameters.azureSubscription }}'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript:  |
       az sql server firewall-rule create -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}" --start-ip-address ${{ parameters.agentPublicIP }} --end-ip-address ${{ parameters.agentPublicIP }}
-      ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/$(Build.Repository.Name).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /Profile:"$(Pipeline.Workspace)/$(Build.Repository.Name).Dacpac/${{ parameters.databaseName }}.publish.xml" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
+      ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /Profile:"$(Pipeline.Workspace)/$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.DefinitionName)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
       result=$?
       az sql server firewall-rule delete -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}"
       exit $result

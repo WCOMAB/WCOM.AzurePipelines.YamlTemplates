@@ -7,8 +7,8 @@ jobs:
         deploy:
           steps:
             - download: current
-              artifact: $(Build.Repository.Name)
-              displayName: Download $(Build.Repository.Name) artifact
+              artifact: $(Build.DefinitionName)
+              displayName: Download $(Build.DefinitionName) artifact
 
             - task: AzureRmWebAppDeployment@4
               displayName: Deploy to app service
@@ -16,4 +16,4 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 appType: 'webApp'
                 WebAppName: ${{ parameters.webAppName }}
-                packageForLinux: '$(Pipeline.Workspace)/$(Build.Repository.Name)/*.zip'
+                packageForLinux: '$(Pipeline.Workspace)/$(Build.DefinitionName)/*.zip'

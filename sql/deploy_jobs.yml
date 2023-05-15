@@ -7,8 +7,8 @@ jobs:
         deploy:
           steps:
             - download: current
-              artifact: $(Build.Repository.Name).Dacpac
-              displayName: Download $(Build.Repository.Name) Dacpac artifact
+              artifact: $(Build.DefinitionName).Dacpac
+              displayName: Download $(Build.DefinitionName) Dacpac artifact
 
             - bash: |
                 echo "##vso[task.setvariable variable=AgentPublicIP;]$(curl checkip.amazonaws.com)"
@@ -27,7 +27,7 @@ jobs:
                   agentPublicIP: $(AgentPublicIP)
                   connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix), parameters.system, parameters.env, parameters.suffix)) }}
                   databaseName: ${{ format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix) }}
-                  azureFirewallRule: '$(Build.Repository.Name)-$(Build.BuildNumber)'
+                  azureFirewallRule: '$(Build.DefinitionName)-$(Build.BuildNumber)'
                   env: ${{ parameters.env }}
                   envName: ${{ parameters.envName }}}
                   suffix: ${{ parameters.suffix }}

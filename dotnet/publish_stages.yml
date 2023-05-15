@@ -4,6 +4,7 @@ stages:
       - stage: ${{ format('PublishTo_{0}', environment.name) }}
         condition: and(succeeded(), ${{ parameters.shouldPublish }})
         displayName: ${{ format('Publish to {0}', environment.name) }}
+        dependsOn: ${{ parameters.dependsOn }}
         jobs:
           - template: publish_jobs.yml
             parameters:

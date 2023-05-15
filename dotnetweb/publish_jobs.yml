@@ -24,9 +24,9 @@ jobs:
       rootFolderOrFile: "$(build.artifactstagingdirectory)"
       includeRootFolder: false
       archiveType: 'zip'
-      archiveFile: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)-$(Build.BuildNumber).zip"
+      archiveFile: "$(build.artifactstagingdirectory)/$(Build.DefinitionName)-$(Build.BuildNumber).zip"
       replaceExistingArchive: true
 
-  - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)-$(Build.BuildNumber).zip"
-    displayName: 'Publish $(Build.Repository.Name) Zip Artifact'
-    artifact: $(Build.Repository.Name)
+  - publish: "$(build.artifactstagingdirectory)/$(Build.DefinitionName)-$(Build.BuildNumber).zip"
+    displayName: 'Publish $(Build.DefinitionName) Zip Artifact'
+    artifact: $(Build.DefinitionName)
