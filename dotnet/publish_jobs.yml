@@ -7,7 +7,7 @@ jobs:
         deploy:
           steps:
             - checkout: self
-              displayName: Checkout $(Build.Repository.Name)
+              displayName: Checkout $(Build.DefinitionName)
 
             - task: UseDotNet@2
               displayName: 'Use .NET SDK (global.json)'
@@ -21,11 +21,11 @@ jobs:
                 onlyPublish: true
 
             - download: current
-              displayName: Download $(Build.Repository.Name) Artifact
-              artifact: $(Build.Repository.Name)
+              displayName: Download $(Build.DefinitionName) Artifact
+              artifact: $(Build.DefinitionName)
 
             - ${{ if parameters.sources }}:
               - ${{ each source in parameters.sources }}:
                 - ${{ if eq(source.publish, true) }}:
-                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/*.$(Build.BuildNumber).nupkg"
+                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.DefinitionName)/*.$(Build.BuildNumber).nupkg"
                     displayName: 'Publish to ${{ source.name }} Feed'
