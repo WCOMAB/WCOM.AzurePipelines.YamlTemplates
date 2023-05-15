@@ -7,6 +7,42 @@ trigger:
 - develop
 - main
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  #DotNet Intregration Test
+- template: dotnet/stages.yml@templates
+  parameters:
+    shouldPublish: false
+    sources:
+      - name: wcom-intern-ecdevops
+        publish: false
+    build: Development
+    environments:
+      - env: dev
+        name: Development
+  #DotNet Web Intregration Test
+- template: dotnetweb/stages.yml@templates
+  parameters:
+    system: test
+    suffix: ""
+    devopsOrg: wcom-public
+    build: Development
+    shouldDeploy: false
+    environments:
+      - env: env
+        name: Development
+  #SQL Intregration Test
+- template: sql/stages.yml@templates
+  parameters:
+    system: test
+    suffix: ""
+    devopsOrg: wcom-public
+    projectSrc: integrationtests/sql/src
+    serverName: 'devops'
+    build: Development
+    shouldDeploy: false
+    databases:
+      - name: DevOps
+    environments:
+      - env: env
+        name: Development
+        deploy: false
