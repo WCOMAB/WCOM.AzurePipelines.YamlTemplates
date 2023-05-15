@@ -15,6 +15,7 @@ stages:
     build: DotNet_Development
     projectSrc: tests/integration/src/dotnet/library
     skipTests: true
+    artifactNamePrefix: DotNet
     environments:
       - env: env
         name: DotNet_Development
@@ -27,6 +28,7 @@ stages:
     build: DotNetWeb_Development
     projectSrc: tests/integration/src/dotnet/web
     shouldDeploy: false
+    artifactNamePrefix: DotNetWeb
     environments:
       - env: env
         name: DotNetWeb_Development
@@ -41,6 +43,7 @@ stages:
     build: SQL_Development
     shouldDeploy: false
     shouldPublish: false
+    artifactNamePrefix: SQL
     databases:
       - name: DevOps
     environments:
