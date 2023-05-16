@@ -90,6 +90,7 @@ stages:
     devopsOrg: wcom-public
     build: Docs_Development
     artifactNamePrefix: Docs
+    projectRoot: tests/integration/src/Docs
     sites:
       - name: 'docs'
     shouldDeploy: false
