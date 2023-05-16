@@ -75,6 +75,7 @@ stages:
     build: Bicep_Development
     artifactNamePrefix: Bicep
     projectRoot: tests/integration/src/Bicep
+    validateBicep: false
     shouldDeploy: false
     environments:
       - env: dev
