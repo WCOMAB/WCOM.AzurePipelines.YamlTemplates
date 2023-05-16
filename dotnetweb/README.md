@@ -20,6 +20,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  projectSrc	             | string	  | No	         | src	                                                          | Source folder to build, pack and publish.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
+ artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
 
 ## Pre-Build
 
@@ -113,6 +114,7 @@ resources:
 stages:
 - template: dotnetweb/stages.yml@templates
   parameters:
+    artifactNamePrefix: prefix
     system: system
     suffix: suffix
     devopsOrg: devopsOrg

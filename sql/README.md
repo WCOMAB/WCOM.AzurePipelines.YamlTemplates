@@ -23,16 +23,17 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  projectSrc	             | string	  | No	         | src	                                                          | Source folder to build, pack and publish.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
+ artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
 
 ## Pre-Build
 
- **Parameters**   | **Type** | **Required** | **Default value** | **Description**                  
+ **Parameters**   | **Type** | **Required** | **Default value** | **Description**
 ------------------|----------|--------------|-------------------|----------------------------------
- scriptType       | string   | No           |                   | The type of script. pscore or bash.     
- targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath. 
+ scriptType       | string   | No           |                   | The type of script. pscore or bash.
+ targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
  filePath         | string   | No           |                   | The path of the script.
  script           | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
- arguments        | string   | No           |                   | Specifies the arguments passed to the script. 
+ arguments        | string   | No           |                   | Specifies the arguments passed to the script.
  failOnStderr     | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
  showWarnings     | bool     | No           | false             | Show warnings in pipeline logs.
  workingDirectory | string   | No           |                   | The working directory where the script is run.
@@ -132,6 +133,7 @@ resources:
 stages:
 - template: sql/stages.yml@templates
   parameters:
+    artifactNamePrefix: prefix
     system: system
     suffix: suffix
     devopsOrg: devopsOrg
