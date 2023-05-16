@@ -81,3 +81,20 @@ stages:
       - env: dev
         name: Bicep_Development
         publish: false
+
+    #Docs Intregration Test
+- template: docs/stages.yml
+  parameters:
+    system: test
+    suffix: do
+    devopsOrg: wcom-public
+    build: Docs_Development
+    artifactNamePrefix: Docs
+    sites:
+      - name: 'docs'
+    sources:
+      - name: wcom
+    shouldDeploy: false
+    environments:
+      - env: dev
+        name: Development

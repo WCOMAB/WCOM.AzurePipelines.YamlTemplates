@@ -12,3 +12,5 @@ stages:
               devopsOrg: ${{ parameters.devopsOrg }}
               sites: ${{ parameters.sites }}
               preBuildScript: ${{ parameters.preBuildScript }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}

@@ -20,21 +20,21 @@ jobs:
       - template: ../dotnetcommon/dotnet_auth.yml
         parameters:
           sources: ${{ parameters.sources }}
-          
+
       - template: ../dotnetcommon/prebuild_common.yml
         parameters:
           preBuildScript: ${{ parameters.preBuildScript }}
 
-      - script: dotnet tool restore
+      - script: dotnet tool restore --configfile ${{ parameters.projectRoot }}/nuget.config
         displayName: .NET Tool Restore
 
-      - pwsh: dotnet wcom-docs-buildartifactdownloader download '$(Build.Repository.LocalPath)/input/.assemblies/*.yaml'
+      - pwsh: dotnet wcom-docs-buildartifactdownloader download '${{ parameters.projectRoot }}/input/.assemblies/*.yaml'
         env:
           WCOM_DOCS_DEVOPS_PAT: $(System.AccessToken)
           WCOM_DOCS_DEVOPS_ORG: ${{ parameters.devopsOrg }}
         displayName: Download Assembly Artifacts
 
-      - pwsh: dotnet wcom-docs-buildartifactdownloader download '$(Build.Repository.LocalPath)/input/.generated/*.yaml' --output '$(Build.Repository.LocalPath)/input/generated'
+      - pwsh: dotnet wcom-docs-buildartifactdownloader download '${{ parameters.projectRoot }}/input/.generated/*.yaml' --output '${{ parameters.projectRoot }}/input/generated'
         env:
           WCOM_DOCS_DEVOPS_PAT: $(System.AccessToken)
           WCOM_DOCS_DEVOPS_ORG: ${{ parameters.devopsOrg }}
@@ -42,7 +42,7 @@ jobs:
 
       - ${{ each site in parameters.sites }}:
         - pwsh: |
-            dotnet wcomsite -i ./input/theme -i ./input/generated -i ./input/${{ site.name }} -o "$(build.artifactstagingdirectory)/output/${{ site.name }}"
+            dotnet wcomsite -i ${{ parameters.projectRoot }}/input/theme -i ${{ parameters.projectRoot }}/input/generated -i ${{ parameters.projectRoot }}/input/${{ site.name }} -o "$(build.artifactstagingdirectory)/output/${{ site.name }}"
             [int] $Result = $LASTEXITCODE
             $Result
             exit $Result
@@ -51,9 +51,9 @@ jobs:
           displayName: Build ${{ site.name }} HTML
 
         - script: |
-            cp ./input/staticwebapp.config.json "$(build.artifactstagingdirectory)/output/${{ site.name }}/staticwebapp.config.json"
+            cp ${{ parameters.projectRoot }}/input/staticwebapp.config.json "$(build.artifactstagingdirectory)/output/${{ site.name }}/staticwebapp.config.json"
           displayName: Copy static web app config
 
         - publish: $(build.artifactstagingdirectory)/output/${{ site.name }}
-          displayName: Publish $(Build.Repository.Name).${{ site.name }} Static Site Artifact
-          artifact: $(Build.Repository.Name).${{ site.name }}
+          displayName: Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} Static Site Artifact
+          artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}

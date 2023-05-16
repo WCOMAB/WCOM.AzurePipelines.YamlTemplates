@@ -21,8 +21,8 @@ jobs:
 
             - ${{ each site in parameters.sites }}:
               - download: current
-                artifact: $(Build.Repository.Name).${{ site.name }}
-                displayName: Download $(Build.Repository.Name).${{ site.name }} artifact
+                artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}
+                displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} artifact
 
               - script: |
                   npm install -g @azure/static-web-apps-cli
@@ -41,7 +41,7 @@ jobs:
                     $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
                     $ENV:SEARCH_SERVICE_NAME='${{ parameters.searchServiceName }}'
                     $ENV:SEARCH_SERVICE_API_KEY=(az search admin-key show --resource-group $ENV:AZURE_RESOURCE_GROUP --service-name $ENV:SEARCH_SERVICE_NAME --query "primaryKey" --output tsv)
-                    dotnet wcom-docs-searchindexuploader upload ${{ site.name }} ${{ parameters.env }} $(Pipeline.Workspace)/$(Build.Repository.Name).${{ site.name }}/searchIndex.json
+                    dotnet wcom-docs-searchindexuploader upload ${{ site.name }} ${{ parameters.env }} $(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}/searchIndex.json
                     [int] $Result = $LASTEXITCODE
                     $Result
                     exit $Result
@@ -56,7 +56,7 @@ jobs:
                     $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
                     $ENV:SWA_CLI_APP_NAME='${{ parameters.webAppName }}'
                     $ENV:SWA_CLI_DEPLOYMENT_TOKEN=(az staticwebapp secrets list --resource-group $ENV:AZURE_RESOURCE_GROUP --name $ENV:SWA_CLI_APP_NAME --query "properties.apiKey" -o tsv)
-                    swa deploy $(Pipeline.Workspace)/$(Build.Repository.Name).${{ site.name }} --env Production
+                    swa deploy $(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} --env Production
                     [int] $Result = $LASTEXITCODE
                     $Result
                     exit $Result
