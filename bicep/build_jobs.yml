@@ -44,7 +44,7 @@ jobs:
       inputs:
         pwsh: true
         targetType: inline
-        inlineScript: |
+        script: |
           [string] $projectRoot = '${{ parameters.projectRoot }}'.Trim()
           [string] $Path = Join-Path $PWD $projectRoot 'modules'
           Write-Host "Ensuring bicep installed..."
