@@ -10,10 +10,9 @@ BillingDimension: system
 Environment: env
 }
 
-resource rgTags 'Microsoft.Resources/tags@2022-09-01' = {
+module tagsTest 'modules/tags.bicep' = {
   name: 'default'
-  scope: resourceGroup()
-  properties: {
+  params: {
     tags: tags
   }
 }
