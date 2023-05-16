@@ -29,10 +29,10 @@ jobs:
         displayName: Installing Search Index tool.
 
       - script: dotnet tool install --global WCOM.Docs.Tools.ArtifactDownloader --version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
-        displayName: Installing Search Index tool.
+        displayName: Installing Artifact Downloader.
 
       - script: dotnet tool install --global WCOM.Docs.Tools.BuildArtifactDownloader --version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
-        displayName: Installing Search Index tool.
+        displayName: Installing Build Artifact Downloader.
 
       #- script: dotnet tool restore --configfile ${{ parameters.projectRoot }}/nuget.config
         #displayName: .NET Tool Restore
