@@ -7,6 +7,60 @@ trigger:
 - develop
 - main
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  #DotNet Intregration Test
+- template: dotnet/stages.yml
+  parameters:
+    shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    build: DotNet_Development
+    projectSrc: tests/integration/src/dotnet/library
+    artifactNamePrefix: DotNet
+    environments:
+      - env: env
+        name: DotNet_Development
+
+- template: dotnet/stages.yml
+  parameters:
+    shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    build: DotNetTool_Development
+    projectSrc: tests/integration/src/dotnet/tool
+    artifactNamePrefix: DotNetTool
+    buildParameters:
+      - '-p:PackAsTool=true'
+      - '-p:ToolCommandName=dotnet-tool'
+    skipTests: true
+    environments:
+      - env: env
+        name: DotNetTool_Development
+
+  #DotNet Web Intregration Test
+- template: dotnetweb/stages.yml
+  parameters:
+    system: test
+    suffix: do
+    devopsOrg: wcom-public
+    build: DotNetWeb_Development
+    projectSrc: tests/integration/src/dotnet/web
+    shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    artifactNamePrefix: DotNetWeb
+    environments:
+      - env: env
+        name: DotNetWeb_Development
+
+  #SQL Intregration Test
+- template: sql/stages.yml
+  parameters:
+    system: test
+    suffix: do
+    devopsOrg: wcom-public
+    projectSrc: tests/integration/src/sql
+    serverName: 'devops'
+    build: SQL_Development
+    shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    artifactNamePrefix: SQL
+    databases:
+      - name: DevOps
+    environments:
+      - env: env
+        name: SQL_Development

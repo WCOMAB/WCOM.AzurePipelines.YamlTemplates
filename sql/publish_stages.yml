@@ -16,3 +16,4 @@ stages:
               suffix: ${{ parameters.suffix }}
               sources: ${{ parameters.sources }}
               databases: ${{ parameters.databases }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}

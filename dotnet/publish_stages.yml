@@ -4,8 +4,13 @@ stages:
       - stage: ${{ format('PublishTo_{0}', environment.name) }}
         condition: and(succeeded(), ${{ parameters.shouldPublish }})
         displayName: ${{ format('Publish to {0}', environment.name) }}
+        dependsOn:
+          - ${{ each env in parameters.environments }}:
+              - ${{ if eq(env.name, parameters.build) }}:
+                - ${{ format('Build_{0}', env.name) }}
         jobs:
           - template: publish_jobs.yml
             parameters:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}

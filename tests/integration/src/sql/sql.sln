@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOps", "DevOps\DevOps.sqlproj", "{3AFABD06-60B8-400B-B742-5A743AE6D97B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AFABD06-60B8-400B-B742-5A743AE6D97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AFABD06-60B8-400B-B742-5A743AE6D97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AFABD06-60B8-400B-B742-5A743AE6D97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AFABD06-60B8-400B-B742-5A743AE6D97B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
