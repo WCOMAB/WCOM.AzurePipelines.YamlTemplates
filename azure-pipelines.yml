@@ -74,6 +74,7 @@ stages:
     suffix: do
     build: Bicep_Development
     artifactNamePrefix: Bicep
+    projectRoot: tests/integration/src/Bicep
     shouldDeploy: false
     environments:
       - env: dev
