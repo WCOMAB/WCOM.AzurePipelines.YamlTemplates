@@ -15,8 +15,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  onlyPublish     | bool     | No           | true              | Allow update to source feed.
  projectSrc      | string   | No           | src               | Source folder to build, pack and publish.
  preBuildScript  | object   | No           |                   | Object containing pre-build parameters.
- environments    | array    | Yes          |                   | Array of environments and environment specific parameters.
-
+ environments    | array    | Yes          |                   | Array of environments and environment specific parameters.artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
 ## Pre-Build
 
  **Parameters**   | **Type** | **Required** | **Default value** | **Description**
@@ -103,6 +102,7 @@ resources:
 stages:
 - template: dotnet/stages.yml@templates
   parameters:
+    artifactNamePrefix: prefix
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     sources:
       - name: authenticateSourceName

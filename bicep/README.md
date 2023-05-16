@@ -4,29 +4,29 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
 
 ## Parameters
 
- **Parameter**           | **Type** | **Required** | **Default value**                                              | **Description**                                           
+ **Parameter**           | **Type** | **Required** | **Default value**                                              | **Description**
 -------------------------|----------|--------------|----------------------------------------------------------------|-----------------------------------------------------------
- system                  | string   | Yes          |                                                                | The target system.                                        
- suffix                  | string   | Yes          |                                                                | The resource name suffix.                                 
- devopsOrg               | string   | Yes          |                                                                | The devops organisation.                                  
- build                   | string   | Yes          |                                                                | The environment to build.                                 
- azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.                              
- azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.                     
- resourceGroup           | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                     | The resource group name.                                  
- resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                  | The format for the resourceGroup name.                    
- acr                     | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.                                        
+ system                  | string   | Yes          |                                                                | The target system.
+ suffix                  | string   | Yes          |                                                                | The resource name suffix.
+ devopsOrg               | string   | Yes          |                                                                | The devops organisation.
+ build                   | string   | Yes          |                                                                | The environment to build.
+ azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.
+ azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.
+ resourceGroup           | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                     | The resource group name.
+ resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                  | The format for the resourceGroup name.
+ acr                     | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
 
 ## Pre-Build
 
- **Parameters**   | **Type** | **Required** | **Default value** | **Description**                  
+ **Parameters**   | **Type** | **Required** | **Default value** | **Description**
 ------------------|----------|--------------|-------------------|----------------------------------
- scriptType       | string   | No           |                   | The type of script. pscore or bash.     
- targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath. 
+ scriptType       | string   | No           |                   | The type of script. pscore or bash.
+ targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
  filePath         | string   | No           |                   | The path of the script.
  script           | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
- arguments        | string   | No           |                   | Specifies the arguments passed to the script. 
+ arguments        | string   | No           |                   | Specifies the arguments passed to the script.
  failOnStderr     | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
  showWarnings     | bool     | No           | false             | Show warnings in pipeline logs.
  workingDirectory | string   | No           |                   | The working directory where the script is run.
@@ -35,13 +35,13 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
 
 ## Per environment
 
- **Parameters**  | **Type** | **Required** | **Default value** | **Description**                                   
+ **Parameters**  | **Type** | **Required** | **Default value** | **Description**
 -----------------|----------|--------------|-------------------|---------------------------------------------------
- env             | array    | Yes          |                   | The target environment.                           
- name            | string   | Yes          |                   | The target environment name.                      
+ env             | array    | Yes          |                   | The target environment.
+ name            | string   | Yes          |                   | The target environment name.
  extraParameters | string   | No           |                   | Used for passing extra parameters to the template.
- deploy          | bool     | No           | true              | Allow deploy to Resource group.                   
- publish         | bool     | No           | true              | Allow publish of modules to container registry.   
+ deploy          | bool     | No           | true              | Allow deploy to Resource group.
+ publish         | bool     | No           | true              | Allow publish of modules to container registry.
 
 ## Examples
 
