@@ -10,7 +10,7 @@ jobs:
       displayName: Bicep Build $(Build.Repository.Name) Arm Template
       inputs:
         targetType: inline
-        inlineScript: |
+        script: |
           [ -d ${{ parameters.projectRoot }}/modules ] || mkdir -p ${{ parameters.projectRoot }}/modules
           [ -d ${{ parameters.projectRoot }}/internal ] || mkdir -p ${{ parameters.projectRoot }}/internal
           az bicep build --file ${{ parameters.projectRoot }}/main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
@@ -22,7 +22,7 @@ jobs:
           azureSubscription: '${{ parameters.azureSubscription }}'
           scriptType: bash
           scriptLocation: inlineScript
-          inlineScript:  |
+          script: |
             az deployment group validate --name "az-validate-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(build.artifactstagingdirectory)/azuredeploy.json" --parameters env="${{ parameters.env }}" suffix="${{ parameters.suffix }}" system="${{ parameters.system }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
 
     - publish: $(build.artifactstagingdirectory)/azuredeploy.json
