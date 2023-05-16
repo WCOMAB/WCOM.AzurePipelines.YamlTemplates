@@ -15,30 +15,31 @@ jobs:
         inlineScript:  |
           [ -d ./modules ] || mkdir -p ./modules
           [ -d ./internal ] || mkdir -p ./internal
-          az bicep build --file main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
+          az bicep build --file ${{ parameters.projectRoot }}/main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
 
-    - task: AzureCLI@2
-      displayName: Validate $(Build.Repository.Name) Arm Template
-      inputs:
-        azureSubscription: '${{ parameters.azureSubscription }}'
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript:  |
-          az deployment group validate --name "az-validate-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(build.artifactstagingdirectory)/azuredeploy.json" --parameters env="${{ parameters.env }}" suffix="${{ parameters.suffix }}" system="${{ parameters.system }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
+    - ${{ if eq(parameters.validateBicep, true) }}:
+      - task: AzureCLI@2
+        displayName: Validate $(Build.Repository.Name) Arm Template
+        inputs:
+          azureSubscription: '${{ parameters.azureSubscription }}'
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript:  |
+            az deployment group validate --name "az-validate-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(build.artifactstagingdirectory)/azuredeploy.json" --parameters env="${{ parameters.env }}" suffix="${{ parameters.suffix }}" system="${{ parameters.system }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
 
     - publish: $(build.artifactstagingdirectory)/azuredeploy.json
-      displayName: 'Publish $(Build.Repository.Name) Artifact'
-      artifact: $(Build.Repository.Name)
+      displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact'
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
 
-    - publish: ./modules
+    - publish: ${{ parameters.projectRoot }}/modules
       condition: eq('${{ parameters.publish }}', true)
       displayName: Publish Bicep Modules Artifact
-      artifact: modules
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)modules
 
-    - publish: ./internal
+    - publish: ${{ parameters.projectRoot }}/internal
       condition: eq('${{ parameters.publish }}', true)
       displayName: Publish Bicep Internal Modules Artifact
-      artifact: internal
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)internal
 
     - task: AzureCLI@2
       displayName: Test building Bicep Modules
@@ -47,7 +48,8 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript: |
-          [string] $Path = "$PWD/modules"
+          [string] $projectRoot = '${{ parameters.projectRoot }}'.Trim()
+          [string] $Path = Join-Path $PWD $projectRoot 'modules'
           Write-Host "Ensuring bicep installed..."
           az bicep upgrade
           az bicep version

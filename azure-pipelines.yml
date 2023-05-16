@@ -8,7 +8,7 @@ trigger:
 - main
 
 stages:
-  #DotNet Intregration Test
+  #DotNet Library Intregration Test
 - template: dotnet/stages.yml
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
@@ -19,6 +19,7 @@ stages:
       - env: env
         name: DotNet_Development
 
+  #DotNet Tool Intregration Test
 - template: dotnet/stages.yml
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
@@ -64,3 +65,17 @@ stages:
     environments:
       - env: env
         name: SQL_Development
+
+  #Bicep Intregration Test
+- template: bicep/stages.yml
+  parameters:
+    system: test
+    devopsOrg: wcom-public
+    suffix: do
+    build: Bicep_Development
+    artifactNamePrefix: Bicep
+    shouldDeploy: false
+    environments:
+      - env: dev
+        name: Bicep_Development
+        publish: false
