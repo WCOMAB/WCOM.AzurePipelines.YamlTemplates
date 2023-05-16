@@ -11,3 +11,4 @@ stages:
               sources: ${{ parameters.sources }}
               devopsOrg: ${{ parameters.devopsOrg }}
               sites: ${{ parameters.sites }}
+              preBuildScript: ${{ parameters.preBuildScript }}

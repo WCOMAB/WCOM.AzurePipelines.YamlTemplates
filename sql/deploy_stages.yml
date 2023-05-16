@@ -25,3 +25,4 @@ stages:
               databases: ${{ parameters.databases }}
               databaseFormat: ${{ parameters.databaseFormat }}
               deployParameters : ${{ environment.deployParameters }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}

@@ -20,6 +20,10 @@ jobs:
       - template: ../dotnetcommon/dotnet_auth.yml
         parameters:
           sources: ${{ parameters.sources }}
+          
+      - template: ../dotnetcommon/prebuild_common.yml
+        parameters:
+          preBuildScript: ${{ parameters.preBuildScript }}
 
       - script: dotnet tool restore
         displayName: .NET Tool Restore

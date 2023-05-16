@@ -21,10 +21,11 @@ jobs:
                 onlyPublish: true
 
             - download: current
-              displayName: Download $(Build.Repository.Name) Artifact
-              artifact: $(Build.Repository.Name)
+              displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact
+              artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
 
-            - ${{ each source in parameters.sources }}:
-              - ${{ if eq(source.publish, true) }}:
-                - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/$(Build.Repository.Name)/*.$(Build.BuildNumber).nupkg"
-                  displayName: 'Publish to ${{ source.name }} Feed'
+            - ${{ if parameters.sources }}:
+              - ${{ each source in parameters.sources }}:
+                - ${{ if eq(source.publish, true) }}:
+                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/*.$(Build.BuildNumber).nupkg"
+                    displayName: 'Publish to ${{ source.name }} Feed'

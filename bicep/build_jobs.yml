@@ -2,6 +2,10 @@ jobs:
   - job: Build
     displayName: ${{ format('{0} Build', parameters.name) }}
     steps:
+    - template: ../dotnetcommon/prebuild_common.yml
+      parameters:
+        preBuildScript: ${{ parameters.preBuildScript }}
+
     - task: AzureCLI@2
       displayName: Bicep Build $(Build.Repository.Name) Arm Template
       inputs:
