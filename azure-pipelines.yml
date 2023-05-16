@@ -92,9 +92,7 @@ stages:
     artifactNamePrefix: Docs
     sites:
       - name: 'docs'
-    sources:
-      - name: wcom
     shouldDeploy: false
     environments:
       - env: dev
-        name: Development
+        name: Docs_Development
