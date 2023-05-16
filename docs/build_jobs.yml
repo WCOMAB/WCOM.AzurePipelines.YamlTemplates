@@ -25,8 +25,17 @@ jobs:
         parameters:
           preBuildScript: ${{ parameters.preBuildScript }}
 
-      - script: dotnet tool restore --configfile ${{ parameters.projectRoot }}/nuget.config
-        displayName: .NET Tool Restore
+      - script: dotnet tool install --global WCOM.Docs.Tools.SearchIndexUploader --version 2023.3.27.2 --configfile ${{ parameters.projectRoot }}/nuget.config
+        displayName: Installing Search Index tool.
+
+      - script: dotnet tool install --global WCOM.Docs.Tools.ArtifactDownloader --version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
+        displayName: Installing Search Index tool.
+
+      - script: dotnet tool install --global WCOM.Docs.Tools.BuildArtifactDownloader -version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
+        displayName: Installing Search Index tool.
+
+      #- script: dotnet tool restore --configfile ${{ parameters.projectRoot }}/nuget.config
+        #displayName: .NET Tool Restore
 
       - pwsh: dotnet wcom-docs-buildartifactdownloader download '${{ parameters.projectRoot }}/input/.assemblies/*.yaml'
         env:
