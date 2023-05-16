@@ -25,10 +25,7 @@ jobs:
         parameters:
           preBuildScript: ${{ parameters.preBuildScript }}
 
-      - script: dotnet tool install --global WCOM.Docs.Tools.SearchIndexUploader --version 2023.3.27.2 --configfile ${{ parameters.projectRoot }}/nuget.config
-        displayName: Installing Search Index tool.
-
-      - script: dotnet tool install --global WCOM.Docs.Tools.ArtifactDownloader --version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
+      - script: dotnet tool install --global Wcom.StaticSiteGenerator.Console --version 2023.4.26.2 --configfile ${{ parameters.projectRoot }}/nuget.config
         displayName: Installing Artifact Downloader.
 
       - script: dotnet tool install --global WCOM.Docs.Tools.BuildArtifactDownloader --version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
