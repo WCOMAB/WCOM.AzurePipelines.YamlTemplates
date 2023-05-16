@@ -24,6 +24,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
+
 ## Pre-Build
 
  **Parameters**   | **Type** | **Required** | **Default value** | **Description**
