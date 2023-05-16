@@ -14,5 +14,6 @@ stages:
               resourceGroup: ${{ format(coalesce(parameters.resourceGroupFormat, '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix) }}
               extraParameters : ${{ environment.extraParameters }}
               publish: ${{ environment.publish }}
+              preBuildScript: ${{ parameters.preBuildScript }}
 
 
