@@ -96,7 +96,7 @@ stages:
       - targetType: inline
       - pwsh: true
       - script: |
-          $Path = "tests\integration\src\Docs\input"
+          [string] $Path = "tests\integration\src\Docs\input"
           New-Item "$Path\bicep" -ItemType Directory -Force
           New-Item "$Path\docs" -ItemType Directory -Force
           New-Item "$Path\dotnet" -ItemType Directory -Force
