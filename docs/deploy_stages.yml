@@ -21,4 +21,6 @@ stages:
               WebAppName: ${{ coalesce(environment.webAppName, format(coalesce(parameters.webAppNameFormat, '{0}-{1}-{2}-{3}-{4}'), parameters.system, parameters.webAppName, coalesce(parameters.webAppType, 'stapp'), environment.env, parameters.suffix)) }}
               sites: ${{ parameters.sites }}
               searchServiceName: ${{ coalesce(parameters.searchServiceName, format(coalesce(parameters.searchServiceNameFormat, '{0}-{1}-{2}-{3}'), parameters.system, coalesce(parameters.searchServiceType, 'srch'), environment.env, parameters.suffix)) }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}
 

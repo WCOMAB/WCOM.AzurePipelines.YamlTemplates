@@ -128,18 +128,18 @@ stages:
     buildParameters:
       - '-p:buildParameter=buildParameterValue'
     preBuildScript:
-      - scriptType: scriptType
-      - targetType: targetType
-      - filePath: filePath
-      - script: script.sh
-      - script: |
-          echo "Hello World!"
-      - arguments: arguments
-      - failOnStderr: true/false
-      - showWarnings: true/false
-      - pwsh: true/false
-      - workingDirectory: workingDirectory
-      - bashEnvValue: bashEnvValue
+      scriptType: scriptType
+      targetType: targetType
+      filePath: filePath
+      script: script.sh
+      script: |
+        echo "Hello World!"
+      arguments: arguments
+      failOnStderr: true/false
+      showWarnings: true/false
+      pwsh: true/false
+      workingDirectory: workingDirectory
+      bashEnvValue: bashEnvValue
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:

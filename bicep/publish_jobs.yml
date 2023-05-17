@@ -3,11 +3,11 @@ jobs:
     displayName: ${{ format('{0} Publish', parameters.name) }}
     steps:
     - download: current
-      artifact: modules
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)modules
       displayName: Download modules
 
     - download: current
-      artifact: internal
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)internal
       displayName: Download internal modules
 
     - task: AzureCLI@2
@@ -66,9 +66,9 @@ jobs:
         rootFolderOrFile: "$(build.artifactstagingdirectory)"
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)Docs-$(Build.BuildNumber).zip"
+        archiveFile: "$(build.artifactstagingdirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)Docs-$(Build.BuildNumber).zip"
         replaceExistingArchive: true
 
-    - publish: "$(build.artifactstagingdirectory)/$(Build.Repository.Name)Docs-$(Build.BuildNumber).zip"
-      displayName: 'Publish $(Build.Repository.Name)Docs Zip Artifact'
-      artifact: "$(Build.Repository.Name)Docs"
+    - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)Docs-$(Build.BuildNumber).zip"
+      displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)Docs Zip Artifact'
+      artifact: "${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)Docs"
