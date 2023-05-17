@@ -90,6 +90,8 @@ stages:
     devopsOrg: wcom-public
     build: Docs_Development
     artifactNamePrefix: Docs
+    sites:
+      - name: 'docs'
     projectRoot: tests/integration/src/docs
     preBuildScript:
       scriptType: pscore
@@ -99,7 +101,7 @@ stages:
         Get-ChildItem -Directory | `
           Get-ChildItem -Filter README.md -File | `
           ForEach-Object {
-            [string] $TargetDirectory = Join-Path 'tests' 'integration' 'src' 'Docs' 'docs' $_.Directory.Name
+            [string] $TargetDirectory = Join-Path 'tests' 'integration' 'src' 'docs' 'input' 'docs' $_.Directory.Name
             [string] $TargetFile = Join-Path $TargetDirectory 'index.md'
             if (!(Test-Path $TargetDirectory))
             {
@@ -107,8 +109,6 @@ stages:
             }
             Copy-Item $_.FullName $TargetFile
           }
-    sites:
-      - name: 'docs'
     shouldDeploy: false
     environments:
       - env: dev
