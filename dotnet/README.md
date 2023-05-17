@@ -121,18 +121,18 @@ stages:
     skipTests: true/false
     projectSrc: projectSrc
     preBuildScript:
-      - scriptType: scriptType
-      - targetType: targetType
-      - filePath: filePath
-      - script: script.sh
-      - script: |
-          echo "Hello World!"
-      - arguments: arguments
-      - failOnStderr: true/false
-      - showWarnings: true/false
-      - pwsh: true/false
-      - workingDirectory: workingDirectory
-      - bashEnvValue: bashEnvValue
+      scriptType: scriptType
+      targetType: targetType
+      filePath: filePath
+      script: script.sh
+      script: |
+        echo "Hello World!"
+      arguments: arguments
+      failOnStderr: true/false
+      showWarnings: true/false
+      pwsh: true/false
+      workingDirectory: workingDirectory
+      bashEnvValue: bashEnvValue
     build: envName
     environments:
       - env: dev
