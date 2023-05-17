@@ -22,7 +22,7 @@ jobs:
           azureSubscription: '${{ parameters.azureSubscription }}'
           scriptType: bash
           scriptLocation: inlineScript
-          script: |
+          inlineScript: |
             az deployment group validate --name "az-validate-$(Build.BuildNumber)" --resource-group "${{ parameters.resourceGroup }}" --template-file "$(build.artifactstagingdirectory)/azuredeploy.json" --parameters env="${{ parameters.env }}" suffix="${{ parameters.suffix }}" system="${{ parameters.system }}" version="$(Build.BuildNumber)" ${{ parameters.extraParameters }}
 
     - publish: $(build.artifactstagingdirectory)/azuredeploy.json
