@@ -92,21 +92,21 @@ stages:
     artifactNamePrefix: Docs
     projectRoot: tests/integration/src/Docs
     preBuildScript:
-      - scriptType: pscore
-      - targetType: inline
-      - pwsh: true
-      - script: |
-          Get-ChildItem -Directory | `
-            Get-ChildItem -Filter README.md -File | `
-            ForEach-Object {
-              [string] $TargetDirectory = Join-Path 'tests' 'integration' 'src' 'Docs' 'docs' $_.Directory.Name
-              [string] $TargetFile = Join-Path $TargetDirectory 'index.md'
-              if (!(Test-Path $TargetDirectory))
-              {
-                New-Item -ItemType Directory -Path $TargetDirectory
-              }
-              Copy-Item $_.FullName $TargetFile
+      scriptType: pscore
+      targetType: inline
+      pwsh: true
+      script: |
+        Get-ChildItem -Directory | `
+          Get-ChildItem -Filter README.md -File | `
+          ForEach-Object {
+            [string] $TargetDirectory = Join-Path 'tests' 'integration' 'src' 'Docs' 'docs' $_.Directory.Name
+            [string] $TargetFile = Join-Path $TargetDirectory 'index.md'
+            if (!(Test-Path $TargetDirectory))
+            {
+              New-Item -ItemType Directory -Path $TargetDirectory
             }
+            Copy-Item $_.FullName $TargetFile
+          }
     sites:
       - name: 'docs'
     shouldDeploy: false
