@@ -90,7 +90,7 @@ stages:
     devopsOrg: wcom-public
     build: Docs_Development
     artifactNamePrefix: Docs
-    projectRoot: tests/integration/src/Docs
+    projectRoot: tests/integration/src/docs
     preBuildScript:
       scriptType: pscore
       targetType: inline
