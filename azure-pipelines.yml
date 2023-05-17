@@ -96,18 +96,17 @@ stages:
       - targetType: inline
       - pwsh: true
       - script: |
-          [string] $Path = "tests\integration\src\Docs\input"
-          New-Item "$Path\bicep" -ItemType Directory -Force
-          New-Item "$Path\docs" -ItemType Directory -Force
-          New-Item "$Path\dotnet" -ItemType Directory -Force
-          New-Item "$Path\dotnetweb" -ItemType Directory -Force
-          New-Item "$Path\sql" -ItemType Directory -Force
-          Copy-Item "bicep\README.MD" -Destination "$Path\bicep\README.MD"
-          Copy-Item "docs\README.MD" -Destination "$Path\docs\README.MD"
-          Copy-Item "dotnet\README.MD" -Destination "$Path\dotnet\README.MD"
-          Copy-Item "dotnetweb\README.MD" -Destination "$Path\dotnetweb\README.MD"
-          Copy-Item "sql\README.MD" -Destination "$Path\sql\README.MD"
-          EXIT ($ExitCodes | Measure-Object -Sum).Sum
+          Get-ChildItem -Directory | `
+            Get-ChildItem -Filter README.md -File | `
+            ForEach-Object {
+              [string] $TargetDirectory = Join-Path 'tests' 'integration' 'src' 'Docs' 'docs' $_.Directory.Name
+              [string] $TargetFile = Join-Path $TargetDirectory 'index.md'
+              if (!(Test-Path $TargetDirectory))
+              {
+                New-Item -ItemType Directory -Path $TargetDirectory
+              }
+              Copy-Item $_.FullName $TargetFile
+            }
     sites:
       - name: 'docs'
     shouldDeploy: false
