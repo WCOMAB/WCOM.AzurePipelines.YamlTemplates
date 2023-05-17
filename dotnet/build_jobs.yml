@@ -45,7 +45,7 @@ jobs:
       displayName: 'DotNet Package'
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Publish $(Build.DefinitionName) Artifact'
+      displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact'
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/'
         archiveFilePatterns: '**/*.$(Build.BuildNumber).nupkg'

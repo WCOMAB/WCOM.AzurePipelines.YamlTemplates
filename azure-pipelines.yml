@@ -8,7 +8,7 @@ trigger:
 - main
 
 stages:
-  #DotNet Intregration Test
+  #DotNet Library Intregration Test
 - template: dotnet/stages.yml
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
@@ -19,6 +19,7 @@ stages:
       - env: env
         name: DotNet_Development
 
+  #DotNet Tool Intregration Test
 - template: dotnet/stages.yml
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
@@ -64,3 +65,51 @@ stages:
     environments:
       - env: env
         name: SQL_Development
+
+  #Bicep Intregration Test
+- template: bicep/stages.yml
+  parameters:
+    system: test
+    devopsOrg: wcom-public
+    suffix: do
+    build: Bicep_Development
+    artifactNamePrefix: Bicep
+    projectRoot: tests/integration/src/Bicep
+    validateBicep: false
+    shouldDeploy: false
+    environments:
+      - env: dev
+        name: Bicep_Development
+        publish: false
+
+    #Docs Intregration Test
+- template: docs/stages.yml
+  parameters:
+    system: test
+    suffix: do
+    devopsOrg: wcom-public
+    build: Docs_Development
+    artifactNamePrefix: Docs
+    sites:
+      - name: 'docs'
+    projectRoot: tests/integration/src/docs
+    preBuildScript:
+      scriptType: pscore
+      targetType: inline
+      pwsh: true
+      script: |
+        Get-ChildItem -Directory | `
+          Get-ChildItem -Filter README.md -File | `
+          ForEach-Object {
+            [string] $TargetDirectory = Join-Path 'tests' 'integration' 'src' 'docs' 'input' 'docs' $_.Directory.Name
+            [string] $TargetFile = Join-Path $TargetDirectory 'index.md'
+            if (!(Test-Path $TargetDirectory))
+            {
+              New-Item -ItemType Directory -Path $TargetDirectory
+            }
+            Copy-Item $_.FullName $TargetFile
+          }
+    shouldDeploy: false
+    environments:
+      - env: dev
+        name: Docs_Development

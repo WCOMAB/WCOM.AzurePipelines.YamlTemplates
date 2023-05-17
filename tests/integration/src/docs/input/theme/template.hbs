@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="/assets/css/vendor.css" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <link rel="stylesheet" href="/scss/TabGroup.css" />
+  <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css" integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ" crossorigin="anonymous">
+
+  <title>{{title}}</title>
+</head>
+
+<body data-spy="scroll" data-target="#toc" commit-hash="{{commitHash}}" class="site-page-container">
+  <div class="modal search-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Search results</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border search-spinner" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div class="list-group list-group-flush search-results">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="site-content-wrap">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+
+        <!-- navigation -->
+        <aside class="col-lg-3 p-3 doc-sidebar">
+          <div class="sticky">
+            <nav class="navbar navbar-vertical navbar-expand-lg navbar-light">
+              <div>
+                <a href="/" class="navbar-brand"><img src="/assets/images/logo-black.png" alt="Logo"><br/><span
+                    class="badge badge-green ml-2">{{siteVersion}}</span></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                  data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                  aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              </div>
+
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul id="page-nav" class="nav flex-column nav-vertical-2">
+                  {{#each navigation}}
+                    {{> navigation}}
+                  {{/each}}
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </aside>
+        <!-- / navigation -->
+
+
+        <!-- content -->
+        <article class="col-lg-9 doc-content">
+
+          <div class="row">
+            <div class="col">
+              <div class="doc-content-header">
+                <div class="row align-items-center">
+                  <div class="col-6 col-lg-8">
+                    <nav aria-label="breadcrumb d-none d-inline-flex-lg">
+                      <a href="../" class="breadcrumb-back" title="Back"></a>
+                      <ol class="breadcrumb d-none d-lg-inline-flex">
+                        {{#each paths}}
+                        <li class="breadcrumb-item"><a href="{{link}}">{{name}}</a></li>
+                        {{/each}}
+                        {{#unless isRoot}}
+                        <li class="breadcrumb-item active" aria-current="page">{{title}}</li>
+                        {{/unless}}
+                      </ol>
+                    </nav>
+                  </div>
+                  <div class="col text-right">
+                    <form class="search-form form-group" action="/api/search/{{siteName}}/{{commitHash}}" method="get">
+                      <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="basic-addon1"><i class="icon-search2"></i></span>
+                        </div>
+                        <input type="text" name="text" class="form-control form-control-sm" placeholder="Search">
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row doc-content-body">
+            <article class="col-md-9">
+              {{{body}}}
+            </article>
+
+            <aside class="col-md-3 d-none d-md-block">
+              <div class="sticky">
+                <ul id="toc" class="nav flex-column toc">
+                  {{#each headings}}
+                  <li class="nav-item">
+                    <a data-scroll class="nav-link" href="#{{link}}">{{name}}</a>
+                  </li>
+                  {{/each}}
+                </ul>
+              </div>
+            </aside>
+
+          </div>
+
+        </article>
+        <!-- / content -->
+
+      </div>
+    </div>
+  </section>
+
+
+    <!-- footer -->
+  <footer class="bg-dark site-footer">
+    <div class="row gutter-3">
+      <div class="col-12 text-white text-md-center">
+          <p><a href="/"><img style="width: 211px;height:39px;margin:5px" src="/assets/images/logo-white.png" alt="Logo" align="left"></a><strong>Last modified:</strong> {{modified}} <strong>by</strong> {{modifiedBy}}<br /><strong>Logged in user:</strong>&nbsp;<span id="authInfo"></span></p>
+        </div>
+    </div>
+  </footer>
+  <!-- / footer -->
+
+  <script src="/assets/js/vendor.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <script src="https://unpkg.com/mermaid@8.9.3/dist/mermaid.min.js" integrity="sha384-nVmn6yKHyUktDHdQfBgpn1YPgEu8gDXTYI5qccfkF1j6oxBHjKEafySIuNs3UhEW" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js" integrity="sha384-3s6jGaYCRJMSo8TSyvHYG4ejjGQaqxMeQYtHIY2dahoVW25bu+lzC0UhJ3RXN5nK" crossorigin="anonymous"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/authinfo.js"></script>
+</body>
+
+</html>

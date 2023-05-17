@@ -17,6 +17,9 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
  acr                     | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
+ artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
+ projectRoot            | string   | No          |                                                                | For changing the root of the project, ie where main.bicep or other files are located.
+ validateBicep           | boolean   |   No          |      true                                        | To control if the Bicep code should be validated or not - default is true.
 
 ## Pre-Build
 
@@ -100,19 +103,22 @@ stages:
     suffix: suffix
     azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
     resourceGroupFormat: '{0}-{1}-{2}-{3}'
+    artifactNamePrefix: prefix
+    projectRoot: some/directory
+    validateBicep: true/false
     preBuildScript:
-      - scriptType: scriptType
-      - targetType: targetType
-      - filePath: filePath
-      - script: script.sh
-      - script: |
-          echo "Hello World!"
-      - arguments: arguments
-      - failOnStderr: true/false
-      - showWarnings: true/false
-      - pwsh: true/false
-      - workingDirectory: workingDirectory
-      - bashEnvValue: bashEnvValue
+      scriptType: scriptType
+      targetType: targetType
+      filePath: filePath
+      script: script.sh
+      script: |
+        echo "Hello World!"
+      arguments: arguments
+      failOnStderr: true/false
+      showWarnings: true/false
+      pwsh: true/false
+      workingDirectory: workingDirectory
+      bashEnvValue: bashEnvValue
     build: envName
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
