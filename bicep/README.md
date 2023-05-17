@@ -19,7 +19,7 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
  projectRoot            | string   | No          |                                                                | For changing the root of the project, ie where main.bicep or other files are located.
- validateBicep           | boolean   | No          |                                                                | To control if the Bicep code should be validated or not - default is true.
+ validateBicep           | boolean   |   No          |      true                                        | To control if the Bicep code should be validated or not - default is true.
 
 ## Pre-Build
 
