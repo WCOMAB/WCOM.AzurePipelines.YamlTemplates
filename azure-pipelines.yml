@@ -91,6 +91,23 @@ stages:
     build: Docs_Development
     artifactNamePrefix: Docs
     projectRoot: tests/integration/src/Docs
+    preBuildScript:
+      - scriptType: pscore
+      - targetType: inline
+      - pwsh: true
+      - script: |
+          $Path = "tests\integration\src\Docs\input"
+          New-Item "$Path\bicep" -ItemType Directory -Force
+          New-Item "$Path\docs" -ItemType Directory -Force
+          New-Item "$Path\dotnet" -ItemType Directory -Force
+          New-Item "$Path\dotnetweb" -ItemType Directory -Force
+          New-Item "$Path\sql" -ItemType Directory -Force
+          Copy-Item "bicep\README.MD" -Destination "$Path\bicep\README.MD"
+          Copy-Item "docs\README.MD" -Destination "$Path\docs\README.MD"
+          Copy-Item "dotnet\README.MD" -Destination "$Path\dotnet\README.MD"
+          Copy-Item "dotnetweb\README.MD" -Destination "$Path\dotnetweb\README.MD"
+          Copy-Item "sql\README.MD" -Destination "$Path\sql\README.MD"
+          EXIT ($ExitCodes | Measure-Object -Sum).Sum
     sites:
       - name: 'docs'
     shouldDeploy: false
