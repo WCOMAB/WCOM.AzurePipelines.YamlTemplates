@@ -1,0 +1,10 @@
+jobs:
+  - job: 
+    steps:
+      - task: UseDotNet@2
+        displayName: Use .NET Core from global.json
+        inputs:
+          packageType: ${{ coalesce(parameters.useDotNetSDK.packageType, 'sdk') }}
+          useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}
+          workingDirectory: ${{ parameters.useDotNetSDK.workingDirectory }}
+          version: ${{ parameters.useDotNetSDK.version }}
