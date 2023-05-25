@@ -1,6 +1,6 @@
 steps:
   - task: UseDotNet@2
-    displayName: Use .NET Core from global.json
+    displayName: 'Install .NET SDK useGlobalJson: ${{ parameters.useDotNetSDK.useGlobalJson }}, version: ${{ parameters.useDotNetSDK.version }}'
     inputs:
       packageType: ${{ coalesce(parameters.useDotNetSDK.packageType, 'sdk') }}
       useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}
