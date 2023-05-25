@@ -11,7 +11,7 @@ jobs:
 
             - template: ../dotnetcommon/dotnet_sdk.yml
               parameters:
-              useDotNetSDK: ${{ parameters.useDotNetSDK }}
+                useDotNetSDK: ${{ parameters.useDotNetSDK }}
 
             - template: ../dotnetcommon/dotnet_auth.yml
               parameters:
