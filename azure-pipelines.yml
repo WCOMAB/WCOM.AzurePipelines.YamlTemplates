@@ -75,12 +75,11 @@ stages:
     build: Bicep_Development
     artifactNamePrefix: Bicep
     projectRoot: tests/integration/src/Bicep
-    validateBicep: false
-    shouldDeploy: false
+    validateBicep: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: dev
         name: Bicep_Development
-        publish: false
 
     #Docs Intregration Test
 - template: docs/stages.yml
@@ -109,7 +108,7 @@ stages:
             }
             Copy-Item $_.FullName $TargetFile
           }
-    shouldDeploy: false
+    shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: dev
         name: Docs_Development

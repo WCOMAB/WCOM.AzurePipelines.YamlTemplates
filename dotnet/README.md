@@ -15,6 +15,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  onlyPublish     | bool     | No           | true              | Allow update to source feed.
  projectSrc      | string   | No           | src               | Source folder to build, pack and publish.
  preBuildScript  | object   | No           |                   | Object containing pre-build parameters.
+ useDotNetSDK    | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  environments    | array    | Yes          |                   | Array of environments and environment specific parameters
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
 
@@ -32,6 +33,15 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  workingDirectory | string   | No           |                   | The working directory where the script is run.
  bashEnvValue     | string   | No           |                   | Value for BASH_ENV environment variable.
  pwsh             | bool     | No           | false             | Use PowerShell Core.
+
+## Use DotNet SDK
+
+ **Parameters**   | **Type** | **Required** | **Default value** | **Description**
+------------------|----------|--------------|-------------------|----------------------------------
+ packageType      | string   | No           | sdk               | Specifies if only the .NET runtime or the SDK should be installed.
+ useGlobalJson    | bool     | No           | true              | Specifies if sdk should be installed from a globalJson file.
+ workingDirectory | string   | No           |                   | The path to the globalJson file.
+ version          | string   | No           |                   | Specifies a specific version of the dotnet sdk.
 
 ## Source
 
@@ -120,6 +130,11 @@ stages:
       - '-p:ToolCommandName=ToolCommandName'
     skipTests: true/false
     projectSrc: projectSrc
+    useDotNetSDK: 
+      packageType: sdk/runtime
+      useGlobalJson: true/false
+      workingDirectory: workingDirectory
+      version: '6.0.x'
     preBuildScript:
       scriptType: scriptType
       targetType: targetType
