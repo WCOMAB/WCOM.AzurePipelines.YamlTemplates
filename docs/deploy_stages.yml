@@ -23,4 +23,5 @@ stages:
               searchServiceName: ${{ coalesce(parameters.searchServiceName, format(coalesce(parameters.searchServiceNameFormat, '{0}-{1}-{2}-{3}'), parameters.system, coalesce(parameters.searchServiceType, 'srch'), environment.env, parameters.suffix)) }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
 
