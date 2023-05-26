@@ -14,3 +14,4 @@ stages:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
