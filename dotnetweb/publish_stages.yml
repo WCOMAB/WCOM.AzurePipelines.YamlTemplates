@@ -13,3 +13,4 @@ stages:
               projectSrc: ${{ coalesce(parameters.projectSrc, 'src') }}
               preBuildScript: ${{ parameters.preBuildScript }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
