@@ -2,11 +2,9 @@ jobs:
   - job: Build
     displayName: ${{ format('{0} Build SSDT', parameters.name) }}
     steps:
-    - task: UseDotNet@2
-      displayName: 'Use .NET SDK (global.json)'
-      inputs:
-        packageType: sdk
-        useGlobalJson: true
+    - template: ../dotnetcommon/dotnet_sdk.yml
+      parameters:
+        useDotNetSDK: ${{ parameters.useDotNetSDK }}
 
     - template: ../dotnetcommon/dotnet_auth.yml
       parameters:

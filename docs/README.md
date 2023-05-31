@@ -23,6 +23,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                           | The format for the resourceGroup name.
  preBuildScript          | object   | No           |                                                                         | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                         | Array of environments and environment specific parameters.
+ useDotNetSDK            | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
  projectRoot            | string   | No          |                                                                | For changing the root of the project, ie where input or other folders are located.
 
@@ -40,6 +41,15 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  workingDirectory | string   | No           |                   | The working directory where the script is run.
  bashEnvValue     | string   | No           |                   | Value for BASH_ENV environment variable.
  pwsh             | bool     | No           | false             | Use PowerShell Core.
+
+## Use DotNet SDK
+
+ **Parameters**   | **Type** | **Required** | **Default value** | **Description**
+------------------|----------|--------------|-------------------|----------------------------------
+ packageType      | string   | No           | sdk               | Specifies if only the .NET runtime or the SDK should be installed.
+ useGlobalJson    | bool     | No           | true              | Specifies if sdk should be installed from a globalJson file.
+ workingDirectory | string   | No           |                   | The path to the globalJson file.
+ version          | string   | No           |                   | Specifies a specific version of the dotnet sdk.
 
 ## Source
 
@@ -132,6 +142,11 @@ stages:
     resourceGroupFormat: '{0}-{1}-{2}-{3}'
     artifactNamePrefix: prefix
     projectRoot: some/directory
+    useDotNetSDK:
+      packageType: sdk/runtime
+      useGlobalJson: true/false
+      workingDirectory: workingDirectory
+      version: '6.0.x'
     build: envName
     sources:
       - name: authenticateSourceName

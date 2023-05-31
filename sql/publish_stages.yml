@@ -17,3 +17,4 @@ stages:
               sources: ${{ parameters.sources }}
               databases: ${{ parameters.databases }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
