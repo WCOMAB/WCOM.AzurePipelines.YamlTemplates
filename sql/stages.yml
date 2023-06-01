@@ -1,3 +1,72 @@
+parameters:
+- name: pool
+  type: object
+  default:
+    vmImage: ubuntu-latest
+- name: environments
+  type: object
+- name: sources
+  type: object
+  default: ''
+- name: preBuildScript
+  type: object
+  default:
+    dummy: ' '
+- name: useDotNetSDK
+  type: object
+  default:
+    dummy: ' '
+- name: databases
+  type: object
+- name: devOpsOrg
+  type: string
+- name: system
+  type: string
+- name: suffix
+  type: string
+- name: build
+  type: string
+- name: buildParameters
+  default: ''
+  type: string
+- name: azureSubscription
+  default: ''
+  type: string
+- name: azureSubscriptionFormat
+  type: string
+  default: ''
+- name: resourceGroup
+  type: string
+  default: ''
+- name: resourceGroupFormat
+  type: string
+  default: ''
+- name: serverNameFormat
+  type: string
+  default: ''
+- name: sqlType
+  type: string
+  default: ''
+- name: databaseFormat
+  type: string
+  default: ''
+- name: projectSrc
+  type: string
+- name: artifactNamePrefix
+  type: string
+- name: serverName
+  type: string
+- name: shouldDeploy
+  type: object
+  default: false
+- name: shouldPublish
+  type: object
+  default: false
+- name: useFireWall
+  type: boolean
+  default: true
+
+
 stages:
 - template: build_stages.yml
   parameters: ${{ parameters }}

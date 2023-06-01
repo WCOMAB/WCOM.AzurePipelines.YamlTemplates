@@ -1,7 +1,7 @@
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
-pool:
-  vmImage: ubuntu-latest
+#pool:
+  #vmImage: ubuntu-latest
 
 trigger:
 - develop
@@ -53,6 +53,8 @@ stages:
   parameters:
     system: test
     suffix: do
+    pool: 
+      vmImage: windows-latest
     devopsOrg: wcom-public
     projectSrc: tests/integration/src/sql
     serverName: 'devops'
@@ -64,6 +66,8 @@ stages:
       - name: DevOps
     environments:
       - env: env
+        envPool:
+          vmImage: macOS-latest
         name: SQL_Development
 
   #Bicep Intregration Test

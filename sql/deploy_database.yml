@@ -2,6 +2,8 @@ steps:
 - ${{ if eq(parameters.useFirewall, true) }}:
   - task: AzureCLI@2
     displayName: Deploy ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact to environment ${{ parameters.envName }}. Firewall rule created ${{ parameters.useFirewall }}"
+    env:
+      MSYS_NO_PATHCONV: 1
     inputs:
       azureSubscription: '${{ parameters.azureSubscription }}'
       scriptType: bash
@@ -16,6 +18,8 @@ steps:
 - ${{ if eq(parameters.useFirewall, false) }}:
   - task: AzureCLI@2
     displayName: Deploy ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact to environment ${{ parameters.envName }}."
+    env:
+      MSYS_NO_PATHCONV: 1
     inputs:
       azureSubscription: '${{ parameters.azureSubscription }}'
       scriptType: bash
