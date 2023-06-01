@@ -52,8 +52,10 @@ parameters:
   default: ''
 - name: projectSrc
   type: string
+  default: ''
 - name: artifactNamePrefix
   type: string
+  default: ''
 - name: serverName
   type: string
 - name: shouldDeploy
