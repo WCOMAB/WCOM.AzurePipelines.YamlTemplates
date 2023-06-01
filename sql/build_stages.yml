@@ -3,9 +3,9 @@ stages:
     - ${{ if eq(environment.name, parameters.build) }}:
       - stage: ${{ format('Build_{0}', environment.name) }}
         displayName: ${{ format('Build {0}', environment.name) }}
-        ${{ if and(environment.envPool, ne(convertToJson(environment.envPool), '{}')) }}:
+        ${{ if gt(length(convertToJson(environment.envPool)), 2) }}:
           pool: ${{ environment.envPool }}
-        ${{ if and(ne(and(environment.envPool, ne(convertToJson(environment.envPool), '{}')), true), '{}'), and(parameters.pool, ne(convertToJson(parameters.pool), '{}')) }}:
+        ${{ if and(le(length(convertToJson(environment.envPool)), 2) , gt(length(convertToJson(parameters.pool)), 2)) }}:
           pool: ${{ parameters.pool }}
         dependsOn: ${{ parameters.dependsOn }}
         jobs:
