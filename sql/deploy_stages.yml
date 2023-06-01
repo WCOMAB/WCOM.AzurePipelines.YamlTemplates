@@ -26,3 +26,4 @@ stages:
               databaseFormat: ${{ parameters.databaseFormat }}
               deployParameters : ${{ environment.deployParameters }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              useFirewall: ${{ coalesce(parameters.useFirewall, true) }}
