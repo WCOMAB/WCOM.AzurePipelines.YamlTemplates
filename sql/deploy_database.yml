@@ -1,5 +1,5 @@
 steps:
-- {{ if eq(parameters.useFirewall, true) }}:
+- ${{ if eq(parameters.useFirewall, true) }}:
   - task: AzureCLI@2
     displayName: Deploy ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact to environment ${{ parameters.envName }}. Firewall rule created ${{ parameters.useFirewall }}"
     inputs:
@@ -13,7 +13,7 @@ steps:
         az sql server firewall-rule delete -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}"
         exit $result
 
-- {{ if eq(parameters.useFirewall, false) }}:
+- ${{ if eq(parameters.useFirewall, false) }}:
   - task: AzureCLI@2
     displayName: Deploy ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact to environment ${{ parameters.envName }}."
     inputs:
