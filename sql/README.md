@@ -25,6 +25,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  useDotNetSDK           | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
+ useFirewall            | bool     | No          |          true                                                      | Should SQL deployment create a temporary firewall rule or not.
 
 ## Pre-Build
 
@@ -184,6 +185,7 @@ stages:
       useGlobalJson: true/false
       workingDirectory: workingDirectory
       version: '6.0.x'
+    useFirewall: true/false
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: dev
