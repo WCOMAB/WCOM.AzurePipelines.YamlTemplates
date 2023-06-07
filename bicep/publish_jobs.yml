@@ -23,7 +23,7 @@ jobs:
           az bicep version
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
-          [string] $Path = '$(Pipeline.Workspace)/modules'
+          [string] $Path = '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)modules'
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
           Push-Location
           Set-Location $Path
