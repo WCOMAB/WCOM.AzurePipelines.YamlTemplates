@@ -3,10 +3,10 @@ stages:
     - ${{ if eq(environment.name, parameters.build) }}:
       - stage: ${{ format('Build_{0}', environment.name) }}
         displayName: ${{ format('Build {0}', environment.name) }}
-        # ${{ if gt(length(convertToJson(environment.envPool)), 2) }}:
-        #   pool: ${{ environment.envPool }}
-        # ${{ if and(le(length(convertToJson(environment.envPool)), 2) , gt(length(convertToJson(parameters.pool)), 2)) }}:
-        #   pool: ${{ parameters.pool }}
+        ${{ if environment.envPool }}:
+          pool: ${{ environment.envPool }}
+        ${{ else }}:
+          pool: ${{ parameters.pool }}
         dependsOn: ${{ parameters.dependsOn }}
         jobs:
           - template: build_jobs.yml

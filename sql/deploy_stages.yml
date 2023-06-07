@@ -3,10 +3,10 @@ stages:
     - ${{ if eq(environment.deploy, true) }}:
       - stage: ${{ format('Deploy_{0}', environment.name) }}
         condition: and(succeeded(), ${{ parameters.shouldDeploy }})
-        # ${{ if gt(length(convertToJson(environment.envPool)), 2) }}:
-        #   pool: ${{ environment.envPool }}
-        # ${{ if and(le(length(convertToJson(environment.envPool)), 2) , gt(length(convertToJson(parameters.pool)), 2)) }}:
-        #   pool: ${{ parameters.pool }}
+        ${{ if environment.envPool }}:
+          pool: ${{ environment.envPool }}
+        ${{ else }}:
+          pool: ${{ parameters.pool }}
         dependsOn:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:
