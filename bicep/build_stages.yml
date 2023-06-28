@@ -11,13 +11,11 @@ stages:
               env: ${{ environment.env }}
               system: ${{ parameters.system }}
               suffix: ${{ parameters.suffix }}
-              azureSubscription: ${{ format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
-              resourceGroup: ${{ format(coalesce(parameters.resourceGroupFormat, '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix) }}
+              azureSubscription: ${{ format(coalesce(coalesce(environment.azureSubscriptionFormat, parameters.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix, environment.name) }}
+              resourceGroup: ${{ format(coalesce(coalesce(environment.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
               extraParameters : ${{ environment.extraParameters }}
               publish: ${{ environment.publish }}
               preBuildScript: ${{ parameters.preBuildScript }}
               validateBicep: ${{ coalesce(parameters.validateBicep, true) }}
               projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
-
-
