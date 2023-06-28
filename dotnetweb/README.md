@@ -162,16 +162,22 @@ stages:
         name: Development
         webAppName: webAppName
         deploy: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
       - env: env
         name: Staging
         webAppName: webAppName
         deploy: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
         deployAfter:
           - Development
       - env: env
         name: Production
         webAppName: webAppName
         deploy: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
         deployAfter:
           - Staging
  ```

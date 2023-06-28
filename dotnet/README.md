@@ -130,7 +130,7 @@ stages:
       - '-p:ToolCommandName=ToolCommandName'
     skipTests: true/false
     projectSrc: projectSrc
-    useDotNetSDK: 
+    useDotNetSDK:
       packageType: sdk/runtime
       useGlobalJson: true/false
       workingDirectory: workingDirectory
@@ -152,4 +152,6 @@ stages:
     environments:
       - env: dev
         name: Development
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
 ```
