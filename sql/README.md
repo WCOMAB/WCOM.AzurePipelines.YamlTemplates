@@ -191,11 +191,15 @@ stages:
       - env: dev
         name: Development
         deploy: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
       - env: stg
         name: Staging
         serverName: serverName
         connectionString: connectionString
         deploy: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
         deployAfter:
           - Development
       - env: prd
@@ -205,6 +209,8 @@ stages:
         connectionStringFormat: '{0}-{1}-{2}-{3}'
         connectionString: connectionString
         deploy: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
         deployAfter:
           - Staging
 ```
