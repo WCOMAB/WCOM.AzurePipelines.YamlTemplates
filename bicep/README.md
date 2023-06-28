@@ -127,4 +127,6 @@ stages:
         extraParameters: 'secretGreeting="$(SECRET_GREETING)" sqladminGroupId="$(sqladminGroupId)" sqladminGroupName="$(sqladminGroupName)"'
         deploy: true/false
         publish: true/false
+        azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
+        resourceGroupFormat: '{0}-{1}-{2}-{3}'
 ```
