@@ -9,7 +9,7 @@ jobs:
             - download: current
               artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac
               displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Dacpac artifact
-            
+
             - ${{ if eq(parameters.useFirewall, true) }}:
               - bash: |
                   echo "##vso[task.setvariable variable=AgentPublicIP;]$(curl checkip.amazonaws.com)"
@@ -30,7 +30,7 @@ jobs:
                   databaseName: ${{ format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix) }}
                   azureFirewallRule: '$(Build.DefinitionName)-$(Build.BuildNumber)'
                   env: ${{ parameters.env }}
-                  envName: ${{ parameters.envName }}}
+                  envName: ${{ parameters.envName }}
                   suffix: ${{ parameters.suffix }}
                   system: ${{ parameters.system }}
                   deployParameters : ${{ join(' ', parameters.deployParameters) }} ${{ join(' ', database.deployParameters) }}
