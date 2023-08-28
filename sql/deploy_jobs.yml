@@ -36,3 +36,5 @@ jobs:
                   deployParameters : ${{ join(' ', parameters.deployParameters) }} ${{ join(' ', database.deployParameters) }}
                   artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
                   useFirewall: ${{ parameters.useFirewall }}
+                  skipProfile: ${{ parameters.skipProfile }}
+
