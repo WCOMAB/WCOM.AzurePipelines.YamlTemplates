@@ -34,3 +34,4 @@ stages:
               deployParameters : ${{ environment.deployParameters }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useFirewall: ${{ coalesce(parameters.useFirewall, true) }}
+              skipProfile: ${{ coalesce(parameters.skipProfile, false) }}

@@ -26,6 +26,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  useDotNetSDK           | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
  useFirewall            | bool     | No          |          true                                                      | Should SQL deployment create a temporary firewall rule or not.
+ skipProfile            | bool     | No          |          false                                                      | Should SQL deployment ignore/don't require a publish.xml file from the database project
 
 ## Pre-Build
 
@@ -187,6 +188,7 @@ stages:
       version: '6.0.x'
     useFirewall: true/false
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    skipProfile: false/true
     environments:
       - env: dev
         name: Development
