@@ -10,8 +10,13 @@ steps:
       scriptLocation: inlineScript
       inlineScript:  |
         az sql server firewall-rule create -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}" --start-ip-address ${{ parameters.agentPublicIP }} --end-ip-address ${{ parameters.agentPublicIP }}
-        ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /Profile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
-        result=$?
+        if [ !${{ parameters.skipProfile }} ]
+        then
+          ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /Profile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
+          result=$?
+        else
+          ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
+          result=$?
         az sql server firewall-rule delete -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}"
         exit $result
 
@@ -25,6 +30,11 @@ steps:
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript:  |
-        ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /Profile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
-        result=$?
+        if [ !${{ parameters.skipProfile }} ]
+        then
+          ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /Profile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
+          result=$?
+        else
+          ./tools/sqlpackage /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac" /TargetConnectionString:"${{ parameters.connectionString }}" /v:"AzureDevOpsEnvironment=${{ parameters.env }}" /v:"AzureDevOpsEnvironmentName=$(Environment.Name)" /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)" /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)" /v:"AzureDevOpsSystem=${{ parameters.system }}" /v:"AzureDevOpsSuffix=${{ parameters.suffix }}" ${{ parameters.deployParameters }}
+          result=$?
         exit $result
