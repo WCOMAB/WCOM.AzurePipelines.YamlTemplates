@@ -67,6 +67,9 @@ parameters:
 - name: useFireWall
   type: boolean
   default: true
+- name: skipProfile
+  type: boolean
+  default: false
 
 
 stages:
