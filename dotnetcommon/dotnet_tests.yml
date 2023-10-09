@@ -19,4 +19,4 @@ steps:
     displayName: 'Publish VSTest logs'
     inputs:
       testResultsFormat: 'VSTest'
-      testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx
+      testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx'
