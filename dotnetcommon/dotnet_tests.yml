@@ -1,0 +1,22 @@
+steps:
+- ${{ if ne(parameters.skipTests, true) }}:
+  - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.13
+    displayName: Installing Report Generator
+
+  - script: dotnet test ${{ parameters.projectSrc }} --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+    displayName: 'DotNet Test'
+
+  - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/coverage.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
+    displayName: 'Merge code coverage reports'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage results'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(build.artifactstagingdirectory)/Report/Cobertura.xml'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish VSTest logs'
+    inputs:
+      testResultsFormat: 'VSTest'
+      testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx

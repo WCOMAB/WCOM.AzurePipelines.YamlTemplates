@@ -22,6 +22,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  useDotNetSDK            | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
+ skipTests              | bool     | No           |  true                                                         | Allow tests to be skipped.
 
 ## Pre-Build
 
