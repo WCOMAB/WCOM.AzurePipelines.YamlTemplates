@@ -5,19 +5,21 @@ steps:
 
   - script: dotnet test ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
     displayName: 'DotNet Test'
-    continueOnError: true
 
   - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/coverage.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
     displayName: 'Merge code coverage reports'
+    condition: succeededOrFailed()
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish code coverage results'
+    condition: succeededOrFailed()
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(build.artifactstagingdirectory)/Report/Cobertura.xml'
 
   - task: PublishTestResults@2
     displayName: 'Publish VSTest logs'
+    condition: succeededOrFailed()
     inputs:
       testResultsFormat: 'VSTest'
       testResultsFiles: '$(Agent.WorkFolder)/**/TestResults/*.trx'
