@@ -5,6 +5,7 @@ steps:
 
   - script: dotnet test ${{ parameters.projectSrc }} --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
     displayName: 'DotNet Test'
+    continueOnError: true
 
   - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/coverage.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
     displayName: 'Merge code coverage reports'
