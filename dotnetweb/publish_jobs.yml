@@ -14,13 +14,14 @@ jobs:
     parameters:
       preBuildScript: ${{ parameters.preBuildScript }}
 
+  - script: dotnet publish ${{ parameters.projectSrc }} --output "$(build.artifactstagingdirectory)" -p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
+    displayName: Publish DotNet App
+
   - template: ../dotnetcommon/dotnet_tests.yml
     parameters:
       skipTests: ${{ parameters.skipTests }}
       projectSrc: ${{ parameters.projectSrc }}
-
-  - script: dotnet publish ${{ parameters.projectSrc }} --output "$(build.artifactstagingdirectory)" -p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
-    displayName: Publish DotNet App
+      buildParameters: ${{ parameters.buildParameters }}
 
   - task: ArchiveFiles@2
     inputs:
