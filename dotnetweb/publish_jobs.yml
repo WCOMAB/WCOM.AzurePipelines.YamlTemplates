@@ -21,6 +21,7 @@ jobs:
     parameters:
       skipTests: ${{ parameters.skipTests }}
       projectSrc: ${{ parameters.projectSrc }}
+      buildParameters: ${{ parameters.buildParameters }}
 
   - task: ArchiveFiles@2
     inputs:
