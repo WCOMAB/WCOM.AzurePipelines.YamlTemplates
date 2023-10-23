@@ -22,3 +22,4 @@ stages:
               databases: ${{ parameters.databases }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              devOpsName: ${{ environment.devOpsName }}

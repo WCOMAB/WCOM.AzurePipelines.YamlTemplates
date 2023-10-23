@@ -24,4 +24,5 @@ stages:
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              devOpsName: ${{ environment.devOpsName }}
 

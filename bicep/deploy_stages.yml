@@ -21,3 +21,4 @@ stages:
               resourceGroup: ${{ format(coalesce(coalesce(environment.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
               extraParameters : ${{ environment.extraParameters }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              devOpsName: ${{ parameters.devOpsName }}
