@@ -13,6 +13,8 @@ stages:
                 - ${{ format('Build_{0}', env.name) }}
           - ${{ each after in environment.deployAfter }}:
             - ${{ format('Deploy_{0}', after) }}
+          - ${{ each depends in environment.dependsOn }}:
+            - ${{ depends }}
         displayName: ${{ format('Deploy to {0}', environment.name) }}
         jobs:
           - template: deploy_jobs.yml
