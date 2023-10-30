@@ -78,6 +78,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  connectionStringFormat  | string   | No           | 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' | Format of connection string.
  serverName              | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, serverName, 'sql', env, suffix)                                                                                                   | The server name.
  deployParameters        | array    | No           |                                                                                                                                                                         | Optional string array of per environment, for all databases additional deploy parameters.
+ dependsOn       | array     | No          |                   | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template. 
 
 ## Examples
 
@@ -195,6 +196,8 @@ stages:
         deploy: true/false
         azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
         resourceGroupFormat: '{0}-{1}-{2}-{3}'
+        dependsOn:
+          - Stage
       - env: stg
         name: Staging
         serverName: serverName
@@ -204,6 +207,8 @@ stages:
         resourceGroupFormat: '{0}-{1}-{2}-{3}'
         deployAfter:
           - Development
+        dependsOn:
+          - Stage
       - env: prd
         name: Production
         serverNameFormat: '{0}-{1}-{2}'
@@ -215,4 +220,6 @@ stages:
         resourceGroupFormat: '{0}-{1}-{2}-{3}'
         deployAfter:
           - Staging
+        dependsOn:
+          - Stage
 ```
