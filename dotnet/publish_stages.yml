@@ -15,3 +15,4 @@ stages:
               sources: ${{ parameters.sources }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              devOpsName: ${{ environment.devOpsName }}

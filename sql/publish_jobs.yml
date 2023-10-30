@@ -1,7 +1,7 @@
 jobs:
   - deployment: ${{ format('{0}_Publish', parameters.env) }}
     displayName: ${{ parameters.env }} Publish
-    environment: ${{ parameters.env }}
+    environment: ${{ coalesce(parameters.devOpsName, parameters.env) }}
     strategy:
       runOnce:
         deploy:
