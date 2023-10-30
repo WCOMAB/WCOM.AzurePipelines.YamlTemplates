@@ -64,6 +64,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  WebAppName     | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'web', env, suffix) | The Web App name.
  deploy         | bool     | No           | true                                                                  | Allow deploy to Resource group.
  deployAfter    | array    | No           |                                                                       | Object will be deployed after following env.
+ dependsOn      | array    | No           |                                                                       | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template. 
 
 ## Examples
 
@@ -163,16 +164,22 @@ stages:
         name: Development
         webAppName: webAppName
         deploy: true/false
+        dependsOn:
+          - Stage
       - env: env
         name: Staging
         webAppName: webAppName
         deploy: true/false
         deployAfter:
           - Development
+        dependsOn:
+          - Stage
       - env: env
         name: Production
         webAppName: webAppName
         deploy: true/false
         deployAfter:
           - Staging
+        dependsOn:
+          - Stage
  ```
