@@ -45,6 +45,7 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
  extraParameters | string   | No           |                   | Used for passing extra parameters to the template.
  deploy          | bool     | No           | true              | Allow deploy to Resource group.
  publish         | bool     | No           | true              | Allow publish of modules to container registry.
+ dependsOn       | array     | No          |                   | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template. 
 
 ## Examples
 
@@ -129,4 +130,6 @@ stages:
         publish: true/false
         azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
         resourceGroupFormat: '{0}-{1}-{2}-{3}'
+        dependsOn:
+          - Stage
 ```
