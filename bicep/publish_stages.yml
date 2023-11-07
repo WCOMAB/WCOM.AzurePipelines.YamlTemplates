@@ -16,5 +16,5 @@ stages:
               env: ${{ environment.env }}
               azureSubscription: ${{ format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
               resourceGroup: ${{ format(coalesce(parameters.resourceGroupFormat, '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix) }}
-              acr: ${{ format('{0}acr{1}{2}', parameters.system, environment.env, parameters.suffix) }}
+              acr: ${{ format(coalesce(parameters.acrFormat, '{0}acr{1}{2}', parameters.system, environment.env, parameters.suffix)) }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
