@@ -6,11 +6,13 @@ jobs:
       parameters:
         preBuildScript: ${{ parameters.preBuildScript }}
 
-    - task: Bash@3
+    - task: AzureCLI@2
       displayName: Bicep Build $(Build.Repository.Name) Arm Template
       inputs:
-        targetType: inline
-        script: |
+        azureSubscription: '${{ parameters.azureSubscription }}'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
           [ -d ${{ parameters.projectRoot }}/modules ] || mkdir -p ${{ parameters.projectRoot }}/modules
           [ -d ${{ parameters.projectRoot }}/internal ] || mkdir -p ${{ parameters.projectRoot }}/internal
           az bicep build --file ${{ parameters.projectRoot }}/main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
