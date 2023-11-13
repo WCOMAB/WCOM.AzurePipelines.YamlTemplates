@@ -1,0 +1,16 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.name, parameters.build) }}:
+      - stage: ${{ format('Build_{0}', environment.name) }}
+        displayName: ${{ format('Build {0}', environment.name) }}
+        dependsOn:
+        jobs:
+          - template: build_jobs.yml
+            parameters:
+              name: ${{ environment.name }}
+              env: ${{ environment.env }}
+              extraParameters : ${{ environment.extraParameters }}
+              preBuildScript: ${{ parameters.preBuildScript }}
+              projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}

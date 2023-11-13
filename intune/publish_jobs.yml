@@ -1,0 +1,17 @@
+jobs:
+  - job: Publish
+    displayName: ${{ format('{0} Publish', parameters.name) }}
+    steps:
+    - template: ../dotnetcommon/dotnet_auth.yml
+      parameters:
+        sources: ${{ parameters.sources }}
+
+    - download: current
+      displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
+
+    - ${{ if parameters.sources }}:
+      - ${{ each source in parameters.sources }}:
+        - ${{ if eq(source.publish, true) }}:
+          - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/*.$(Build.BuildNumber).nupkg"
+            displayName: 'Publish to ${{ source.name }} Feed'
