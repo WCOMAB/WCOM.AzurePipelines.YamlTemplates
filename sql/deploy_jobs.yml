@@ -6,6 +6,10 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - template: ../dotnetcommon/dotnet_sdk.yml
+              parameters:
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              
             - download: current
               artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac
               displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Dacpac artifact
