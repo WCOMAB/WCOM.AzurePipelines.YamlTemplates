@@ -8,7 +8,7 @@ jobs:
           steps:
             - template: ../dotnetcommon/dotnet_sdk.yml
               parameters:
-              useDotNetSDK: ${{ parameters.useDotNetSDK }}
+                useDotNetSDK: ${{ parameters.useDotNetSDK }}
               
             - download: current
               artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac
