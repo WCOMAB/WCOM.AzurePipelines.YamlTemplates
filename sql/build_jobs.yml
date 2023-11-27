@@ -17,6 +17,11 @@ jobs:
     - script: dotnet pack ${{ parameters.projectSrc }} -p:OutputPath=$(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/Dacpac --output $(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/NuGet -p:Version=$(Build.BuildNumber) ${{ parameters.buildParameters }}
       displayName: 'DotNet Pack'
 
+    - ${{ if coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}:
+      - publish: "$(Build.ArtifactStagingDirectory)/global.json"
+        displayName: Publishing global.json
+        artifact: global.json
+
     - publish: "$(Build.ArtifactStagingDirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/artifacts/Dacpac"
       displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Dacpac Artifact'
       artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac

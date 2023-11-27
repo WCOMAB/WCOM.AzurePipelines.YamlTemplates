@@ -6,6 +6,11 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - ${{ if coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}:
+              - download: current
+                artifact: global.json
+                displayName: Downloading global.json artifact
+            
             - template: ../dotnetcommon/dotnet_sdk.yml
               parameters:
                 useDotNetSDK: ${{ parameters.useDotNetSDK }}
