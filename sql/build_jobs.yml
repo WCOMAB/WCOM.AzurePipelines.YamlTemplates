@@ -21,7 +21,7 @@ jobs:
       - script: ls -l && pwd
         displayName: Debug
 
-      - publish: "$(Pipeline.Workspace)/tests/integration/global.json"
+      - publish: "$(Build.Repository.LocalPath)/tests/integration/global.json"
         displayName: Publishing global.json
         artifact: global.json
 
