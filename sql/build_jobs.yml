@@ -21,7 +21,7 @@ jobs:
       - script: ls -l && pwd
         displayName: Debug
 
-      - publish: "$(Agent.BuildDirectory)/tests/integration/global.json"
+      - publish: "/tests/integration/global.json"
         displayName: Publishing global.json
         artifact: global.json
 
