@@ -18,6 +18,9 @@ jobs:
       displayName: 'DotNet Pack'
 
     - ${{ if coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}:
+      - script: ls -l
+        displayName: Debug
+        
       - publish: "$(Agent.BuildDirectory)/global.json"
         displayName: Publishing global.json
         artifact: global.json
