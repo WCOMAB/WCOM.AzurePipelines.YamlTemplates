@@ -13,7 +13,7 @@ jobs:
             
             - template: ../dotnetcommon/dotnet_sdk.yml
               parameters:
-                workingDirectory: global.json
+                workingDirectory: "$(Pipeline.Workspace)/global.json"
                 useDotNetSDK: ${{ parameters.useDotNetSDK }}
               
             - download: current
