@@ -15,7 +15,8 @@ stages:
               env: ${{ environment.env }}
               buildParameters: ${{ parameters.buildParameters }}
               sources: ${{ parameters.sources }}
-              projectSrc: ${{ coalesce(parameters.projectSrc, 'src') }}
+              projectRoot: ${{ parameters.projectRoot }}
+              projectSrc: "${{ parameters.projectRoot }}${{ coalesce(parameters.projectSrc, 'src') }}"
               preBuildScript: ${{ parameters.preBuildScript }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
