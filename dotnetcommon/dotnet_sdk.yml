@@ -4,5 +4,5 @@ steps:
     inputs:
       packageType: ${{ coalesce(parameters.useDotNetSDK.packageType, 'sdk') }}
       useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}
-      workingDirectory: ${{ parameters.useDotNetSDK.workingDirectory }}
+      workingDirectory: ${{ coalesce(parameters.useDotNetSDK.workingDirectory, parameters.workingDirectory) }}
       version: ${{ parameters.useDotNetSDK.version }}

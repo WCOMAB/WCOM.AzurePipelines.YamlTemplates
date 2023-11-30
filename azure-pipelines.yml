@@ -13,7 +13,8 @@ stages:
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     build: DotNet_Development
-    projectSrc: tests/integration/src/dotnet/library
+    projectRoot: tests/integration/
+    projectSrc: src/dotnet/library
     artifactNamePrefix: DotNet
     environments:
       - env: env
@@ -24,7 +25,8 @@ stages:
   parameters:
     shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     build: DotNetTool_Development
-    projectSrc: tests/integration/src/dotnet/tool
+    projectRoot: tests/integration/
+    projectSrc: src/dotnet/tool
     artifactNamePrefix: DotNetTool
     buildParameters:
       - '-p:PackAsTool=true'
@@ -41,7 +43,8 @@ stages:
     suffix: do
     devopsOrg: wcom-public
     build: DotNetWeb_Development
-    projectSrc: tests/integration/src/dotnet/web
+    projectRoot: tests/integration/
+    projectSrc: src/dotnet/web
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     artifactNamePrefix: DotNetWeb
     environments:
@@ -56,7 +59,8 @@ stages:
     pool:
       vmImage: windows-latest
     devopsOrg: wcom-public
-    projectSrc: tests/integration/src/sql
+    projectRoot: tests/integration/
+    projectSrc: src/sql
     serverName: 'devops'
     build: SQL_Development
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')

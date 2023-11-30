@@ -21,6 +21,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  databases               | array    | No           |                                                                | Array of databases.
  databaseFormat          | string   | No           | '{1}'                                                          | Format of database name.
  projectSrc	             | string	  | No	         | src	                                                          | Source folder to build, pack and publish.
+ projectRoot	           | string	  | No	         | src	                                                          | root folder to for the project.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  useDotNetSDK           | object   | No           |                   | Object containing parameters for specified dotnet SDK.

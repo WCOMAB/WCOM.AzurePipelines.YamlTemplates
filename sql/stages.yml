@@ -53,6 +53,9 @@ parameters:
 - name: projectSrc
   type: string
   default: ''
+- name: projectRoot
+  type: string
+  default: ''
 - name: artifactNamePrefix
   type: string
   default: ''

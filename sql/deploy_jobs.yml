@@ -6,8 +6,16 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - ${{ if coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}:
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  buildType: 'current'
+                  artifactName: 'global.json'
+                  targetPath: '$(Pipeline.Workspace)'
+            
             - template: ../dotnetcommon/dotnet_sdk.yml
               parameters:
+                workingDirectory: "$(Pipeline.Workspace)"
                 useDotNetSDK: ${{ parameters.useDotNetSDK }}
               
             - download: current
