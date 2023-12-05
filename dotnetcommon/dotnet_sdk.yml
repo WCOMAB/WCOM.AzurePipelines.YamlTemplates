@@ -1,8 +1,9 @@
 steps:
-  - task: UseDotNet@2
-    displayName: 'Install .NET SDK useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}, version: ${{ parameters.useDotNetSDK.version }}'
-    inputs:
-      packageType: ${{ coalesce(parameters.useDotNetSDK.packageType, 'sdk') }}
-      useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}
-      workingDirectory: ${{ coalesce(parameters.useDotNetSDK.workingDirectory, parameters.workingDirectory) }}
-      version: ${{ parameters.useDotNetSDK.version }}
+  - ${{ if eq(coalesce(parameters.useDotNetSDK.skipTask, false), true) }}:
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}, version: ${{ parameters.useDotNetSDK.version }}'
+      inputs:
+        packageType: ${{ coalesce(parameters.useDotNetSDK.packageType, 'sdk') }}
+        useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}
+        workingDirectory: ${{ coalesce(parameters.useDotNetSDK.workingDirectory, parameters.workingDirectory) }}
+        version: ${{ parameters.useDotNetSDK.version }}
