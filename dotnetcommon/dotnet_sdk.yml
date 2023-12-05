@@ -1,5 +1,5 @@
 steps:
-  - ${{ if eq(coalesce(parameters.useDotNetSDK.skipTask, false), true) }}:
+  - ${{ if eq(coalesce(parameters.useDotNetSDK.skipTask, false), false) }}:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}, version: ${{ parameters.useDotNetSDK.version }}'
       inputs:
