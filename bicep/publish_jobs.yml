@@ -22,7 +22,7 @@ jobs:
           az config set auto-upgrade.prompt=no
           az config set auto-upgrade.all=no
           az upgrade --yes
-          az bicep upgrade --yes
+          az bicep upgrade
           az version
           az bicep version
           [string] $version = '$(Build.BuildNumber)'
