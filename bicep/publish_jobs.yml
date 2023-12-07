@@ -19,7 +19,7 @@ jobs:
         scriptLocation: inlineScript
         inlineScript:  |
           Write-Host "Ensuring bicep installed..."
-          az bicep upgrade
+          az config set auto-upgrade.enable=no
           az bicep version
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
