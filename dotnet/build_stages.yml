@@ -19,3 +19,4 @@ stages:
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               azureSubscription: ${{ parameters.azureSubscription }}
               dpi: ${{ parameters.dpi }}
+              dpi.report: ${{ coalesce(parameters.dpi.report, false) }}
