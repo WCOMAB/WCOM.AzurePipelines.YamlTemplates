@@ -1,20 +1,17 @@
 steps:
 - ${{ if parameters.dpi.report }}:
-  - task: AzurePowerShell@5
+  - pwsh: |
+      if ((Get-Command dpi|Measure-Object).Count -lt 1)
+      {
+        dotnet tool install --global DPI
+      }
     displayName: Checking for DPI tool installation.
-    inputs:
-      azureSubscription: ${{ parameters.azureSubscription }}
-      ScriptType: InlineScript
-      errorActionPreference: continue
-      Inline: |
-        if ((Get-Command dpi|Measure-Object).Count -lt 1)
-        {
-          dotnet tool install --global DPI
-        }
+    continueOnError: true
 
   - ${{ if eq(parameters.dpi.report, true) }}:
     - pwsh: dpi nuget -o table report
       continueOnError: true
+      displayName: Creating DPI Report
       env:
         NuGetReportSettings_WorkspaceId: ${{ parameters.dpi.WorkspaceId }}
         NuGetReportSettings_SharedKey: ${{ parameters.dpi.SharedKey }}
@@ -22,3 +19,4 @@ steps:
   - ${{ if eq(parameters.dpi.report, false) }}:
     - pwsh: dpi nuget -o table analyze
       continueOnError: true
+      displayName: Analyzing DPI (local output only)
