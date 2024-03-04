@@ -16,3 +16,5 @@ stages:
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               skipTests: ${{ coalesce(parameters.skipTests, true) }}
+              azureSubscription: ${{ parameters.azureSubscription }}
+              dpi: ${{ parameters.dpi }}

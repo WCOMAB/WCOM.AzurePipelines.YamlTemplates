@@ -17,6 +17,11 @@ jobs:
     - script: dotnet build ${{ parameters.projectSrc }} /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Build'
 
+    - template: ../dotnetcommon/dotnet_dpi.yml
+      parameters:
+        dpi: ${{ parameters.dpi }}
+        azureSubscription: ${{ parameters.azureSubscription }}
+
     - template: ../dotnetcommon/dotnet_tests.yml
       parameters:
         skipTests: ${{ parameters.skipTests }}
