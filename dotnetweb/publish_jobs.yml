@@ -23,6 +23,11 @@ jobs:
       projectSrc: ${{ parameters.projectSrc }}
       buildParameters: ${{ parameters.buildParameters }}
 
+  - template: ../dotnetcommon/dotnet_dpi.yml
+    parameters:
+      dpi: ${{ parameters.dpi }}
+      azureSubscription: ${{ parameters.azureSubscription }}
+
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: "$(build.artifactstagingdirectory)"

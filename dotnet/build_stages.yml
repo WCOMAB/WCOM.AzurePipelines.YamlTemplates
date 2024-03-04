@@ -17,3 +17,5 @@ stages:
               preBuildScript: ${{ parameters.preBuildScript }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              azureSubscription: ${{ parameters.azureSubscription }}
+              dpi: ${{ parameters.dpi }}
