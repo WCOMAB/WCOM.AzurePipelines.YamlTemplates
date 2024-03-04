@@ -1,6 +1,6 @@
 steps:
 - pwsh: |
-    if ((Get-Command dpi|Measure-Object).Count -lt 1)
+    if ((Get-Command -Name dpi -ErrorAction Ignore| Measure-Object).Count -lt 1)
     {
       dotnet tool install --global DPI
     }
