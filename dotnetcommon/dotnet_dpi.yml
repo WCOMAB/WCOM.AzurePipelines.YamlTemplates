@@ -1,4 +1,5 @@
 steps:
+- ${{ if ne(length(parameters.dpi.report), 0) }}:
   - task: AzurePowerShell@5
     displayName: Checking for DPI tool installation.
     inputs:
