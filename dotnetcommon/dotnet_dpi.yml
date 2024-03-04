@@ -7,7 +7,7 @@ steps:
   displayName: Checking for DPI tool installation.
   continueOnError: true
 
-- ${{ if eq(parameters.dpi.report, true) }}:
+- ${{ if eq(coalesce(parameters.dpi.report, false), true) }}:
   - pwsh: dpi nuget -o table report
     continueOnError: true
     displayName: Creating DPI Report
@@ -15,7 +15,7 @@ steps:
       NuGetReportSettings_WorkspaceId: ${{ parameters.dpi.WorkspaceId }}
       NuGetReportSettings_SharedKey: ${{ parameters.dpi.SharedKey }}
 
-- ${{ if eq(parameters.dpi.report, false) }}:
+- ${{ if eq(coalesce(parameters.dpi.report, false), false) }}:
   - pwsh: dpi nuget -o table analyze
     continueOnError: true
     displayName: Analyzing DPI (local output only)
