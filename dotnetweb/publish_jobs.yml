@@ -10,6 +10,10 @@ jobs:
     parameters:
       sources: ${{ parameters.sources }}
 
+  - template: ../dotnetcommon/dotnet_tool.yml
+    parameters:
+      toolRestore: ${{ parameters.toolRestore }}
+
   - template: ../dotnetcommon/prebuild_common.yml
     parameters:
       preBuildScript: ${{ parameters.preBuildScript }}

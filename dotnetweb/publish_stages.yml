@@ -18,3 +18,4 @@ stages:
               skipTests: ${{ coalesce(parameters.skipTests, true) }}
               azureSubscription: ${{ parameters.azureSubscription }}
               dpi: ${{ parameters.dpi }}
+              toolRestore: ${{ coalesce(parameters.toolRestore, false) }}

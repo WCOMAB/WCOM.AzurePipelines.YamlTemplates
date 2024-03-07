@@ -18,6 +18,9 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  useDotNetSDK    | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  environments    | array    | Yes          |                   | Array of environments and environment specific parameters
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
+ dpi        | object   | No          |                   | Settings relating to Dependency reports using DPI tool
+ toolRestore     | bool     | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
+
 
 ## Pre-Build
 
@@ -50,6 +53,14 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  name           | string   | Yes          |                   | The source name.
  token          | string   | No           |                   | Access token.
  publish        | bool     | No           |                   | Allow update to NuGet source.
+
+## dpi
+
+ **Parameters** | **Type** | **Required** | **Default value** | **Description**
+----------------|----------|--------------|-------------------|------------------
+ report           | bool   | no        | false                   | Boolean to create report or not.
+ WorkspaceId          | string (secret)   | Yes           |                   | The Id of the log analytic workspace the reports gets sent to.
+ SharedKey        | string (secret)   | Yes           |                   | Shared/Primary Key to the workspace you want to send the reports to
 
 ## Per environment
 
@@ -130,6 +141,7 @@ stages:
       - '-p:ToolCommandName=ToolCommandName'
     skipTests: true/false
     projectSrc: projectSrc
+    toolRestore: true/false
     useDotNetSDK: 
       packageType: sdk/runtime
       useGlobalJson: true/false
@@ -148,6 +160,10 @@ stages:
       pwsh: true/false
       workingDirectory: workingDirectory
       bashEnvValue: bashEnvValue
+    dpi:
+      report: true/false
+      WorkspaceId: <secret string>
+      SharedKey: <secret string>
     build: envName
     environments:
       - env: dev
