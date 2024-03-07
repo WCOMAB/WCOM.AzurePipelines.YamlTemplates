@@ -19,3 +19,4 @@ stages:
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               azureSubscription: ${{ parameters.azureSubscription }}
               dpi: ${{ parameters.dpi }}
+              toolRestore: ${{ coalesce(parameters.toolRestore, false) }}

@@ -23,6 +23,8 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  useDotNetSDK            | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
  skipTests              | bool     | No           |  true                                                         | Allow tests to be skipped.
+  dpi        | object   | No          |                   | Settings relating to Dependency reports using DPI tool
+ toolRestore     | bool     | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
 
 ## Pre-Build
 
@@ -54,6 +56,14 @@ Azure DevOps YAML template is used to deploy and publish web applications.
 ----------------|----------|--------------|----------------------------|------------------
  name           | string   | Yes          |                            | The source name.
  token          | string   | No           |                            | Access token.
+
+## dpi
+
+ **Parameters** | **Type** | **Required** | **Default value** | **Description**
+----------------|----------|--------------|-------------------|------------------
+ report           | bool   | no        | false                   | Boolean to create report or not.
+ WorkspaceId          | string (secret)   | Yes           |                   | The Id of the log analytic workspace the reports gets sent to.
+ SharedKey        | string (secret)   | Yes           |                   | Shared/Primary Key to the workspace you want to send the reports to
 
 ## Per environment
 
@@ -139,6 +149,7 @@ stages:
         token: $(CustomerNugetFeedToken)
     buildParameters:
       - '-p:buildParameter=buildParameterValue'
+    toolRestore: true/false
     preBuildScript:
       scriptType: scriptType
       targetType: targetType
@@ -158,6 +169,10 @@ stages:
       useGlobalJson: true/false
       workingDirectory: workingDirectory
       version: '6.0.x'
+    dpi:
+      report: true/false
+      WorkspaceId: <secret string>
+      SharedKey: <secret string>
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: env
