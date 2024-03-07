@@ -1,0 +1,3 @@
+steps:
+- ${{ if eq(parameters.toolRestore, true) }}:
+  - script: dotnet tool restore
