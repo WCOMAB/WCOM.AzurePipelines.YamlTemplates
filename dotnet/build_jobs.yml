@@ -10,8 +10,8 @@ jobs:
       parameters:
         sources: ${{ parameters.sources }}
 
-    - ${{ if eq(parameters.restore, true) }}:
-      - script: dotnet restore
+    - ${{ if eq(parameters.toolRestore, true) }}:
+      - script: dotnet tool restore
 
     - template: ../dotnetcommon/prebuild_common.yml
       parameters:
