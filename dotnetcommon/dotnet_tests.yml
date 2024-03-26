@@ -10,11 +10,10 @@ steps:
     displayName: 'Merge code coverage reports'
     condition: succeededOrFailed()
 
-  - task: PublishCodeCoverageResults@1
+  - task: PublishCodeCoverageResults@2
     displayName: 'Publish code coverage results'
     condition: succeededOrFailed()
     inputs:
-      codeCoverageTool: Cobertura
       summaryFileLocation: '$(build.artifactstagingdirectory)/Report/Cobertura.xml'
 
   - task: PublishTestResults@2
