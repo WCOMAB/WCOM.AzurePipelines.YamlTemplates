@@ -27,7 +27,9 @@ jobs:
           az bicep version
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
-          [string] $Path = '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)modules'
+          [string] $Path = '$(Pipeline.Workspace)/modules'
+          Move-Item -Path '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)modules' -Destination '$(Pipeline.Workspace)/modules' -Force
+          Move-Item -Path '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)internal' -Destination '$(Pipeline.Workspace)/internal' -Force
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
           Push-Location
           Set-Location $Path
