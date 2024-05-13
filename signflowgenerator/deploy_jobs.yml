@@ -1,0 +1,41 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
+    displayName: ${{ format('{0} Deploy', parameters.name) }}
+    environment: ${{ parameters.name }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+              path: $(Build.Repository.Name)
+
+            - template: ../dotnetcommon/dotnet_sdk.yml
+              parameters:
+                useDotNetSDK: ${{ parameters.useDotNetSDK }}
+
+            - template: ../dotnetcommon/dotnet_auth.yml
+              parameters:
+                sources: ${{ parameters.sources }}
+
+            - template: ../dotnetcommon/dotnet_tool.yml
+              parameters:
+                toolRestore: true
+
+            - download: current
+              displayName: Download $(Build.DefinitionName) Artifact
+              artifact: signsettings
+
+            - task: AzureCLI@2
+              displayName: Deploy $(Build.Repository.Name) Settings Manifest
+              env:
+                  KeyVaultSettings__VaultName: '${{ parameters.keyVaultName }}'
+                  EventHttpClientSettings__ApiUrl: '${{ parameters.eventApi.url}}'
+                  EventHttpClientSettings__ApiKey: '${{ parameters.eventApi.key}}'
+                  SubscriberSettings__Name: '${{ parameters.subsriber.name}}'
+                  SubscriberSettings__CallbackEvent: '${{ parameters.subsriber.callbackEvent}}'
+              inputs:
+                azureSubscription: '${{ parameters.azureSubscription }}'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  dotnet wcomsign deploy $(Pipeline.Workspace)/signsettings/signsettings.json
