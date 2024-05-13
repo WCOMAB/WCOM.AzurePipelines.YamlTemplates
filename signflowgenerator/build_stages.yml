@@ -1,0 +1,19 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.name, parameters.build) }}:
+      - stage: ${{ format('Build_{0}', environment.name) }}
+        displayName: ${{ format('Build {0}', environment.name) }}
+        dependsOn:
+        jobs:
+          - template: build_jobs.yml
+            parameters:
+              name: ${{ environment.name }}
+              env: ${{ environment.env }}
+              system: ${{ parameters.system }}
+              suffix: ${{ parameters.suffix }}
+              azureSubscription: ${{ format(coalesce(coalesce(environment.azureSubscriptionFormat, parameters.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix, environment.name) }}
+              resourceGroup: ${{ format(coalesce(coalesce(environment.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
+              keyVaultName: ${{ format(coalesce(coalesce(environment.keyVaultNameFormat, parameters.keyVaultNameFormat), '{2}-{0}-kv-{1}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
+              eventApi: ${{ environment.eventApi }}
+              subsriber: ${{ parameters.subsriber }}
+              sources: ${{ parameters.sources }}

@@ -1,3 +1,4 @@
 steps:
 - ${{ if eq(parameters.toolRestore, true) }}:
   - script: dotnet tool restore
+    displayName: Restore .NET Tools

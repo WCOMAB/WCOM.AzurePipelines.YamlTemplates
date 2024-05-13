@@ -1,0 +1,27 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.deploy, true) }}:
+      - stage: ${{ format('Deploy_{0}', environment.name) }}
+        condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+        dependsOn:
+          - ${{ each env in parameters.environments }}:
+              - ${{ if eq(env.name, parameters.build) }}:
+                - ${{ format('Build_{0}', env.name) }}
+          - ${{ each after in environment.deployAfter }}:
+            - ${{ format('Deploy_{0}', after) }}
+          - ${{ each depends in environment.dependsOn }}:
+            - ${{ depends }}
+        displayName: ${{ format('Deploy to {0}', environment.name) }}
+        jobs:
+          - template: deploy_jobs.yml
+            parameters:
+              name: ${{ environment.name }}
+              env: ${{ environment.env }}
+              system: ${{ parameters.system }}
+              suffix: ${{ parameters.suffix }}
+              azureSubscription: ${{ format(coalesce(coalesce(environment.azureSubscriptionFormat, parameters.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix, environment.name) }}
+              resourceGroup: ${{ format(coalesce(coalesce(environment.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
+              keyVaultName: ${{ format(coalesce(coalesce(environment.keyVaultNameFormat, parameters.keyVaultNameFormat), '{2}-{0}-kv-{1}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
+              eventApi: ${{ environment.eventApi }}
+              subsriber: ${{ parameters.subsriber }}
+              sources: ${{ parameters.sources }}
