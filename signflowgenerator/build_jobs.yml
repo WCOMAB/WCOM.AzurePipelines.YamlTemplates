@@ -8,7 +8,7 @@ jobs:
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__Env'
         value: '${{ resource.env }}'
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter'
-        value: '${{ join(';',resource.deployAfter) }}
+        value: '${{ join(';',resource.deployAfter) }}'
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__ResourceGroup'
         value: '${{ resource.resourceGroup }}'
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__KeyVaultName'
