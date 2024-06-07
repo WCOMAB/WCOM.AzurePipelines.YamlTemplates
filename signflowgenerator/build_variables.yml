@@ -13,15 +13,16 @@ parameters:
   type: object
   default: []
 variables:
-  - name: 'DocumentationSettings__Resources__${{ resource.env }}__Name'
-    value: '${{ resource.name }}'
-  - name: 'DocumentationSettings__Resources__${{ resource.env }}__Env'
-    value: '${{ resource.env }}'
-  - name: 'DocumentationSettings__Resources__${{ resource.env }}__ResourceGroup'
-    value: '${{ resource.resourceGroup }}'
-  - name: 'DocumentationSettings__Resources__${{ resource.env }}__KeyVaultName'
-    value: '${{ resource.keyVaultName }}'
-  - name: 'DocumentationSettings__Resources__${{ resource.env }}__ApiUrl'
-    value: '${{ resource.eventApi.url }}'
-  - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter'
-    value: '${{ join(';',resource.deployAfter) }}'
+  - name: 'DocumentationSettings__Resources__${{ parameters.env }}__Name'
+    value: '${{ parameters.name }}'
+  - name: 'DocumentationSettings__Resources__${{ parameters.env }}__Env'
+    value: '${{ parameters.env }}'
+  - name: 'DocumentationSettings__Resources__${{ parameters.env }}__ResourceGroup'
+    value: '${{ parameters.resourceGroup }}'
+  - name: 'DocumentationSettings__Resources__${{ parameters.env }}__KeyVaultName'
+    value: '${{ parameters.keyVaultName }}'
+  - name: 'DocumentationSettings__Resources__${{ parameters.env }}__ApiUrl'
+    value: '${{ parameters.eventApi.url }}'
+  - ${{ each after in parameters.deployAfter }}:
+    - name: 'DocumentationSettings__Resources__${{ parameters.env }}__DependsOn__${{ after }}'
+      value: ${{ format('{0}', after) }}
