@@ -20,7 +20,10 @@ parameters:
 - name: sources
   type: object
   default: ''
-- name: resources
+- name: sources
+  type: object
+  default: ''
+- name: useDotNetSDK
   type: object
   default: ''
 jobs:

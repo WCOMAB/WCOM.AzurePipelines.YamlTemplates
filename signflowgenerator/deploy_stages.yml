@@ -25,3 +25,4 @@ stages:
               eventApi: ${{ environment.eventApi }}
               subsriber: ${{ parameters.subsriber }}
               sources: ${{ parameters.sources }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
