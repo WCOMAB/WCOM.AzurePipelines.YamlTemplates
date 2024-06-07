@@ -13,6 +13,7 @@ jobs:
         value: '${{ resource.keyVaultName }}'
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__ApiUrl'
         value: '${{ resource.eventApi.url }}'
+    - ${{ each resource in parameters.resources }}:
       - ${{ each after in resource.deployAfter }}:
         - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter__${{ after }}'
           value: '${{ after }}'
