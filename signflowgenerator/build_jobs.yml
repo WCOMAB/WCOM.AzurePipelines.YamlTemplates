@@ -13,10 +13,8 @@ jobs:
         value: '${{ resource.keyVaultName }}'
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__ApiUrl'
         value: '${{ resource.eventApi.url }}'
-    - ${{ each resource in parameters.resources }}:
-      - ${{ each after in resource.deployAfter }}:
-        - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter__${{ after }}'
-          value: '${{ after }}'
+      - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter'
+        value: '${{ join(';',resource.deployAfter) }}'
     steps:
     - template: ../dotnetcommon/dotnet_sdk.yml
       parameters:
