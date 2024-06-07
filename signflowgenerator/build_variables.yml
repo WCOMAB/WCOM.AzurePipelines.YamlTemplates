@@ -11,7 +11,7 @@ parameters:
   type: object
 - name: deployAfter
   type: object
-  default: []
+  default: ''
 variables:
   - name: 'DocumentationSettings__Resources__${{ parameters.env }}__Name'
     value: '${{ parameters.name }}'
@@ -23,6 +23,7 @@ variables:
     value: '${{ parameters.keyVaultName }}'
   - name: 'DocumentationSettings__Resources__${{ parameters.env }}__ApiUrl'
     value: '${{ parameters.eventApi.url }}'
-  - ${{ each after in parameters.deployAfter }}:
-    - name: 'DocumentationSettings__Resources__${{ parameters.env }}__DependsOn__${{ after }}'
-      value: ${{ format('{0}', after) }}
+  - ${{ if ne(length(parameters.deployAfter), 0) }}:
+    - ${{ each after in parameters.deployAfter }}:
+      - name: 'DocumentationSettings__Resources__${{ parameters.env }}__DependsOn__${{ after }}'
+        value: '${{ after }}'
