@@ -13,9 +13,9 @@ jobs:
         value: '${{ resource.keyVaultName }}'
       - name: 'DocumentationSettings__Resources__${{ resource.env }}__ApiUrl'
         value: '${{ resource.eventApi.url }}'
-      - ${{ each depends in resource.dependsOn }}:
-        - name: 'DocumentationSettings__Resources__${{ resource.env }}__DependsOn__${{ depends }}'
-          value: 'true'
+      - ${{ each after in resource.deployAfter }}:
+        - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter__${{ after }}'
+          value: '${{ after }}'
     steps:
     - template: ../dotnetcommon/dotnet_sdk.yml
       parameters:
