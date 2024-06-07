@@ -17,6 +17,7 @@ stages:
               eventApi: ${{ environment.eventApi }}
               subsriber: ${{ parameters.subsriber }}
               sources: ${{ parameters.sources }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
               resources:
                 - ${{ each resenv in parameters.environments }}:
                   - name: ${{ resenv.name }}
