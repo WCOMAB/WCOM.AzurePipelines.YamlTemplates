@@ -1,0 +1,27 @@
+parameters:
+- name: env
+  type: string
+- name: name
+  type: string
+- name: resourceGroup
+  type: string
+- name: keyVaultName
+  type: string
+- name: eventApi
+  type: object
+- name: deployAfter
+  type: object
+  default: []
+variables:
+  - name: 'DocumentationSettings__Resources__${{ resource.env }}__Name'
+    value: '${{ resource.name }}'
+  - name: 'DocumentationSettings__Resources__${{ resource.env }}__Env'
+    value: '${{ resource.env }}'
+  - name: 'DocumentationSettings__Resources__${{ resource.env }}__ResourceGroup'
+    value: '${{ resource.resourceGroup }}'
+  - name: 'DocumentationSettings__Resources__${{ resource.env }}__KeyVaultName'
+    value: '${{ resource.keyVaultName }}'
+  - name: 'DocumentationSettings__Resources__${{ resource.env }}__ApiUrl'
+    value: '${{ resource.eventApi.url }}'
+  - name: 'DocumentationSettings__Resources__${{ resource.env }}__DeployAfter'
+    value: '${{ join(';',resource.deployAfter) }}'
