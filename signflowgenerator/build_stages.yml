@@ -25,4 +25,4 @@ stages:
                     keyVaultName: ${{ format(coalesce(coalesce(resenv.keyVaultNameFormat, parameters.keyVaultNameFormat), '{2}-{0}-kv-{1}'), parameters.system, resenv.env, parameters.suffix, resenv.name) }}
                     eventApi:
                       url: ${{ environment.eventApi.url }}
-                    deployAfter: resenv.deployAfter
+                    deployAfter: ${{ resenv.deployAfter }}
