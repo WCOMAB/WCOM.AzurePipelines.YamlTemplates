@@ -20,9 +20,9 @@ parameters:
 - name: sources
   type: object
   default: ''
-- name: sources
+- name: resources
   type: object
-  default: ''
+  default: []
 - name: useDotNetSDK
   type: object
   default: ''
