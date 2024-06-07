@@ -23,6 +23,9 @@ stages:
                     env: ${{ resenv.env }}
                     resourceGroup: ${{ format(coalesce(coalesce(resenv.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, resenv.env, parameters.suffix, resenv.name) }}
                     keyVaultName: ${{ format(coalesce(coalesce(resenv.keyVaultNameFormat, parameters.keyVaultNameFormat), '{2}-{0}-kv-{1}'), parameters.system, resenv.env, parameters.suffix, resenv.name) }}
-                    deployAfter: ${{ resenv.deployAfter }}
+                    ${{ if ne(length(resenv.deployAfter), 0) }}:
+                      deployAfter: ${{ resenv.deployAfter }}
+                    ${{ else }}:
+                      deployAfter: []
                     eventApi:
                       url: ${{ environment.eventApi.url }}
