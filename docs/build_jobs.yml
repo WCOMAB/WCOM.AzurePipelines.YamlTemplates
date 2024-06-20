@@ -18,10 +18,10 @@ jobs:
         parameters:
           preBuildScript: ${{ parameters.preBuildScript }}
 
-      - script: dotnet tool install --global Wcom.StaticSiteGenerator.Console --version 2023.4.26.2 --configfile ${{ parameters.projectRoot }}/nuget.config
+      - script: dotnet tool install --global Wcom.StaticSiteGenerator.Console --configfile ${{ parameters.projectRoot }}/nuget.config
         displayName: Installing Artifact Downloader.
 
-      - script: dotnet tool install --global WCOM.Docs.Tools.BuildArtifactDownloader --version 2023.5.9.3 --configfile ${{ parameters.projectRoot }}/nuget.config
+      - script: dotnet tool install --global WCOM.Docs.Tools.BuildArtifactDownloader --configfile ${{ parameters.projectRoot }}/nuget.config
         displayName: Installing Build Artifact Downloader.
 
       #- script: dotnet tool restore --configfile ${{ parameters.projectRoot }}/nuget.config
