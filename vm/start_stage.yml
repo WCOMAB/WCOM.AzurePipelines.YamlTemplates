@@ -1,13 +1,14 @@
 jobs:
-  - job: Start_VM_${{ parameters.env }}
-    pool: 
-      vmImage: ubuntu-latest
-    steps:
-        - task: AzureCLI@2
-          displayName: Start ${{ parameters.env }} VM.
-          inputs:
-            azureSubscription: '${{ format(coalesce(coalesce(parameters.azureSubscriptionFormat, parameters.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, parameters.env, parameters.suffix, parameters.envName) }}'
-            scriptType: 'pscore'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-              az vm start --resource-group ${{ format(coalesce(coalesce(parameters.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, parameters.env, parameters.suffix, parameters.envName) }} --name ${{ format(coalesce(coalesce(parameters.vmNameFormat, parameters.vmNameFormat), '{0}-{1}-{2}'), parameters.system, parameters.env, parameters.suffix, parameters.envName) }} --verbose
+  - ${{ each vm in parameters.vms }}:
+    - job: Start_VM_${{ parameters.env }}
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+          - task: AzureCLI@2
+            displayName: Start ${{ vm.env }} VM.
+            inputs:
+              azureSubscription: '${{ format(coalesce(coalesce(vm.azureSubscription, vm.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), vm.devopsOrg, vm.system, vm.env, vm.suffix, vm.envName) }}'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az vm start --resource-group ${{ format(coalesce(coalesce(vm.resourceGroup, vm.resourceGroupFormat), '{0}-{1}-{2}'), vm.system, vm.env, vm.suffix, vm.envName) }} --name ${{ format(coalesce(coalesce(vm.vmName, vm.vmNameFormat), '{0}-{1}-{2}'), vm.system, vm.env, vm.suffix, vm.envName) }} --verbose
