@@ -1,0 +1,3 @@
+stages:
+- template: start_stage.yml
+  parameters: ${{ parameters }}
