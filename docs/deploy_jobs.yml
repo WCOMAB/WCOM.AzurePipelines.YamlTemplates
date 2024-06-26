@@ -27,7 +27,7 @@ jobs:
                   npm install -g @azure/static-web-apps-cli
                 displayName: Install SWA CLI
 
-              - script: dotnet tool install --global WCOM.Docs.Tools.SearchIndexUploader --version 2023.3.27.2
+              - script: dotnet tool install --global WCOM.Docs.Tools.SearchIndexUploader
                 displayName: Installing SearchIndex tool
 
               - task: AzureCLI@2
