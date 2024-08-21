@@ -36,6 +36,7 @@ jobs:
               inputs:
                 azureSubscription: '${{ parameters.azureSubscription }}'
                 addSpnToEnvironment: true
+                useGlobalConfig: true
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
