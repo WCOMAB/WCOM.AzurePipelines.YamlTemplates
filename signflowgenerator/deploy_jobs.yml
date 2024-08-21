@@ -35,6 +35,7 @@ jobs:
                   SubscriberSettings__CallbackEvent: '${{ parameters.subsriber.callbackEvent}}'
               inputs:
                 azureSubscription: '${{ parameters.azureSubscription }}'
+                addSpnToEnvironment: true
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
