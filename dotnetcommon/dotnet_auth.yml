@@ -2,6 +2,11 @@ steps:
 - ${{ if ne(length(parameters.sources), 0) }}:
   - ${{ each source in parameters.sources }}:
     - ${{ if or(ne(parameters.onlyPublish, true), eq(source.publish, true)) }}:
-      - script: |
-          dotnet nuget update source "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
-        displayName: Authenticate ${{ source.name }} Feed
+      - ${{ if ne(length(source.source), 0) }}:
+        - script: |
+            dotnet nuget add source "${{ source.source }}" --name "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
+          displayName: Add ${{ source.name }} Feed
+      - ${{ else }}:
+        - script: |
+            dotnet nuget update source "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
+          displayName: Authenticate ${{ source.name }} Feed
