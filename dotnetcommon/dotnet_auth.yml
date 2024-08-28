@@ -2,7 +2,7 @@ steps:
 - ${{ if ne(length(parameters.sources), 0) }}:
   - ${{ each source in parameters.sources }}:
     - ${{ if or(ne(parameters.onlyPublish, true), eq(source.publish, true)) }}:
-      - ${{ if ne(length(source.source), 0) }}:
+      - ${{ if ne(length(coalesce(source.source, '')), 0) }}:
         - script: |
             dotnet nuget add source "${{ source.source }}" --name "${{ source.name }}" -u "vsts" -p "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --store-password-in-clear-text --configfile ./nuget.config
           displayName: Add ${{ source.name }} Feed
