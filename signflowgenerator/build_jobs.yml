@@ -54,8 +54,14 @@ jobs:
           EventHttpClientSettings__ApiKey: '${{ parameters.eventApi.key}}'
           SubscriberSettings__Name: '${{ parameters.subsriber.name}}'
           SubscriberSettings__CallbackEvent: '${{ parameters.subsriber.callbackEvent}}'
+          MSI_ENDPOINT: ''
+          MSI_SECRET: ''
+          IDENTITY_ENDPOINT: ''
+          IDENTITY_HEADER: ''
       inputs:
         azureSubscription: '${{ parameters.azureSubscription }}'
+        addSpnToEnvironment: true
+        useGlobalConfig: true
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
