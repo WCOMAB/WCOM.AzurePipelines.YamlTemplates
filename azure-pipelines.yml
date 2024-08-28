@@ -16,6 +16,8 @@ stages:
     projectRoot: tests/integration/
     projectSrc: src/dotnet/library
     artifactNamePrefix: DotNet
+    buildParameters:
+      - '-p:Configuration=Release'
     environments:
       - env: env
         name: DotNet_Development
@@ -31,6 +33,7 @@ stages:
     buildParameters:
       - '-p:PackAsTool=true'
       - '-p:ToolCommandName=dotnet-tool'
+      - '-p:Configuration=Release'
     skipTests: true
     environments:
       - env: env
