@@ -49,6 +49,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  useGlobalJson    | bool     | No           | true              | Specifies if sdk should be installed from a globalJson file.
  workingDirectory | string   | No           |                   | The path to the globalJson file.
  version          | string   | No           |                   | Specifies a specific version of the dotnet sdk.
+ skipTask         | bool     | No           |   true            | Bool if you want to skip this task or not.
 
 ## Source
 
@@ -169,6 +170,7 @@ stages:
       useGlobalJson: true/false
       workingDirectory: workingDirectory
       version: '6.0.x'
+      skipTask: true
     dpi:
       report: true/false
       WorkspaceId: <secret string>
