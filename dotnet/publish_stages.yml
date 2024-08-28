@@ -15,4 +15,3 @@ stages:
               sources: ${{ parameters.sources }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
-              onlyPublish: ${{ parameters.onlyPublish }}
