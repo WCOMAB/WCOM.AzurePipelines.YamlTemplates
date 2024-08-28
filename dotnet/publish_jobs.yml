@@ -17,6 +17,7 @@ jobs:
               parameters:
                 sources: ${{ parameters.sources }}
                 onlyPublish: true
+                deploy: true
 
             - download: current
               displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact
