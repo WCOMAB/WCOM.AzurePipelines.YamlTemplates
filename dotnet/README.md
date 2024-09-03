@@ -17,8 +17,8 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  preBuildScript  | object   | No           |                   | Object containing pre-build parameters.
  useDotNetSDK    | object   | No           |                   | Object containing parameters for specified dotnet SDK.
  environments    | array    | Yes          |                   | Array of environments and environment specific parameters
- artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
- dpi        | object   | No          |                   | Settings relating to Dependency reports using DPI tool
+ artifactNamePrefix     | string   | No    |                   | Prefix for artifacts created by this pipeline.
+ dpi             | object   | No           |                   | Settings relating to Dependency reports using DPI tool
  toolRestore     | bool     | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
 
 
@@ -54,7 +54,9 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 ----------------|----------|--------------|-------------------|------------------
  name           | string   | Yes          |                   | The source name.
  token          | string   | No           |                   | Access token.
+ source         | string   | No           |                   | The source URL if the pipeline is adding sources.
  publish        | bool     | No           |                   | Allow update to NuGet source.
+ onlyDeploy     | bool     | No           |                   | Decides of a source should be used to publish nugets or not.
 
 ## dpi
 
@@ -138,6 +140,11 @@ stages:
       - name: authenticateUsingTokenAndPushSourceName
         token: $(CustomerNugetFeedToken)
         publish: true
+      - name: authenticateUsingTokenAndPushAndAddSourceName
+        token: $(CustomerNugetFeedToken)
+        source: SourceURL
+        publish: true
+        onlyDeploy: false
     buildParameters:
       - '-p:PackAsTool=true/false'
       - '-p:ToolCommandName=ToolCommandName'
