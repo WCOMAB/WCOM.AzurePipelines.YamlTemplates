@@ -57,10 +57,12 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
 ## Source
 
  **Parameters** | **Type** | **Required** | **Default value** | **Description**
-----------------|----------|--------------|-------------------|------------------------------
+----------------|----------|--------------|-------------------|------------------
  name           | string   | Yes          |                   | The source name.
  token          | string   | No           |                   | Access token.
+ source         | string   | No           |                   | The source URL if the pipeline is adding sources.
  publish        | bool     | No           |                   | Allow update to NuGet source.
+ onlyDeploy     | bool     | No           |                   | Decides of a source should be used to publish nugets or not.
 
 ## Database
 
@@ -161,6 +163,11 @@ stages:
       - name: authenticateUsingTokenAndPushSourceName
         token: $(CustomerNugetFeedToken)
         publish: true
+      - name: authenticateUsingTokenAndPushAndAddSourceName
+        token: $(CustomerNugetFeedToken)
+        source: SourceURL
+        publish: true
+        onlyDeploy: false
     azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
     resourceGroupFormat: '{0}-{1}-{2}-{3}'
     databaseFormat: '{1}'
