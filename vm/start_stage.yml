@@ -2,7 +2,7 @@ stages:
   - stage: StartVMs
     jobs:
     - ${{ each vm in parameters.vms }}:
-      - job: Start_VM_${{ parameters.env }}
+      - job: Start_VM_${{ vm.env }}
         pool: 
           vmImage: ubuntu-latest
         steps:
