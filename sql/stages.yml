@@ -73,6 +73,9 @@ parameters:
 - name: skipProfile
   type: boolean
   default: false
+- name: dependsOn
+  default: ''
+  type: string
 
 
 stages:
