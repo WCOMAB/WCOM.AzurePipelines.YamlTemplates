@@ -1,6 +1,5 @@
 stages:
-  - stage:
-    displayName: Starting VMs
+  - stage: StartVMs
     jobs:
     - ${{ each vm in parameters.vms }}:
       - job: Start_VM_${{ parameters.env }}
