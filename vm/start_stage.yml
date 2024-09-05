@@ -6,6 +6,7 @@ stages:
       - job: Start_VM_${{ parameters.env }}
         pool: 
           vmImage: ubuntu-latest
+        steps:
         - task: AzureCLI@2
           displayName: Start ${{ vm.env }} VM.
           inputs:
