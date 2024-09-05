@@ -10,7 +10,7 @@ stages:
         - task: AzureCLI@2
           displayName: Start ${{ vm.env }} VM.
           inputs:
-            azureSubscription: '${{ format(coalesce(coalesce(vm.azureSubscription, vm.azureSubscriptionFormat), "azdo-{0}-{1}-{2}-{3}"), vm.devopsOrg, vm.system, vm.env, vm.suffix, vm.envName) }}'
+            azureSubscription: '${{ format(coalesce(coalesce(vm.azureSubscription, vm.azureSubscriptionFormat), azdo-{0}-{1}-{2}-{3}), vm.devopsOrg, vm.system, vm.env, vm.suffix, vm.envName) }}'
             scriptType: 'pscore'
             scriptLocation: 'inlineScript'
             inlineScript: |
