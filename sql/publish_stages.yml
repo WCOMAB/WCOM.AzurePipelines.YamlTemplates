@@ -1,7 +1,7 @@
 stages:
   - ${{ each environment in parameters.environments }}:
     - ${{ if eq(environment.name, parameters.build) }}:
-      - stage: ${{ format('PublishTo_{0}', environment.name) }}
+      - stage: ${{ format('PublishTo_{0}', coalesce(environment.displayName, environment.name)) }}
         condition: and(succeeded(), ${{ parameters.shouldPublish }})
         ${{ if environment.envPool }}:
           pool: ${{ environment.envPool }}
@@ -11,7 +11,7 @@ stages:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:
                 - ${{ format('Build_{0}', env.name) }}
-        displayName: ${{ format('Publish to {0}', environment.name) }}
+        displayName: ${{ format('Publish to {0}', coalesce(environment.displayName, environment.name)) }}
         jobs:
           - template: publish_jobs.yml
             parameters:
