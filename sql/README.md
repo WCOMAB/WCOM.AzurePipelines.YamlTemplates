@@ -77,7 +77,6 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
 -------------------------|----------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------
  env                     | array    | Yes          |                                                                                                                                                                         | The target environment.
  name                    | string   | Yes          |                                                                                                                                                                         | The target environment name.
- displayName             | string   | No           |                                                                                                                                                                         | Name override for stage name and display name.
  deploy                  | bool     | No           | true                                                                                                                                                                    | Allow deploy to Resource group.
  connectionString        | string   | No           | format(connectionStringFormat, serverName, databaseFormat, system, env, suffix)                                                                                         | String to connect to Azure Sql database.
  connectionStringFormat  | string   | No           | 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' | Format of connection string.
@@ -204,7 +203,6 @@ stages:
     environments:
       - env: dev
         name: Development
-        displayName: Development_1
         deploy: true/false
         azureSubscriptionFormat: '{0}-{1}-{2}-{3}-{4}'
         resourceGroupFormat: '{0}-{1}-{2}-{3}'
