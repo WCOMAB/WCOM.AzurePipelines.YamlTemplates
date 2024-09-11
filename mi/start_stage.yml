@@ -1,0 +1,27 @@
+stages:
+  - stage: StartMIs
+    jobs:
+    - ${{ each mi in parameters.mis }}:
+      - job: Start_MI_${{ mi.env }}
+        pool: 
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          displayName: Get ${{ mi.env }} ManagedInstance ID
+          inputs:
+          azureSubscription:
+          scriptType: 'pscore'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            $mi_id=az resource list --name "format(coalesce(coalesce(mi.name, mi.nameFormat), '{0}-{1}-{2}-{3}'), mi.devopsOrg, mi.system, mi.env, mi.suffix, mi.envName)" --query "[].id" | ConvertFrom-JSON
+            Write-Host $mi_id
+            echo "##vso[task.setvariable variable=managedinstanceId]$mi_id"
+
+        - task: AzureCLI@2
+          displayName: Start ${{ mi.env }} Managed Instance.
+          inputs:
+            azureSubscription: ${{ format(coalesce(coalesce(mi.azureSubscription, mi.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), mi.devopsOrg, mi.system, mi.env, mi.suffix, mi.envName) }}
+            scriptType: 'pscore'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az sql mi start --ids $(managedinstanceId)
