@@ -1,0 +1,23 @@
+stages:
+  - stage: StartMIs
+    jobs:
+    - ${{ each mi in parameters.mis }}:
+      - job: Start_MI_${{ mi.env }}
+        pool: 
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          displayName: Start ${{ mi.env }} Managed Instance.
+          inputs:
+            azureSubscription: ${{ format(coalesce(coalesce(mi.azureSubscription, mi.azureSubscriptionFormat), 'azdo-{0}-{1}-{2}-{3}'), mi.devopsOrg, mi.system, mi.env, mi.suffix, mi.envName) }}
+            scriptType: 'pscore'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              [string] $ResourceId = (az resource list --name "${{ format(coalesce(coalesce(mi.name, mi.nameFormat), '{0}-{1}-{2}-{3}'), mi.devopsOrg, mi.system, mi.env, mi.suffix, mi.envName) }}" --query "[].id" --output tsv)
+              if ([string]::IsNullOrEmpty(($ResourceId)))
+              {
+                'No Resource Id Found'
+                return 404
+              }
+
+              az sql mi start --ids $ResourceId
