@@ -1,0 +1,39 @@
+jobs:
+  - job: Build
+    displayName: ${{ format('{0} Build', parameters.name) }}
+    steps:
+    - template: ../dotnetcommon/prebuild_common.yml
+      parameters:
+        preBuildScript: ${{ parameters.preBuildScript }}
+    
+    - template: ../dotnetcommon/dotnet_sdk.yml
+      parameters:
+        useDotNetSDK: ${{ parameters.useDotNetSDK }}
+
+    - checkout: self
+      displayName: Cloning own repo.
+      fetchDepth: 0
+
+    - checkout: inline-tool
+      displayName: Cloning Intune Win32-Content-Prep-Tool.
+      fetchDepth: 0
+
+    - task: Bash@3
+      inputs:
+        targetType: inline
+        script: |
+          Microsoft-Win32-Content-Prep-Tool/IntuneWinAppUtil.exe -c "${{ parameters.projectSrc }}/src/$(Build.DefinitionName)" -s "${{ parameters.projectSrc }}/src/$(Build.DefinitionName)/**.msi" -s "${{ parameters.projectSrc }}/src/$(Build.DefinitionName)/**.exe" -o "$(build.artifactstagingdirectory)/$(Build.DefinitionName)" ${{ parameters.extraParameters }}
+
+    - publish: $(build.artifactstagingdirectory)/$(Build.DefinitionName)
+      displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact'
+      artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
+
+
+    # - task: AzureCLI@2
+    #   displayName: Git Clone Intune Win32-Content-Prep-Tool
+    #   inputs:
+    #     azureSubscription: '${{ parameters.azureSubscription }}'
+    #     scriptType: bash
+    #     scriptLocation: inlineScript
+    #     inlineScript: |
+    #       git clone https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool.git --progress --branch master --depth=1 $(Build.SourcesDirectory)
