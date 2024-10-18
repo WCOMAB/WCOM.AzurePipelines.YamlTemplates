@@ -1,0 +1,53 @@
+stages:
+- stage:
+  displayName: 'Download and create IntuneWinPackage'
+  jobs:
+  - job:
+    steps:
+      - task: PowerShell@2
+        displayName: Download and unpack package
+        inputs:
+          targetType: 'inline'
+          script: |
+            [string] $IndexUri = 'https://${{ parameters.artifactStorageName }}.blob.core.windows.net/artifactindex/${{ parameters.appName }}/latestVersion.json?${{ parameters.indexSASToken }}'
+            [string] $ArtifactUrl = (Invoke-RestMethod -Uri $IndexUri).url
+            Invoke-WebRequest `
+              -Uri $ArtifactUrl `
+              -OutFile ${{ parameters.appName }}.zip
+            Expand-Archive -Path .\${{ parameters.appName }}.zip -DestinationPath '$(Build.Repository.LocalPath)/src/$(Build.Repository.Name)/'
+            Push-Location
+            Set-Location '$(Build.Repository.LocalPath)/src/$(Build.Repository.Name)/'
+            $BinaryVersion = [Version]::Parse( (.\${{ parameters.appName }}.exe --version) )
+            if ($BinaryVersion -eq $null)
+            {
+              Write-Error -Message 'Failed to download executable'
+              exit 1
+            }
+            else
+            {
+              "Version $BinaryVersion downloaded successfully" | Write-Output
+              exit 0
+            }
+            Pop-Location
+
+      - task: PowerShell@2
+        displayName: Build IntuneWinPackage
+        inputs:
+          targetType: 'inline'
+          script: |
+            Invoke-WebRequest -Uri 'https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/master/IntuneWinAppUtil.exe' -OutFile $(Build.Repository.LocalPath)/IntuneWinAppUtil.exe
+            $(Build.Repository.LocalPath)/IntuneWinAppUtil.exe -c $(Build.Repository.LocalPath)/src/$(Build.Repository.Name)/ -s $(Build.Repository.LocalPath)/src/$(Build.Repository.Name)/${{ parameters.appName }}.exe -o $(Build.Repository.LocalPath)/IntunePackage/ -q
+            Rename-Item $(Build.Repository.LocalPath)/IntunePackage/${{ parameters.appName }}.intunewin $(Build.Repository.LocalPath)/IntunePackage/$(Build.DefinitionName).intunewin
+
+      - task: ArchiveFiles@2
+        displayName: Archive application $(Build.DefinitionName)
+        inputs:
+          rootFolderOrFile: $(Build.Repository.LocalPath)/IntunePackage
+          includeRootFolder: false
+          archiveFile: $(Build.Repository.LocalPath)/$(Build.DefinitionName).zip
+          
+      - task: PublishBuildArtifacts@1
+        displayName: Publish application $(Build.DefinitionName)
+        inputs:
+          PathtoPublish: $(Build.Repository.LocalPath)/$(Build.DefinitionName).zip
+          artifactName: $(Build.DefinitionName)
