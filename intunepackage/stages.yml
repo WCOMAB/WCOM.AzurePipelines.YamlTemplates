@@ -1,0 +1,3 @@
+stages:
+- template: build_stages.yml
+  parameters: ${{ parameters }}
