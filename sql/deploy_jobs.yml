@@ -38,7 +38,7 @@ jobs:
                   resourceGroup: ${{ parameters.resourceGroup }}
                   serverName: ${{ parameters.serverName }}
                   agentPublicIP: $(AgentPublicIP)
-                  connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix), parameters.system, parameters.env, parameters.suffix)) }}
+                  connectionString: ${{ coalesce(parameters.connectionString, format(coalesce(parameters.connectionStringFormat, 'Server=tcp:{0}.database.windows.net,1433;Initial Catalog={1};{2}Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'), parameters.serverName, format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, replace(replace(parameters.useToken, 'True', ''), 'False', 'Authentication=Active Directory Default;'), parameters.env, parameters.suffix), parameters.system, parameters.env, parameters.suffix)) }}
                   databaseName: ${{ format(coalesce(parameters.databaseFormat, '{1}'), parameters.system, database.name, parameters.env, parameters.suffix) }}
                   azureFirewallRule: '$(Build.DefinitionName)-$(Build.BuildNumber)'
                   env: ${{ parameters.env }}
