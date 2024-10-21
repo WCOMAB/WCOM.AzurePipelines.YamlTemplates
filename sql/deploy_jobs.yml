@@ -49,4 +49,4 @@ jobs:
                   artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
                   useFirewall: ${{ parameters.useFirewall }}
                   skipProfile: ${{ parameters.skipProfile }}
-
+                  useToken: ${{ parameters.useToken }}

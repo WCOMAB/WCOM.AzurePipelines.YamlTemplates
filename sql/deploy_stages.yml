@@ -37,4 +37,5 @@ stages:
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               useFirewall: ${{ coalesce(parameters.useFirewall, true) }}
               skipProfile: ${{ coalesce(parameters.skipProfile, false) }}
+              useToken: ${{ coalesce(parameters.useToken, false) }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
