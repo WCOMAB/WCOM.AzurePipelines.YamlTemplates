@@ -76,6 +76,9 @@ parameters:
 - name: dependsOn
   default: ''
   type: string
+- name: useToken
+  default: false
+  type: boolean
 
 
 stages:
