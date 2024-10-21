@@ -33,8 +33,6 @@ steps:
           echo "Use token"
         fi
 
-        echo "$cmd"
-
         # Execute the command
         eval $cmd
 
