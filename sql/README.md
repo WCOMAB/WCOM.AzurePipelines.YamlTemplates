@@ -28,6 +28,7 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
  useFirewall            | bool     | No          |          true                                                      | Should SQL deployment create a temporary firewall rule or not.
  skipProfile            | bool     | No          |          false                                                      | Should SQL deployment ignore/don't require a publish.xml file from the database project
+ useToken               | bool     | No          |          false                                                      | Use token to connect to SQL Server, especially usable when deploy host has Managed Identity activated.
 
 ## Pre-Build
 
@@ -200,6 +201,7 @@ stages:
     useFirewall: true/false
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     skipProfile: false/true
+    useToken: true/false
     environments:
       - env: dev
         name: Development
