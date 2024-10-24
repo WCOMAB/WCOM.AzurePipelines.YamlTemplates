@@ -9,41 +9,54 @@ steps:
       scriptLocation: inlineScript
       inlineScript:  |
         # Base command
-        cmd="./tools/sqlpackage"
+        cmd='./tools/sqlpackage'
 
         # Common parameters
-        cmd+=" /Action:Publish -p:ScriptDatabaseCompatibility=true /SourceFile:\"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac\" /TargetConnectionString:\"${{ parameters.connectionString }}\" /v:\"AzureDevOpsEnvironment=${{ parameters.env }}\" /v:\"AzureDevOpsEnvironmentName=$(Environment.Name)\" /v:\"AzureDevOpsBuildNumber=$(Build.BuildNumber)\" /v:\"AzureDevOpsRepositoryName=$(Build.Repository.Name)\" /v:\"AzureDevOpsSystem=${{ parameters.system }}\" /v:\"AzureDevOpsSuffix=${{ parameters.suffix }}\" ${{ parameters.deployParameters }}"
+        cmd+=' /Action:Publish'
+        cmd+=' -p:ScriptDatabaseCompatibility=true'
+        cmd+=' /SourceFile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.dacpac"'
+        cmd+=' /TargetConnectionString:"${{ parameters.connectionString }}"'
+        cmd+=' /v:"AzureDevOpsEnvironment=${{ parameters.env }}"'
+        cmd+=' /v:"AzureDevOpsEnvironmentName=$(Environment.Name)"'
+        cmd+=' /v:"AzureDevOpsBuildNumber=$(Build.BuildNumber)"'
+        cmd+=' /v:"AzureDevOpsRepositoryName=$(Build.Repository.Name)"'
+        cmd+=' /v:"AzureDevOpsSystem=${{ parameters.system }}"'
+        cmd+=' /v:"AzureDevOpsSuffix=${{ parameters.suffix }}"'
+        cmd+=' ${{ parameters.deployParameters }}'
 
         # Check if Firewall is used
-        if [ "${{ parameters.useFirewall }}" = "True" ]; then
+        if [ '${{ parameters.useFirewall }}' == 'True' ]; then
+          echo 'Creating firewall rule...'
           az sql server firewall-rule create -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}" --start-ip-address ${{ parameters.agentPublicIP }} --end-ip-address ${{ parameters.agentPublicIP }}
-          echo "Firewall rule created ${{ parameters.useFirewall }}"
+          echo "Firewall rule created ($?)."
         fi
 
         # Check Skip Profile
-        if [ "${{ parameters.skipProfile }}" = "False" ]; then
-          cmd+=" /Profile:\"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml\""
-          echo "Use profile"
+        if [ '${{ parameters.skipProfile }}' == 'False' ]; then
+          echo 'Use profile'
+          cmd+=' /Profile:"$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac/${{ parameters.databaseName }}.publish.xml"'
         fi
 
         # Check useToken
-        if [ "${{ parameters.useToken }}" = "True" ]; then
+        if [ '${{ parameters.useToken }}' == 'True' ]; then
+          echo 'Use token'
           token=$(az account get-access-token --resource https://database.windows.net/ --query accessToken --output tsv)
-          cmd+=" /at:$token"
-          echo "Use token"
+          echo "##vso[task.setsecret]$token"
+          cmd+=" /at:'$token'"
         fi
 
         # Execute the command
+        echo "Executing: $cmd"
         eval $cmd
 
         # Capture the exit code of eval
         result=$?
 
         # Remove Firewall rule if Firewall is in use
-        if [ "${{ parameters.useFirewall }}" = "True" ]; then
-          az sql server firewall-rule delete -g ${{ parameters.resourceGroup }} -s ${{ parameters.serverName }} -n "${{ parameters.azureFirewallRule}}"
-          echo "Firewall rule removed ${{ parameters.useFirewall }}"
+        if [ '${{ parameters.useFirewall }}' == 'True' ]; then
+          echo 'Removing firewall rule...'
+          az sql server firewall-rule delete -g '${{ parameters.resourceGroup }}' -s '${{ parameters.serverName }}' -n '${{ parameters.azureFirewallRule}}'
+          echo "Firewall rule removed ($?)."
         fi
 
         exit $result
-       
