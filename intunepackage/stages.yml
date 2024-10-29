@@ -1,3 +1,18 @@
+parameters:
+- name: artifactStorageName
+  type: string
+- name: appName
+  type: string
+- name: indexSASToken
+  type: string
+- name: shouldDeploy
+  default: false
+  type: boolean
+- name: azureSubscription
+  type: string
+- name: appId
+  type: string
+
 stages:
 - template: build_stages.yml
   parameters: ${{ parameters }}

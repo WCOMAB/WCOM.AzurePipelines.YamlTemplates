@@ -1,12 +1,3 @@
-parameters:
-- name: shouldDeploy
-  default: false
-  type: boolean
-- name: azureSubscription
-  type: string
-- name: appId
-  type: string
-
 stages:
 - stage:
   displayName: 'Upload and update Intune Package'
