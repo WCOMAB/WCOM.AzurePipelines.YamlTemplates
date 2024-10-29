@@ -7,7 +7,7 @@ parameters:
   type: string
 - name: shouldDeploy
   default: false
-  type: boolean
+  type: object
 - name: azureSubscription
   type: string
 - name: appId
