@@ -1,0 +1,35 @@
+stages:
+- stage:
+  displayName: 'Upload and update Intune Package'
+  condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+  jobs:
+  - job:
+    steps:
+      - task: DownloadBuildArtifacts@1
+        displayName: Download current artifact
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          downloadPath: '$(System.ArtifactsDirectory)'
+      - task: AzureCLI@2
+        displayName: Upload Intune package and update version
+        inputs:
+          azureSubscription: '${{ parameters.azureSubscription }}'
+          scriptType: 'pscore'
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          inlineScript: |
+            # Expand artifact
+            Expand-Archive -Path $(System.ArtifactsDirectory)\$(Build.DefinitionName)\$(Build.DefinitionName).zip -DestinationPath '$(Build.Repository.LocalPath)\IntunePackage\'
+            
+            # Install IntuneWin32App module
+            Install-Module -Name "IntuneWin32App" -AcceptLicense -force
+
+            # Connect to MSGraph
+            Connect-MSIntuneGraph -TenantId "$env:tenantId" -ClientID "$env:servicePrincipalId" -ClientSecret "$env:servicePrincipalKey"
+
+            # Upload new package
+            Update-IntuneWin32AppPackageFile -ID "${{ parameters.appId }}" -FilePath $(Build.Repository.LocalPath)\IntunePackage\$(Build.DefinitionName).intunewin
+
+            # Update version for package
+            Set-IntuneWin32App -ID "${{ parameters.appId }}" -AppVersion "$(Build.BuildNumber)"
