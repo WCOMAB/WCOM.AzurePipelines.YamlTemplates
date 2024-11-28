@@ -3,15 +3,15 @@ parameters:
   type: string
 - name: appName
   type: string
+- name: tenants
+  type: object
 - name: indexSASToken
+  type: string
+- name: build
   type: string
 - name: shouldDeploy
   default: false
   type: object
-- name: azureSubscription
-  type: string
-- name: appId
-  type: string
 
 stages:
 - template: build_stages.yml

@@ -1,5 +1,5 @@
 stages:
-- stage:
+- stage: 'Build'
   displayName: 'Download and create IntuneWinPackage'
   jobs:
   - job:
