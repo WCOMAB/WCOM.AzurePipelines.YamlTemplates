@@ -14,26 +14,40 @@ Azure DevOps Pipelines YAML template used to build IntunePackage.
 ## Examples
 
 ```yaml
-name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
-
-trigger:
-- main
-
-pool:
-  vmImage: windows-latest
-
-resources:
-  repositories:
-    - repository: templates
-      type: github
-      endpoint: GitHubPublic
-      name: WCOMAB/WCOM.AzurePipelines.YamlTemplates
-      ref: refs/heads/main
-
+# Publish Intune Package to Wcom
 stages:
-  - template: intunepackage/stages.yml@templates
+  - template: intunetemplate/stages.yml
     parameters:
-      artifactStorageName: 'mystorageaccount'
-      appName: 'myappname'
+      artifactStorageName: 'storageName'
+      appName: 'MyApp'
       indexSASToken: '$(indexSASToken)'
+      build: dev
+      tenants:
+        - name: 'Tenant1'
+          azureSubscription: 'azdo-tenant1-intunedeploy'
+          environments:
+            - name: dev
+              apps:
+                - name: c
+                  id: 'IntuneAppId'
+            - name: stg
+              deployAfter:
+                - dev
+              apps:
+                - name: 'MyApp-stg'
+                  id: 'IntuneAppId'
+        - name: 'Tenant2'
+          azureSubscription: 'azdo-tenant2-intunedeploy'
+          environments:
+            - name: dev
+              apps:
+                - name: 'MyApp-dev'
+                  id: 'IntuneAppId'
+            - name: stg
+              deployAfter:
+                - dev
+              apps:
+                - name: 'MyApp-stg'
+                  id: 'IntuneAppId'
+      shouldDeploy: eq(variables['Build.SourceBranch'], variables['deploy_branch'])
 ```

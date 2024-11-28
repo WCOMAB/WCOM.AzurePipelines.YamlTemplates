@@ -1,0 +1,57 @@
+stages:
+- ${{ each tenant in parameters.tenants }}:
+  - ${{ each environment in tenant.environments }}:
+    - stage: ${{ format('Deploy_{0}_{1}', tenant.name, environment.name) }}
+      displayName: 'Process ${{ tenant.name }} ${{ environment.name }}'
+      condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+      dependsOn:
+        - ${{ each env in tenant.environments }}:
+          - ${{ if eq(env.name, parameters.build) }}:
+            - ${{ format('Build', env.name) }}
+        - ${{ each after in environment.deployAfter }}:
+          - ${{ format('Deploy_{0}_{1}', tenant.name, after) }}
+        - ${{ each depends in environment.dependsOn }}:
+          - ${{ depends }}
+      jobs:
+      - job:
+        steps:
+          - task: DownloadBuildArtifacts@1
+            displayName: Download current artifact
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              downloadPath: '$(System.ArtifactsDirectory)'
+          - task: AzureCLI@2
+            displayName: Update ${{ parameters.appName }} for ${{ tenant.name }}
+            inputs:
+              azureSubscription: '${{ tenant.azureSubscription }}'
+              scriptType: 'pscore'
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              inlineScript: | 
+                # Expand artifact
+                Expand-Archive -Path $(System.ArtifactsDirectory)\$(Build.DefinitionName)\$(Build.DefinitionName).zip -DestinationPath '$(Build.Repository.LocalPath)\IntunePackage\'
+                
+                # Install IntuneWin32App module
+                Install-Module -Name "IntuneWin32App" -AcceptLicense -force
+
+                # Connect to MSGraph
+                Connect-MSIntuneGraph -TenantId "$env:tenantId" -ClientID "$env:servicePrincipalId" -ClientSecret "$env:servicePrincipalKey"
+
+                # Convert apps array to JSON string
+                $appsJson = '${{ convertToJson(environment.apps) }}'
+                $apps = ConvertFrom-Json -InputObject $appsJson
+
+                # Loop through each apps and upload the package
+                foreach ($app in $apps) {
+                    $appId = $app.Id
+                    $appName = $app.Name
+
+                    # Upload new package
+                    Write-Host "Uploading package for App: $appName (ID: $appId)"
+                    Update-IntuneWin32AppPackageFile -ID $appId -FilePath "$(Build.Repository.LocalPath)\IntunePackage\$(Build.DefinitionName).intunewin"
+
+                    # Update version for package
+                    Write-Host "Updating version for App: $appName (ID: $appId)"
+                    Set-IntuneWin32App -ID $appId  -AppVersion "$(Build.BuildNumber)"
+                }

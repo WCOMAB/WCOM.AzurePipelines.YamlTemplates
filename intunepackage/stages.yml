@@ -1,3 +1,21 @@
+parameters:
+- name: artifactStorageName
+  type: string
+- name: appName
+  type: string
+- name: tenants
+  type: object
+- name: indexSASToken
+  type: string
+- name: build
+  type: string
+- name: shouldDeploy
+  default: false
+  type: object
+
 stages:
 - template: build_stages.yml
+  parameters: ${{ parameters }}
+
+- template: publish_stages.yml
   parameters: ${{ parameters }}
