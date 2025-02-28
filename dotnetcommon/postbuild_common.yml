@@ -1,0 +1,28 @@
+steps:
+- ${{ if in(parameters.postBuildScript.scriptType, 'pscore', 'bash') }}:
+  - ${{ if eq(parameters.postBuildScript.scriptType, 'pscore') }}:
+    - task: Powershell@2
+      displayName: Post-Build Powershell Script
+      inputs:
+        targetType: ${{ parameters.postBuildScript.targetType }}
+        filePath: ${{ parameters.postBuildScript.filePath }}
+        script: ${{ parameters.postBuildScript.script }}
+        arguments: ${{ parameters.postBuildScript.arguments }}
+        failOnStderr: ${{ parameters.postBuildScript.failOnStderr }}
+        showWarnings: ${{ parameters.postBuildScript.showWarnings }}
+        pwsh: ${{ parameters.postBuildScript.pwsh }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  - ${{ if eq(parameters.postBuildScript.scriptType, 'bash') }}:
+    - task: Bash@3
+      displayName: Post-Build Bash Script
+      inputs:
+        targetType: ${{ parameters.postBuildScript.targetType }}
+        filePath: ${{ parameters.postBuildScript.filePath }}
+        script: ${{ parameters.postBuildScript.script }}
+        arguments: ${{ parameters.postBuildScript.arguments }}
+        failOnStderr: ${{ parameters.postBuildScript.failOnStderr }}
+        workingDirectory: ${{ parameters.postBuildScript.workingDirectory }}
+        bashEnvValue: ${{ parameters.postBuildScript.bashEnvValue }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken) 
