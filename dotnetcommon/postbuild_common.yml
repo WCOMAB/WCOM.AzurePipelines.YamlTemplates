@@ -13,6 +13,8 @@ steps:
         pwsh: ${{ parameters.postBuildScript.pwsh }}
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ each var in parameters.postBuildScript.env }}:
+          ${{ var.key }}: ${{ var.value }}
   - ${{ if eq(parameters.postBuildScript.scriptType, 'bash') }}:
     - task: Bash@3
       displayName: Post-Build Bash Script
@@ -25,4 +27,6 @@ steps:
         workingDirectory: ${{ parameters.postBuildScript.workingDirectory }}
         bashEnvValue: ${{ parameters.postBuildScript.bashEnvValue }}
       env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken) 
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ each var in parameters.postBuildScript.env }}:
+          ${{ var.key }}: ${{ var.value }}
