@@ -4,22 +4,23 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 
 ## Parameters
 
- **Parameter**   | **Type** | **Required** | **Default value** | **Description**
------------------|----------|--------------|-------------------|-------------------------------------------
- sources         | object   | Yes          |                   | NuGet feeds to authenticate against and optionally push to.
- buildParameters | object   | No           |                   | Build Parameters.
- toolCommandName | string   | No           |                   | Tool command name.
- publish         | bool     | No           |                   | Allow publish to Feed.
- skipTests       | bool     | No           |                   | Allow tests to be skipped.
- build           | string   | Yes          |                   | The environment to build.
- onlyPublish     | bool     | No           | true              | Allow update to source feed.
- projectSrc      | string   | No           | src               | Source folder to build, pack and publish.
- preBuildScript  | object   | No           |                   | Object containing pre-build parameters.
- useDotNetSDK    | object   | No           |                   | Object containing parameters for specified dotnet SDK.
- environments    | array    | Yes          |                   | Array of environments and environment specific parameters
- artifactNamePrefix     | string   | No    |                   | Prefix for artifacts created by this pipeline.
- dpi             | object   | No           |                   | Settings relating to Dependency reports using DPI tool
- toolRestore     | bool     | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
+ **Parameter**       | **Type**  | **Required** | **Default value** | **Description**
+---------------------|-----------|--------------|-------------------|-------------------------------------------
+ sources             | object    | Yes          |                   | NuGet feeds to authenticate against and optionally push to.
+ buildParameters     | object    | No           |                   | Build Parameters.
+ toolCommandName     | string    | No           |                   | Tool command name.
+ publish             | bool      | No           |                   | Allow publish to Feed.
+ skipTests           | bool      | No           |                   | Allow tests to be skipped.
+ build               | string    | Yes          |                   | The environment to build.
+ onlyPublish         | bool      | No           | true              | Allow update to source feed.
+ projectSrc          | string    | No           | src               | Source folder to build, pack and publish.
+ preBuildScript      | object    | No           |                   | Object containing pre-build parameters.
+ postBuildScript     | object    | No           |                   | Object containing post-build parameters.
+ useDotNetSDK        | object    | No           |                   | Object containing parameters for specified dotnet SDK.
+ environments        | array     | Yes          |                   | Array of environments and environment specific parameters
+ artifactNamePrefix  | string    | No           |                   | Prefix for artifacts created by this pipeline.
+ dpi                 | object    | No           |                   | Settings relating to Dependency reports using DPI tool
+ toolRestore         | bool      | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
 
 
 ## Pre-Build
@@ -36,6 +37,25 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  workingDirectory | string   | No           |                   | The working directory where the script is run.
  bashEnvValue     | string   | No           |                   | Value for BASH_ENV environment variable.
  pwsh             | bool     | No           | false             | Use PowerShell Core.
+
+## Post-Build
+
+ **Parameters**   | **Type** | **Required** | **Default value** | **Description**
+------------------|----------|--------------|-------------------|----------------------------------
+ scriptType       | string   | No           |                   | The type of script. pscore or bash.
+ targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
+ filePath         | string   | No           |                   | The path of the script.
+ script           | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
+ arguments        | string   | No           |                   | Specifies the arguments passed to the script.
+ failOnStderr     | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
+ showWarnings     | bool     | No           | false             | Show warnings in pipeline logs.
+ workingDirectory | string   | No           |                   | The working directory where the script is run.
+ bashEnvValue     | string   | No           |                   | Value for BASH_ENV environment variable.
+ pwsh             | bool     | No           | false             | Use PowerShell Core.
+ displayName      | string   | No           |                   | Custom display name for the task. If not specified, a default name will be generated.
+ azureSubscription| string   | No           |                   | Azure Resource Manager subscription for Azure CLI execution. If specified, script runs using Azure CLI task.
+ env              | object   | No           |                   | Dictionary of environment variables to pass to the script.
+
 
 ## Use DotNet SDK
 
@@ -60,11 +80,11 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 
 ## dpi
 
- **Parameters** | **Type** | **Required** | **Default value** | **Description**
-----------------|----------|--------------|-------------------|------------------
- report           | bool   | no        | false                   | Boolean to create report or not.
- WorkspaceId          | string (secret)   | Yes           |                   | The Id of the log analytic workspace the reports gets sent to.
- SharedKey        | string (secret)   | Yes           |                   | Shared/Primary Key to the workspace you want to send the reports to
+ **Parameters**   | **Type**          | **Required** | **Default value** | **Description**
+------------------|-------------------|--------------|-------------------|------------------
+ report           | bool              | No           | false            | Boolean to create report or not.
+ WorkspaceId      | string (secret)   | Yes          |                  | The Id of the log analytic workspace the reports gets sent to.
+ SharedKey        | string (secret)   | Yes          |                  | Shared/Primary Key to the workspace you want to send the reports to.
 
 ## Per environment
 
@@ -72,21 +92,6 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 ----------------|----------|--------------|-------------------|---------------------------------------------
  env            | array    | Yes          |                   | The target environment.
  name           | string   | Yes          |                   | The target environment name.
-
-## Post-Build
-
- **Parameters**   | **Type** | **Required** | **Default value** | **Description**
-------------------|----------|--------------|-------------------|----------------------------------
- scriptType       | string   | No           |                   | The type of script. pscore or bash.
- targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
- filePath         | string   | No           |                   | The path of the script.
- script           | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
- arguments        | string   | No           |                   | Specifies the arguments passed to the script.
- failOnStderr     | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
- showWarnings     | bool     | No           | false             | Show warnings in pipeline logs.
- workingDirectory | string   | No           |                   | The working directory where the script is run.
- bashEnvValue     | string   | No           |                   | Value for BASH_ENV environment variable.
- pwsh             | bool     | No           | false             | Use PowerShell Core.
 
 ## Examples
 
@@ -185,6 +190,22 @@ stages:
       pwsh: true/false
       workingDirectory: workingDirectory
       bashEnvValue: bashEnvValue
+    postBuildScript:
+      scriptType: pscore
+      targetType: filePath
+      filePath: scripts/post-build.ps1
+      script: |
+        Write-Host "Post-build script"
+      arguments: -Environment Production
+      failOnStderr: true
+      showWarnings: true
+      pwsh: true
+      workingDirectory: $(Build.SourcesDirectory)
+      displayName: Custom Post-Build Step
+      azureSubscription: My-Azure-Connection
+      env:
+        KEY1: value1
+        KEY2: $(Pipeline.Variable)
     dpi:
       report: true/false
       WorkspaceId: <secret string>
