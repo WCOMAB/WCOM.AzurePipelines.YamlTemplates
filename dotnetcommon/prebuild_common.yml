@@ -1,28 +1,8 @@
+parameters:
+  preBuildScript: {}
+
 steps:
-- ${{ if in(parameters.preBuildScript.scriptType, 'pscore', 'bash') }}:
-  - ${{ if eq(parameters.preBuildScript.scriptType, 'pscore') }}:
-    - task: Powershell@2
-      displayName: Pre-Build Powershell Script
-      inputs:
-        targetType: ${{ parameters.preBuildScript.targetType }}
-        filePath: ${{ parameters.preBuildScript.filePath }}
-        script: ${{ parameters.preBuildScript.script }}
-        arguments: ${{ parameters.preBuildScript.arguments }}
-        failOnStderr: ${{ parameters.preBuildScript.failOnStderr }}
-        showWarnings: ${{ parameters.preBuildScript.showWarnings }}
-        pwsh: ${{ parameters.preBuildScript.pwsh }}
-      env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-  - ${{ if eq(parameters.preBuildScript.scriptType, 'bash') }}:
-    - task: Bash@3
-      displayName: Pre-Build Bash Script
-      inputs:
-        targetType: ${{ parameters.preBuildScript.targetType }}
-        filePath: ${{ parameters.preBuildScript.filePath }}
-        script: ${{ parameters.preBuildScript.script }}
-        arguments: ${{ parameters.preBuildScript.arguments }}
-        failOnStderr: ${{ parameters.preBuildScript.failOnStderr }}
-        workingDirectory: ${{ parameters.preBuildScript.workingDirectory }}
-        bashEnvValue: ${{ parameters.preBuildScript.bashEnvValue }}
-      env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+- template: build_script.yml
+  parameters:
+    script: ${{ parameters.preBuildScript }}
+    prefix: 'Pre-Build'
