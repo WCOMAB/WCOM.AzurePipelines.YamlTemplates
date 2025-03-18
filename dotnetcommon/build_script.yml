@@ -1,0 +1,55 @@
+parameters:
+  script: {}
+  prefix: ''  # This will be either 'Pre-Build' or 'Post-Build'
+
+steps:
+- ${{ if in(parameters.script.scriptType, 'pscore', 'bash') }}:
+  - ${{ if parameters.script.azureSubscription }}:
+    - task: AzureCLI@2
+      displayName: ${{ coalesce(parameters.script.displayName, format('{0} Azure {1} {2} script', parameters.prefix, parameters.script.scriptType, parameters.script.targetType)) }}
+      inputs:
+        azureSubscription: ${{ parameters.script.azureSubscription }}
+        scriptType: ${{ parameters.script.scriptType }}
+        scriptLocation: ${{ replace(replace(parameters.script.targetType, 'filePath', 'scriptPath'), 'inline', 'inlineScript') }}
+        scriptPath: ${{ parameters.script.filePath }}
+        inlineScript: ${{ parameters.script.script }}
+        arguments: ${{ parameters.script.arguments }}
+        failOnStandardError: ${{ parameters.script.failOnStderr }}
+        workingDirectory: ${{ parameters.script.workingDirectory }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ each var in parameters.script.env }}:
+          ${{ var.key }}: ${{ var.value }}
+
+  - ${{ else }}:
+    - ${{ if eq(parameters.script.scriptType, 'pscore') }}:
+      - task: Powershell@2
+        displayName: ${{ coalesce(parameters.script.displayName, format('{0} PowerShell {1} script', parameters.prefix, parameters.script.targetType)) }}
+        inputs:
+          targetType: ${{ parameters.script.targetType }}
+          filePath: ${{ parameters.script.filePath }}
+          script: ${{ parameters.script.script }}
+          arguments: ${{ parameters.script.arguments }}
+          failOnStderr: ${{ parameters.script.failOnStderr }}
+          showWarnings: ${{ parameters.script.showWarnings }}
+          pwsh: ${{ parameters.script.pwsh }}
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ each var in parameters.script.env }}:
+            ${{ var.key }}: ${{ var.value }}
+
+    - ${{ if eq(parameters.script.scriptType, 'bash') }}:
+      - task: Bash@3
+        displayName: ${{ coalesce(parameters.script.displayName, format('{0} Bash {1} script', parameters.prefix, parameters.script.targetType)) }}
+        inputs:
+          targetType: ${{ parameters.script.targetType }}
+          filePath: ${{ parameters.script.filePath }}
+          script: ${{ parameters.script.script }}
+          arguments: ${{ parameters.script.arguments }}
+          failOnStderr: ${{ parameters.script.failOnStderr }}
+          workingDirectory: ${{ parameters.script.workingDirectory }}
+          bashEnvValue: ${{ parameters.script.bashEnvValue }}
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ each var in parameters.script.env }}:
+            ${{ var.key }}: ${{ var.value }} 
