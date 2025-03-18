@@ -1,51 +1,8 @@
+parameters:
+  postBuildScript: {}
+
 steps:
-- ${{ if in(parameters.postBuildScript.scriptType, 'pscore', 'bash') }}:
-  - ${{ if parameters.postBuildScript.azureSubscription }}:
-    - task: AzureCLI@2
-      displayName: ${{ coalesce(parameters.postBuildScript.displayName, format('Post-Build Azure {0} {1} script', parameters.postBuildScript.scriptType, parameters.postBuildScript.targetType)) }}
-      inputs:
-        azureSubscription: ${{ parameters.postBuildScript.azureSubscription }}
-        scriptType: ${{ parameters.postBuildScript.scriptType }}
-        scriptLocation: ${{ replace(replace(parameters.postBuildScript.targetType, 'filePath', 'scriptPath'), 'inline', 'inlineScript') }}
-        scriptPath: ${{ parameters.postBuildScript.filePath }}
-        inlineScript: ${{ parameters.postBuildScript.script }}
-        arguments: ${{ parameters.postBuildScript.arguments }}
-        failOnStandardError: ${{ parameters.postBuildScript.failOnStderr }}
-        workingDirectory: ${{ parameters.postBuildScript.workingDirectory }}
-      env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-        ${{ each var in parameters.postBuildScript.env }}:
-          ${{ var.key }}: ${{ var.value }}
-
-  - ${{ else }}:
-    - ${{ if eq(parameters.postBuildScript.scriptType, 'pscore') }}:
-      - task: Powershell@2
-        displayName: ${{ coalesce(parameters.postBuildScript.displayName, format('Post-Build PowerShell {0} script', parameters.postBuildScript.targetType)) }}
-        inputs:
-          targetType: ${{ parameters.postBuildScript.targetType }}
-          filePath: ${{ parameters.postBuildScript.filePath }}
-          script: ${{ parameters.postBuildScript.script }}
-          arguments: ${{ parameters.postBuildScript.arguments }}
-          failOnStderr: ${{ parameters.postBuildScript.failOnStderr }}
-          showWarnings: ${{ parameters.postBuildScript.showWarnings }}
-          pwsh: ${{ parameters.postBuildScript.pwsh }}
-        env:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-          ${{ each var in parameters.postBuildScript.env }}:
-            ${{ var.key }}: ${{ var.value }}
-
-    - ${{ if eq(parameters.postBuildScript.scriptType, 'bash') }}:
-      - task: Bash@3
-        displayName: ${{ coalesce(parameters.postBuildScript.displayName, format('Post-Build Bash {0} script', parameters.postBuildScript.targetType)) }}
-        inputs:
-          targetType: ${{ parameters.postBuildScript.targetType }}
-          filePath: ${{ parameters.postBuildScript.filePath }}
-          script: ${{ parameters.postBuildScript.script }}
-          arguments: ${{ parameters.postBuildScript.arguments }}
-          failOnStderr: ${{ parameters.postBuildScript.failOnStderr }}
-          workingDirectory: ${{ parameters.postBuildScript.workingDirectory }}
-          bashEnvValue: ${{ parameters.postBuildScript.bashEnvValue }}
-        env:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-          ${{ each var in parameters.postBuildScript.env }}:
-            ${{ var.key }}: ${{ var.value }}
+- template: build_script.yml
+  parameters:
+    script: ${{ parameters.postBuildScript }}
+    prefix: 'Post-Build'
