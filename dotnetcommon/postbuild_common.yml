@@ -1,0 +1,8 @@
+parameters:
+  postBuildScript: {}
+
+steps:
+- template: build_script.yml
+  parameters:
+    script: ${{ parameters.postBuildScript }}
+    prefix: 'Post-Build'

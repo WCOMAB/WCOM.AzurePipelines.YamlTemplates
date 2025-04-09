@@ -35,6 +35,10 @@ jobs:
     - script: dotnet pack ${{ parameters.projectSrc }} --no-build --no-restore --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Package'
 
+    - template: ../dotnetcommon/postbuild_common.yml
+      parameters:
+        postBuildScript: ${{ parameters.postBuildScript }}
+
     - task: PublishPipelineArtifact@1
       displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact'
       inputs:
