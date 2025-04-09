@@ -1,5 +1,5 @@
 stages:
-- template: publish_stages.yml
+- template: build_stages.yml
   parameters: ${{ parameters }}
   
 - template: deploy_stages.yml

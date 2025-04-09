@@ -5,7 +5,7 @@ stages:
         displayName: ${{ format('Build {0}', environment.name) }}
         dependsOn: ${{ parameters.dependsOn }}
         jobs:
-          - template: publish_jobs.yml
+          - template: build_jobs.yml
             parameters:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
