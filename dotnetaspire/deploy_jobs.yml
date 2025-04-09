@@ -1,0 +1,49 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', parameters.environment.name) }}
+    displayName: ${{ parameters.environment.name}} Deploy
+    environment: ${{ coalesce(parameters.environment.devOpsName, parameters.environment.name) }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - template: ../dotnetcommon/dotnet_sdk.yml
+            parameters:
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              
+          - template: ../dotnetcommon/dotnet_auth.yml
+            parameters:
+              sources: ${{ parameters.sources }}
+          
+          # azd delegate auth to az to use service connection with AzureCLI@2
+          - pwsh: |
+              azd config set auth.useAzCliAuth "true"
+            displayName: Configure AZD to Use AZ CLI Authentication.
+
+          - task: AzureCLI@2
+            displayName: Provision ${{ parameters.environment.name }} Infrastructure
+            inputs:
+              azureSubscription: ${{ parameters.azureSubscription }}
+              scriptType: bash
+              scriptLocation: inlineScript
+              workingDirectory: $(Build.SourcesDirectory)
+              inlineScript: |
+                azd provision -e ${{ parameters.environment.env }} --no-prompt
+            env:
+              ${{ each envVar in parameters.environment.environmentVariables }}:
+                ${{ envVar.key }}: ${{ envVar.value }}
+
+          - task: AzureCLI@2
+            displayName: Deploy ${{ parameters.environment.name }} Application
+            inputs:
+              azureSubscription: ${{ parameters.azureSubscription }}
+              scriptType: bash
+              scriptLocation: inlineScript
+              workingDirectory: $(Build.SourcesDirectory)
+              inlineScript: |
+                azd deploy -e ${{ parameters.environment.env }} --no-prompt
+            env:
+              ${{ each envVar in parameters.environment.environmentVariables }}:
+                ${{ envVar.key }}: ${{ envVar.value }}

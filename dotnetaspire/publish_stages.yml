@@ -1,0 +1,15 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.name, parameters.build) }}:
+      - stage: ${{ format('Build_{0}', environment.name) }}
+        displayName: ${{ format('Build {0}', environment.name) }}
+        dependsOn: ${{ parameters.dependsOn }}
+        jobs:
+          - template: publish_jobs.yml
+            parameters:
+              name: ${{ environment.name }}
+              sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
+              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
+              azureSubscription: ${{ format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              environment: ${{ environment }}
