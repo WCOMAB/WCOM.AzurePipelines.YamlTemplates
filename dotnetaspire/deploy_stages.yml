@@ -1,0 +1,26 @@
+stages:
+  - ${{ each environment in parameters.environments }}:
+    - ${{ if eq(environment.deploy, true) }}:
+      - stage: ${{ format('Deploy_{0}', environment.name) }}
+        condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+        dependsOn:
+          - ${{ each env in parameters.environments }}:
+              - ${{ if eq(env.name, parameters.build) }}:
+                - ${{ format('Build_{0}', env.name) }}
+          - ${{ each after in environment.deployAfter }}:
+            - ${{ format('Deploy_{0}', after) }}
+          - ${{ each depends in environment.dependsOn }}:
+            - ${{ depends }}
+        displayName: ${{ format('Deploy to {0}', environment.name) }}
+        jobs:
+          - template: deploy_jobs.yml
+            parameters:
+              environment: ${{ environment }}
+              build: ${{ parameters.build }}
+              shouldDeploy: ${{ parameters.shouldDeploy }}
+              environments: ${{ parameters.environments }}
+              deployAfter: ${{ environment.deployAfter }}
+              dependsOn: ${{ environment.dependsOn }}
+              sources: ${{ parameters.sources }}
+              useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              azureSubscription: ${{ format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}

@@ -1,0 +1,31 @@
+jobs:
+- job: Publish
+  displayName: ${{ format('{0} Build', parameters.name) }}
+  steps:
+  - template: ../dotnetcommon/dotnet_sdk.yml
+    parameters:
+      useDotNetSDK: ${{ parameters.useDotNetSDK }}
+
+  - template: ../dotnetcommon/dotnet_auth.yml
+    parameters:
+      sources: ${{ parameters.sources }}
+  
+  # azd delegate auth to az to use service connection with AzureCLI@2
+  - pwsh: |
+      azd config set auth.useAzCliAuth "true"
+    displayName: Configure AZD to Use AZ CLI Authentication.
+
+  - task: AzureCLI@2
+    displayName: Package Aspire Project Environment ${{ parameters.name }}
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      workingDirectory: $(Build.SourcesDirectory)
+      inlineScript: |
+        azd restore --all --no-prompt
+        azd provision -e ${{ parameters.name }} --preview --no-prompt
+    env:
+      ${{ if parameters.environment.environmentVariables }}:
+        ${{ each envVar in parameters.environment.environmentVariables }}:
+          ${{ envVar.key }}: ${{ envVar.value }}
