@@ -1,0 +1,20 @@
+stages:
+  - ${{ if eq(coalesce(parameters.container.deploy, gt(length(coalesce(parameters.container.csproj, '')), 0)), true) }}:
+    - ${{ each server in parameters.container.servers }}:
+      - stage: ${{ format('Deploy_{0}', replace(replace(replace(server.name, ' ', '_'), '-', '_'), '.', '_')) }}
+        displayName: ${{ format('Deploy to {0}', server.name) }}
+        condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+        dependsOn:
+          - ${{ format('Build_{0}', parameters.build) }}
+        jobs:
+          - template: deploy_jobs.yml
+            parameters:
+              name: ${{ server.name }}
+              repository: ${{ parameters.container.repository }}
+              artifact: ${{ coalesce(parameters.container.artifact, parameters.container.repository )}}
+              tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
+              latest: ${{ eq(coalesce(coalesce(server.latest, parameters.container.latest), true), true) }}
+              registry: ${{ coalesce(server.registry, parameters.container.repository) }}
+              username: ${{ server.username }}
+              password: ${{ server.password }}
+              environment: ${{ coalesce(server.environment, parameters.build) }}

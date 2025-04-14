@@ -40,6 +40,13 @@ jobs:
       archiveFile: "$(build.artifactstagingdirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)-$(Build.BuildNumber).zip"
       replaceExistingArchive: true
 
+  - template: ../dotnetcommon/postbuild_common.yml
+    parameters:
+      postBuildScript: ${{ parameters.postBuildScript }}
+
   - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)-$(Build.BuildNumber).zip"
     displayName: 'Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Zip Artifact'
     artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
+
+  - template: ../container/build_steps.yml
+    parameters: ${{ parameters }}

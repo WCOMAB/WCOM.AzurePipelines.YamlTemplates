@@ -1,0 +1,18 @@
+steps:
+  - bash: |
+        dotnet publish '${{ parameters.csproj }}' \
+            --os linux \
+            --arch x64 \
+            -p:Version=$(Build.BuildNumber) \
+            -t:PublishContainer \
+            -p ContainerBaseImage='${{ parameters.baseimage }}' \
+            -p ContainerPort='${{ parameters.port }}' \
+            -p ContainerRepository='${{ parameters.repository }}' \
+            -p ContainerImageTag='${{ parameters.tag }}' \
+            -p ContainerArchiveOutputPath='$(build.artifactstagingdirectory)/${{ parameters.artifact }}.tar.gz'
+    displayName: 'Build ${{ parameters.artifact }} Image'
+    workingDirectory: '$(Build.Repository.LocalPath)'
+
+  - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifact }}.tar.gz"
+    displayName: 'Publish ${{ parameters.artifact }} Image'
+    artifact: ${{ parameters.artifact }}
