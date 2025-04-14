@@ -9,7 +9,7 @@ stages:
             parameters:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
-              artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
               azureSubscription: ${{ format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               environment: ${{ environment }}
+              workingDirectory: ${{ parameters.workingDirectory }}

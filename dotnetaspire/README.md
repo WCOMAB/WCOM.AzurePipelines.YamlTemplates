@@ -12,7 +12,6 @@ Azure DevOps Pipelines YAML template used to build, provision, and deploy .NET A
  build                   | string   | Yes          |                                                                | The environment to build.
  azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.
  azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.
- artifactNamePrefix      | string   | No           |                                                                | Prefix for artifacts created by this pipeline.
  useDotNetSDK            | object   | No           |                                                                | Object containing parameters for specified dotnet SDK.
  shouldDeploy            | boolean  | No           | true                                                           | Conditional flag to control whether deployment should occur.
  sources                 | object   | No           |                                                                | NuGet feeds to authenticate against.
@@ -90,10 +89,10 @@ stages:
   parameters:
     system: myapp
     devopsOrg: myorg
-    artifactNamePrefix: 'myapp'
     build: test
     azureSubscriptionFormat: 'azure-devops-deployment-myapp-{2}'
     shouldDeploy: eq(variables['Build.SourceBranch'], variables['deploy_branch'])
+    workingDirectory: $(Build.SourcesDirectory)
     sources:
       - name: NuGetFeed
     environments:
