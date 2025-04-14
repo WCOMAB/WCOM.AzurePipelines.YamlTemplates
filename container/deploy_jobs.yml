@@ -1,0 +1,24 @@
+jobs:
+  - deployment: ${{ format('{0}_Deploy', replace(replace(replace(parameters.name, ' ', '_'), '-', '_'), '.', '_')) }}
+    displayName: ${{ parameters.name}} Deploy
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: ${{ parameters.artifact }}
+              displayName: Download ${{ parameters.artifact }} artifact
+
+            - script: |
+                crane auth login ${{ parameters.name }} -u ${{ parameters.username }} -p ${{ parameters.password }}
+              displayName: Login to registry
+
+            - script: |
+                crane push "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz" "${{ parameters.name }}/${{ parameters.registry }}:${{ parameters.tag }}"
+              displayName: Push ${{ parameters.repository }}:${{ parameters.tag }} to registry
+
+            - ${{ if eq(parameters.latest, true) }}:
+              - script: |
+                  crane push "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz" "${{ parameters.name }}/${{ parameters.registry }}:latest"
+                displayName: Push ${{ parameters.repository }}:latest to registry
