@@ -21,7 +21,7 @@ jobs:
       azureSubscription: ${{ parameters.azureSubscription }}
       scriptType: bash
       scriptLocation: inlineScript
-      workingDirectory: ${{ parameters.workingDirectory }}
+      workingDirectory: ${{ parameters.projectSrc }}
       inlineScript: |
         azd restore --all --no-prompt
         azd provision -e ${{ parameters.name }} --preview --no-prompt

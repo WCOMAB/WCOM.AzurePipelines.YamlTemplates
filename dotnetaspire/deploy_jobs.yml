@@ -28,7 +28,7 @@ jobs:
               azureSubscription: ${{ parameters.azureSubscription }}
               scriptType: bash
               scriptLocation: inlineScript
-              workingDirectory: ${{ parameters.workingDirectory }}
+              workingDirectory: ${{ parameters.projectSrc }}
               inlineScript: |
                 azd provision -e ${{ parameters.environment.env }} --no-prompt
             env:
@@ -41,7 +41,7 @@ jobs:
               azureSubscription: ${{ parameters.azureSubscription }}
               scriptType: bash
               scriptLocation: inlineScript
-              workingDirectory: ${{ parameters.workingDirectory }}
+              workingDirectory: ${{ parameters.projectSrc }}
               inlineScript: |
                 azd deploy -e ${{ parameters.environment.env }} --no-prompt
             env:
