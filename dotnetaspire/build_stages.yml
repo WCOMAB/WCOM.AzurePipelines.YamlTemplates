@@ -12,4 +12,4 @@ stages:
               azureSubscription: ${{ format(coalesce(parameters.azureSubscriptionFormat, 'azdo-{0}-{1}-{2}-{3}'), parameters.devopsOrg, parameters.system, environment.env, parameters.suffix) }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               environment: ${{ environment }}
-              projectSrc: ${{ parameters.projectSrc }}
+              projectSrc: ${{ coalesce(parameters.projectSrc, '$(Build.SourcesDirectory)') }}
