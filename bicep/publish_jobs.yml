@@ -25,6 +25,7 @@ jobs:
           az bicep upgrade
           az version
           az bicep version
+          az bicep publish --help
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
           [string] $Path = '$(Pipeline.Workspace)/modules'
