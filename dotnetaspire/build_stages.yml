@@ -13,3 +13,4 @@ stages:
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               environment: ${{ environment }}
               projectSrc: ${{ coalesce(parameters.projectSrc, '$(Build.SourcesDirectory)') }}
+              installAzd: ${{ coalesce(parameters.installAzd, false) }}

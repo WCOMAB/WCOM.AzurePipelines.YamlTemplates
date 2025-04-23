@@ -10,6 +10,15 @@ jobs:
     parameters:
       sources: ${{ parameters.sources }}
   
+  # Install azd
+  - ${{ if eq(parameters.installAzd, true) }}:
+    - task: Bash@3
+      displayName: Install azd
+      inputs:
+        targetType: 'inline'
+        script: |
+          curl -fsSL https://aka.ms/install-azd.sh | bash
+
   # azd delegate auth to az to use service connection with AzureCLI@2
   - pwsh: |
       azd config set auth.useAzCliAuth "true"
