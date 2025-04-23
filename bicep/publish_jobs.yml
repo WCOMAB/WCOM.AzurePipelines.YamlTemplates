@@ -25,7 +25,6 @@ jobs:
           az bicep upgrade
           az version
           az bicep version
-          az bicep publish --help
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
           [string] $Path = '$(Pipeline.Workspace)/modules'
@@ -34,27 +33,64 @@ jobs:
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
           Push-Location
           Set-Location $Path
-          Write-Host "Publishing modules..."
-          Get-ChildItem -Path $Path -Recurse -Include *.bicep | `
-              ForEach-Object -Parallel {
-                  [string] $moduleBaseName = [string]::Concat(
-                                                [system.IO.Path]::GetDirectoryName((Resolve-Path -Relative $_.FullName)),
-                                                '/',
-                                                $_.BaseName
-                                              ).Replace(
-                                                '\',
-                                                '/'
-                                              ).TrimStart(
-                                                '.',
-                                                '/'
-                                              ).ToLowerInvariant()
-                  Write-Host "Publishing $moduleBaseName to br:$using:RegistryName.azurecr.io/bicep/modules/${moduleBaseName}:$using:version..."
-                  az bicep publish --verbose --file $_.FullName --target br:$using:RegistryName.azurecr.io/bicep/modules/${moduleBaseName}:$using:version | Write-Host
-                  ($using:ExitCodes).Add($LASTEXITCODE)
-                  Write-Host "Published $moduleBaseName."
+          $modulesToPublish = @()
+
+          Write-Host "Getting modules to publish..."
+          Get-ChildItem -Path $Path -Recurse -Include *.bicep | ForEach-Object {
+              [string] $moduleBaseName = [string]::Concat(
+                                            [system.IO.Path]::GetDirectoryName((Resolve-Path -Relative $_.FullName)),
+                                            '/',
+                                            $_.BaseName
+                                          ).Replace(
+                                            '\',
+                                            '/'
+                                          ).TrimStart(
+                                            '.',
+                                            '/'
+                                          ).ToLowerInvariant()
+              $target = "br:$RegistryName.azurecr.io/bicep/modules/${moduleBaseName}:$version"
+              $modulesToPublish += [PSCustomObject]@{
+                  File = $_.FullName
+                  Target = $target
+                  BaseName = $moduleBaseName
               }
-          Pop-Location
+          }
+          Write-Host "Found $($modulesToPublish.Count) modules to publish"
+          
+          Write-Host "Publishing modules..."
+          
+          # Publish first module single-threaded to validate configuration
+          if ($modulesToPublish.Count -gt 0) {
+              $firstModule = $modulesToPublish[0]
+              Write-Host "Publishing first module $($firstModule.BaseName) to $($firstModule.Target) in single-threaded mode to validate configuration..."
+              az bicep publish --verbose --file $firstModule.File --target $firstModule.Target | Write-Host
+              $firstExitCode = $LASTEXITCODE
+              $ExitCodes.Add($firstExitCode)
+              
+              if ($firstExitCode -eq 0) {
+                  Write-Host "First module published successfully. Proceeding with parallel publishing for remaining modules..."
+                  
+                  # Process remaining modules in parallel
+                  if ($modulesToPublish.Count -gt 1) {
+                      $modulesToPublish[1..$($modulesToPublish.Count-1)] | ForEach-Object -Parallel {
+                          Write-Host "Publishing $($_.BaseName) to $($_.Target)..."
+                          az bicep publish --verbose --file $_.File --target $_.Target | Write-Host
+                          ($using:ExitCodes).Add($LASTEXITCODE)
+                          Write-Host "Published $($_.BaseName)."
+                      }
+                  }
+              }
+              else {
+                  Write-Host "First module publishing failed with exit code $firstExitCode. Aborting parallel publishing."
+              }
+          }
+          else {
+              Write-Host "No modules found to publish."
+          }
+          
           Write-Host "Done publishing modules."
+          
+          Pop-Location
           EXIT ($ExitCodes | Measure-Object -Sum).Sum
 
     - task: AzureCLI@2
