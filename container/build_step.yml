@@ -9,10 +9,10 @@ steps:
             -p ContainerPort='${{ parameters.port }}' \
             -p ContainerRepository='${{ parameters.repository }}' \
             -p ContainerImageTag='${{ parameters.tag }}' \
-            -p ContainerArchiveOutputPath='$(build.artifactstagingdirectory)/${{ parameters.artifact }}.tar.gz'
+            -p ContainerArchiveOutputPath='$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz'
     displayName: 'Build ${{ parameters.artifact }} Image'
     workingDirectory: '$(Build.Repository.LocalPath)'
 
-  - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifact }}.tar.gz"
+  - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"
     displayName: 'Publish ${{ parameters.artifact }} Image'
     artifact: ${{ parameters.artifact }}
