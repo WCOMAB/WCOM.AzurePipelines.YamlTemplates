@@ -12,6 +12,9 @@ steps:
             -p ContainerArchiveOutputPath='$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz'
     displayName: 'Build ${{ parameters.artifact }} Image'
     workingDirectory: '$(Build.Repository.LocalPath)'
+    env:
+      DOTNET_CONTAINER_PULL_REGISTRY_UNAME: ${{ parameters.pullRegistryUsername }}
+      DOTNET_CONTAINER_PULL_REGISTRY_PWORD: ${{ parameters.pullRegistryPassword }}
 
   - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"
     displayName: 'Publish ${{ parameters.artifact }} Image'

@@ -8,3 +8,5 @@ steps:
         baseimage: ${{ parameters.container.baseimage }}
         port: ${{ coalesce(parameters.container.port, '8080') }}
         tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
+        pullRegistryUsername: ${{ parameters.container.pullRegistryUsername }}
+        pullRegistryPassword: ${{ parameters.container.pullRegistryPassword }}
