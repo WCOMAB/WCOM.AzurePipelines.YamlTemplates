@@ -3,6 +3,14 @@ stages:
     - ${{ if eq(environment.deploy, true) }}:
       - stage: ${{ format('Deploy_{0}', environment.name) }}
         condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+        ${{ if environment.deploymentpool }}:
+          pool: ${{ environment.deploymentpool }}
+        ${{ elseif parameters.deploymentpool }}:
+          pool: ${{ parameters.deploymentpool }}
+        ${{ elseif environment.pool }}:
+          pool: ${{ environment.pool }}
+        ${{ elseif parameters.pool }}:
+          pool: ${{ parameters.pool }}
         dependsOn:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:

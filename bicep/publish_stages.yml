@@ -3,6 +3,14 @@ stages:
     - ${{ if eq(environment.publish, true) }}:
       - stage: ${{ format('PublishModule_{0}', environment.name) }}
         condition: and(succeeded(), ${{ parameters.shouldDeploy }}) #Check if pipeline is on main branch
+        ${{ if environment.publishpool }}:
+          pool: ${{ environment.publishpool }}
+        ${{ elseif parameters.publishpool }}:
+          pool: ${{ parameters.publishpool }}
+        ${{ elseif environment.pool }}:
+          pool: ${{ environment.pool }}
+        ${{ elseif parameters.pool }}:
+          pool: ${{ parameters.pool }}
         dependsOn:
           - ${{ each env in parameters.environments }}:
               - ${{ if eq(env.name, parameters.build) }}:

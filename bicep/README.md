@@ -17,10 +17,15 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
  acr                     | string   | No           | format('{0}acr{1}{2}', system, env, suffix)                    | The resource name.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
- artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
- projectRoot            | string   | No          |                                                                | For changing the root of the project, ie where main.bicep or other files are located.
- validateBicep           | boolean   |   No          |      true                                        | To control if the Bicep code should be validated or not - default is true.
- acrFormat             | string   |   No          |  format({0}acr{1}{2}', parameters.system, environment.env, parameters.suffix) | The format which the bicep ACR follows.
+ artifactNamePrefix      | string   | No           |                                                                | Prefix for artifacts created by this pipeline.
+ projectRoot             | string   | No           |                                                                | For changing the root of the project, ie where main.bicep or other files are located.
+ validateBicep           | boolean  | No           |      true                                                      | To control if the Bicep code should be validated or not - default is true.
+ acrFormat               | string   | No           |  format({0}acr{1}{2}', parameters.system, environment.env, parameters.suffix) | The format which the bicep ACR follows.
+ pool                    | string   | No           |                                                                | Controls which agent pool to use for all stages.
+ buildPool               | string   | No           |                                                                | Controls which agent pool to use for build stages (overrides pool).
+ publishPool             | string   | No           |                                                                | Controls which agent pool to use for publish stages (overrides pool).
+ deployPool              | string   | No           |                                                                | Controls which agent pool to use for deploy stages (overrides pool).
+ 
 
 
 ## Pre-Build
@@ -47,7 +52,12 @@ Azure DevOps Pipelines YAML template used to Build, validate and deploy resource
  extraParameters | string   | No           |                   | Used for passing extra parameters to the template.
  deploy          | bool     | No           | true              | Allow deploy to Resource group.
  publish         | bool     | No           | true              | Allow publish of modules to container registry.
- dependsOn       | array     | No          |                   | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template. 
+ dependsOn       | array    | No           |                   | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template.
+ pool            | string   | No           |                   | Controls which agent pool to use for all stages.
+ buildPool       | string   | No           |                   | Controls which agent pool to use for build stages (overrides pool).
+ publishPool     | string   | No           |                   | Controls which agent pool to use for publish stages (overrides pool).
+ deployPool      | string   | No           |                   | Controls which agent pool to use for deploy stages (overrides pool).
+ 
 
 ## Examples
 
