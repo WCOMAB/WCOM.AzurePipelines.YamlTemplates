@@ -20,6 +20,10 @@ jobs:
 
   - script: dotnet publish ${{ parameters.projectSrc }} --output "$(build.artifactstagingdirectory)" -p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
     displayName: Publish DotNet App
+    env: 
+      ${{ if parameters.publishEnvironmentVariables }}:
+        ${{ each envVar in parameters.publishEnvironmentVariables }}:
+          ${{ envVar.key }}: ${{ envVar.value }}
 
   - template: ../dotnetcommon/dotnet_tests.yml
     parameters:

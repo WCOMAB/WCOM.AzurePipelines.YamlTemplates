@@ -27,6 +27,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  dpi                     | object   | No           |                                                                | Settings relating to Dependency reports using DPI tool
  toolRestore             | bool     | No           | false                                                          | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
  container               | object   | No           |                                                                | Container configuration for containerized deployments.
+ publishEnvironmentVariables | bool | No           | false                                                          | Flag to publish environment variables to the deployment.
 
 ## Pre-Build
 
@@ -234,6 +235,9 @@ stages:
         KEY1: value1
         KEY2: $(Pipeline.Variable)
     build: envName
+    publishEnvironmentVariables:
+      key1: value1
+      key2: value2
     useDotNetSDK:
       packageType: sdk/runtime
       useGlobalJson: true/false
