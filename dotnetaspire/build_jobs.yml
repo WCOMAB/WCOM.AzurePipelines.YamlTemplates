@@ -32,7 +32,21 @@ jobs:
       scriptLocation: inlineScript
       workingDirectory: ${{ parameters.projectSrc }}
       inlineScript: |
-        azd restore --all --no-prompt
+        azd restore --all --no-promptS
+    env:
+      ${{ if parameters.environment.environmentVariables }}:
+        ${{ each envVar in parameters.environment.environmentVariables }}:
+          ${{ envVar.key }}: ${{ envVar.value }}
+
+  - ${{ if eq(parameters.whatIfDeploy, true) }}:
+    - task: AzureCLI@2
+      displayName: WhatIf Deploy ${{ parameters.name }}
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          azd provision -e ${{ parameters.name }} --preview --no-prompt --debug --no-state
     env:
       ${{ if parameters.environment.environmentVariables }}:
         ${{ each envVar in parameters.environment.environmentVariables }}:
