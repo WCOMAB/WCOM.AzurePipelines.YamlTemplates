@@ -10,6 +10,7 @@ Azure DevOps Pipelines YAML template used to build, provision, and deploy .NET A
  suffix                  | string   | Yes          |                                                                | The resource name suffix.
  devopsOrg               | string   | Yes          |                                                                | The devops organisation.
  build                   | string   | Yes          |                                                                | The environment to build.
+ whatIfDeploy            | bool     | No           | false                                                          | Use whatIf deployment in build stage to validate deployment of resources.
  azureSubscription       | string   | No           | format('azdo-{0}-{1}-{2}-{3}', devopsOrg, system, env, suffix) | The Azure Subscription name.
  azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                         | The format for the azureSubscription.
  useDotNetSDK            | object   | No           |                                                                | Object containing parameters for specified dotnet SDK.
@@ -91,6 +92,7 @@ stages:
     system: myapp
     devopsOrg: myorg
     build: test
+    whatIfDeploy: true
     azureSubscriptionFormat: 'azure-devops-deployment-myapp-{2}'
     shouldDeploy: eq(variables['Build.SourceBranch'], variables['deploy_branch'])
     projectSrc: $(Build.SourcesDirectory)
