@@ -32,7 +32,7 @@ jobs:
       scriptLocation: inlineScript
       workingDirectory: ${{ parameters.projectSrc }}
       inlineScript: |
-        azd restore --all --no-promptS
+        azd restore --all --no-prompt
     env:
       ${{ if parameters.environment.environmentVariables }}:
         ${{ each envVar in parameters.environment.environmentVariables }}:
