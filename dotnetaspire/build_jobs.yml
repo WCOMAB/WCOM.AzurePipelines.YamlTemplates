@@ -47,7 +47,7 @@ jobs:
         scriptLocation: inlineScript
         inlineScript: |
           azd provision -e ${{ parameters.name }} --preview --no-prompt --debug --no-state
-    env:
-      ${{ if parameters.environment.environmentVariables }}:
-        ${{ each envVar in parameters.environment.environmentVariables }}:
-          ${{ envVar.key }}: ${{ envVar.value }}
+      env:
+        ${{ if parameters.environment.environmentVariables }}:
+          ${{ each envVar in parameters.environment.environmentVariables }}:
+            ${{ envVar.key }}: ${{ envVar.value }}
