@@ -21,6 +21,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  artifactNamePrefix  | string    | No           |                   | Prefix for artifacts created by this pipeline.
  dpi                 | object    | No           |                   | Settings relating to Dependency reports using DPI tool
  toolRestore         | bool      | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
+ shouldBuild         | bool      | No           | true              | Flag to control whether the dotnet build step should be executed.
 
 
 ## Pre-Build
@@ -171,6 +172,7 @@ stages:
     skipTests: true/false
     projectSrc: projectSrc
     toolRestore: true/false
+    shouldBuild: true/false
     useDotNetSDK: 
       packageType: sdk/runtime
       useGlobalJson: true/false
