@@ -21,3 +21,4 @@ stages:
               dpi: ${{ parameters.dpi }}
               toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
               postBuildScript: ${{ parameters.postBuildScript }}
+              shouldBuild: ${{ coalesce(parameters.shouldBuild, true) }}
