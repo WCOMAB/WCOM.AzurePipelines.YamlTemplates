@@ -173,10 +173,8 @@ stages:
     projectSrc: projectSrc
     toolRestore: true/false
     publishEnvironmentVariables:
-      - key: key1
-        value: value1
-      - key: key2
-        value: value2
+      key1: value1
+      key2: value2
     useDotNetSDK: 
       packageType: sdk/runtime
       useGlobalJson: true/false
