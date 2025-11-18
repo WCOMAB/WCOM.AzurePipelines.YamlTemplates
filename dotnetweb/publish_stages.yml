@@ -21,3 +21,4 @@ stages:
               toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
               postBuildScript: ${{ parameters.postBuildScript }}
               container: ${{ parameters.container }}
+              publishEnvironmentVariables: ${{ parameters.publishEnvironmentVariables }}

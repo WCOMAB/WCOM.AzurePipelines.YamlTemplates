@@ -20,6 +20,10 @@ jobs:
 
     - script: dotnet build ${{ parameters.projectSrc }} /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Build'
+      env: 
+        ${{ if parameters.buildEnvironmentVariables }}:
+          ${{ each envVar in parameters.buildEnvironmentVariables }}:
+            ${{ envVar.key }}: ${{ envVar.value }}
 
     - template: ../dotnetcommon/dotnet_dpi.yml
       parameters:
@@ -34,6 +38,10 @@ jobs:
 
     - script: dotnet pack ${{ parameters.projectSrc }} --no-build --no-restore --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Package'
+      env: 
+        ${{ if parameters.buildEnvironmentVariables }}:
+          ${{ each envVar in parameters.buildEnvironmentVariables }}:
+            ${{ envVar.key }}: ${{ envVar.value }}
 
     - template: ../dotnetcommon/postbuild_common.yml
       parameters:
