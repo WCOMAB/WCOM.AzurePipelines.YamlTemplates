@@ -11,6 +11,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  toolCommandName     | string    | No           |                   | Tool command name.
  publish             | bool      | No           |                   | Allow publish to Feed.
  skipTests           | bool      | No           |                   | Allow tests to be skipped.
+ testMode            | string    | No           |                   | Test execution mode. Use 'solution' or 'project' for Microsoft.Testing.Platform (requires --solution or --project flag), otherwise uses default VSTest behavior.
  build               | string    | Yes          |                   | The environment to build.
  onlyPublish         | bool      | No           | true              | Allow update to source feed.
  projectSrc          | string    | No           | src               | Source folder to build, pack and publish.
@@ -21,7 +22,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  artifactNamePrefix  | string    | No           |                   | Prefix for artifacts created by this pipeline.
  dpi                 | object    | No           |                   | Settings relating to Dependency reports using DPI tool
  toolRestore         | bool      | No           | false             | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
- buildEnvironmentVariables | object | No           |                                                                | Dictionary of environment variables to pass to the build task.
+ buildEnvironmentVariables | object | No        |                   | Dictionary of environment variables to pass to the build task.
 
 
 ## Pre-Build
@@ -170,6 +171,7 @@ stages:
       - '-p:PackAsTool=true/false'
       - '-p:ToolCommandName=ToolCommandName'
     skipTests: true/false
+    testMode: solution/project
     projectSrc: projectSrc
     toolRestore: true/false
     buildEnvironmentVariables:
