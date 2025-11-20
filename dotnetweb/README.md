@@ -24,10 +24,11 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  useDotNetSDK            | object   | No           |                                                                | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix      | string   | No           |                                                                | Prefix for artifacts created by this pipeline.
  skipTests               | bool     | No           |  true                                                          | Allow tests to be skipped.
+ testMode                | string   | No           |                                                                | Test execution mode. Use 'solution' or 'project' for Microsoft.Testing.Platform (requires --solution or --project flag), otherwise uses default VSTest behavior.
  dpi                     | object   | No           |                                                                | Settings relating to Dependency reports using DPI tool
  toolRestore             | bool     | No           | false                                                          | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
  container               | object   | No           |                                                                | Container configuration for containerized deployments.
- publishEnvironmentVariables | object | No           |                                                                | Dictionary of environment variables to pass to the publish task.
+ publishEnvironmentVariables | object | No         |                                                                | Dictionary of environment variables to pass to the publish task.
 
 ## Pre-Build
 
@@ -204,6 +205,8 @@ stages:
         onlyDeploy: false
     buildParameters:
       - '-p:buildParameter=buildParameterValue'
+    skipTests: true/false
+    testMode: solution/project
     toolRestore: true/false
     preBuildScript:
       scriptType: scriptType

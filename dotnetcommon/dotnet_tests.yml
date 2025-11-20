@@ -1,12 +1,22 @@
 steps:
 - ${{ if ne(parameters.skipTests, true) }}:
-  - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.2.1
+  - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.5.0
     displayName: Installing Report Generator
 
-  - script: dotnet test ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
-    displayName: 'DotNet Test'
+  - ${{ if eq(parameters.testMode, 'solution') }}:
+    - script: dotnet test --solution ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura
+      displayName: 'DotNet Test (Microsoft.Testing.Platform - Solution)'
 
-  - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/coverage.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
+  - ${{ if eq(parameters.testMode, 'project') }}:
+    - script: dotnet test --project ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura
+      displayName: 'DotNet Test (Microsoft.Testing.Platform - Project)'
+
+  - ${{ if and(ne(parameters.testMode, 'solution'), ne(parameters.testMode, 'project')) }}:
+
+    - script: dotnet test ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+      displayName: 'DotNet Test'
+
+  - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/*.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
     displayName: 'Merge code coverage reports'
     condition: succeededOrFailed()
 
