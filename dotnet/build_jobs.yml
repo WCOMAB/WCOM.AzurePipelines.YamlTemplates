@@ -33,6 +33,7 @@ jobs:
     - template: ../dotnetcommon/dotnet_tests.yml
       parameters:
         skipTests: ${{ parameters.skipTests }}
+        testMode: ${{ parameters.testMode }}
         projectSrc: ${{ parameters.projectSrc }}
         buildParameters: ${{ parameters.buildParameters }}
 
