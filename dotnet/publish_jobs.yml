@@ -26,5 +26,33 @@ jobs:
             - ${{ if parameters.sources }}:
               - ${{ each source in parameters.sources }}:
                 - ${{ if eq(source.publish, true) }}:
-                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/*.$(Build.BuildNumber).nupkg"
+                  - pwsh: |
+                      $packagePath = "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)"
+                      $apiKey = "${{ coalesce(source.token, '', '$(System.AccessToken)') }}"
+                      $source = "${{ source.name }}"
+
+                      $packages = Get-ChildItem -Path $packagePath -Filter "*.$(Build.BuildNumber).nupkg" -File
+
+                      if ($packages.Count -eq 0) {
+                          Write-Host "No packages found matching pattern: $packagePath\*.$(Build.BuildNumber).nupkg"
+                          exit 1
+                      }
+
+                      Write-Host "Found $($packages.Count) package(s) to push:"
+                      $packages | ForEach-Object { Write-Host "  - $($_.FullName)" }
+
+                      $packages | ForEach-Object -Parallel {
+                          $package = $_
+                          $apiKey = $using:apiKey
+                          $source = $using:source
+
+                          Write-Host "Pushing package: $($package.FullName)"
+                          dotnet nuget push --api-key $apiKey --source $source $package.FullName
+
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to push $($package.FullName)"
+                              exit $LASTEXITCODE
+                          }
+                          Write-Host "Successfully pushed: $($package.FullName)"
+                      } -ThrottleLimit 5
                     displayName: 'Publish to ${{ source.name }} Feed'
