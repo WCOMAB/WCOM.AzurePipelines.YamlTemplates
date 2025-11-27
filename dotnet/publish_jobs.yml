@@ -26,5 +26,15 @@ jobs:
             - ${{ if parameters.sources }}:
               - ${{ each source in parameters.sources }}:
                 - ${{ if eq(source.publish, true) }}:
-                  - script: dotnet nuget push --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}" "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/*.$(Build.BuildNumber).nupkg"
+                  - pwsh: |
+                      $pattern = "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/*.$(Build.BuildNumber).nupkg"
+                      $pkg = Get-ChildItem -Path $pattern | Select-Object -First 1
+
+                      if (-not $pkg) {
+                          throw "No nupkg found matching pattern $pattern"
+                      }
+
+                      Write-Host "Pushing package: $($pkg.FullName)"
+
+                      dotnet nuget push "$($pkg.FullName)" --api-key "${{ coalesce(source.token, '', '$(System.AccessToken)') }}" --source "${{ source.name }}"
                     displayName: 'Publish to ${{ source.name }} Feed'
