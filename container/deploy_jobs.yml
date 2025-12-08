@@ -11,14 +11,14 @@ jobs:
               displayName: Download ${{ parameters.artifact }} artifact
 
             - script: |
-                crane auth login ${{ parameters.name }} -u ${{ parameters.username }} -p ${{ parameters.password }}
+                echo '${{ parameters.password }}' | regctl registry login "${{ parameters.name }}" -u "${{ parameters.username }}" --pass-stdin
               displayName: Login to registry
 
             - script: |
-                crane push "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz" "${{ parameters.name }}/${{ parameters.registry }}:${{ parameters.tag }}"
+                regctl image import "${{ parameters.name }}/${{ parameters.registry }}:${{ parameters.tag }}" "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"
               displayName: Push ${{ parameters.repository }}:${{ parameters.tag }} to registry
 
             - ${{ if eq(parameters.latest, true) }}:
               - script: |
-                  crane push "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz" "${{ parameters.name }}/${{ parameters.registry }}:latest"
+                  regctl image import "${{ parameters.name }}/${{ parameters.registry }}:latest" "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"
                 displayName: Push ${{ parameters.repository }}:latest to registry
