@@ -23,7 +23,9 @@ stages:
       displayName: ${{ format('Publish to Container App {0}', environment.name) }}
       condition: and(succeeded(), ${{ parameters.shouldDeploy }})
       dependsOn:
-        - ${{ format('Deploy_{0}', parameters.build) }}
+        - ${{ format('Build_{0}', parameters.build) }}
+        - ${{ each server in parameters.container.servers }}:
+          - ${{ format('Deploy_{0}', replace(replace(replace(server.name, ' ', '_'), '-', '_'), '.', '_')) }}
       jobs:
         - template: publish_jobs.yml
           parameters:
