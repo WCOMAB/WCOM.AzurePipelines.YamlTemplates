@@ -18,3 +18,20 @@ stages:
               username: ${{ server.username }}
               password: ${{ server.password }}
               environment: ${{ coalesce(server.environment, parameters.build) }}
+  - ${{ each environment in parameters.container.environments }}:
+    - stage: ${{ format('Publish_{0}', replace(replace(replace(environment.name, ' ', '_'), '-', '_'), '.', '_')) }}
+      displayName: ${{ format('Publish to Container App {0}', environment.name) }}
+      condition: and(succeeded(), ${{ parameters.shouldDeploy }})
+      dependsOn:
+        - ${{ format('Deploy_{0}', parameters.build) }}
+      jobs:
+        - template: publish_jobs.yml
+          parameters:
+            name: ${{ environment.name }}
+            environment: ${{ coalesce(environment.environment, environment.name, parameters.build) }}
+            azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
+            containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
+            resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
+            image: ${{ coalesce(environment.image, format('{0}/{1}:{2}', coalesce(environment.registry, parameters.container.repository), parameters.container.repository, coalesce(parameters.container.tag, '$(Build.BuildNumber)'))) }}
+            acrUsername: ${{ coalesce(environment.acrUsername, environment.username) }}
+            acrPassword: ${{ coalesce(environment.acrPassword, environment.password) }}

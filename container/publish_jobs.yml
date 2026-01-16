@@ -1,0 +1,19 @@
+jobs:
+  - deployment: ${{ format('{0}_Publish', replace(replace(replace(parameters.name, ' ', '_'), '-', '_'), '.', '_')) }}
+    displayName: ${{ parameters.name}} Publish
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureContainerApps@1
+              displayName: Update Container App ${{ parameters.name }}
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                containerAppName: ${{ parameters.containerAppName }}
+                resourceGroup: ${{ parameters.resourceGroup }}
+                imageToDeploy: ${{ parameters.image }}
+                ${{ if parameters.acrUsername }}:
+                acrUsername: ${{ parameters.acrUsername }}
+                ${{ if parameters.acrPassword }}:
+                acrPassword: ${{ parameters.acrPassword }}
