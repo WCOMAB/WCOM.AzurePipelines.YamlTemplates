@@ -6,14 +6,14 @@ jobs:
       runOnce:
         deploy:
           steps:
-            - task: AzureContainerApps@1
+            - task: AzureCLI@2
               displayName: Update Container App ${{ parameters.name }}
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
-                containerAppName: ${{ parameters.containerAppName }}
-                resourceGroup: ${{ parameters.resourceGroup }}
-                imageToDeploy: ${{ parameters.image }}
-                ${{ if parameters.acrUsername }}:
-                acrUsername: ${{ parameters.acrUsername }}
-                ${{ if parameters.acrPassword }}:
-                acrPassword: ${{ parameters.acrPassword }}
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  az containerapp update \
+                    --name ${{ parameters.containerAppName }} \
+                    --resource-group ${{ parameters.resourceGroup }} \
+                    --image ${{ parameters.image }}${{ coalesce(format(' {0}', parameters.containerAppArgs), '') }}
