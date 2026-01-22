@@ -32,7 +32,7 @@ stages:
         - template: publish_jobs.yml
           parameters:
             name: ${{ environment.name }}
-            registry: ${{ environment.registry }}
+            registry: ${{ coalesce(environment.registry, parameters.container.repository) }}
             username: ${{ coalesce(environment.acrUsername, environment.registryUsername) }}
             password: ${{ coalesce(environment.acrPassword, environment.registryPassword) }}
             imageName: ${{ parameters.container.imageName }}
