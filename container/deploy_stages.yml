@@ -33,10 +33,9 @@ stages:
         - template: publish_jobs.yml
           parameters:
             name: ${{ environment.name }}
-            environment: ${{ coalesce(environment.environment, environment.name, parameters.build) }}
-            containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
-            azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
-            resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
+            environment: environment.environment
+            containerAppName: environment.containerAppName
+            azureSubscription: environment.azureSubscription
+            resourceGroup: environment.resourceGroup
             image: ${{ format('{0}/{1}:{2}', environment.sourceServer, parameters.container.repository, coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
-            registry: ${{ coalesce(environment.registry, parameters.container.registry) }}
             containerAppArgs: ${{ coalesce(environment.containerAppArgs, '') }}

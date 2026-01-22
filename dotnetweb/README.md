@@ -127,6 +127,19 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  environment      | string   | No           | parameters.build                 | Environment to deploy to.
  latest           | bool     | No           | container.latest                 | Whether to tag the container as latest on this server.
 
+## Container Environments
+
+ **Parameters**   | **Type** | **Required** | **Default value**                | **Description**
+------------------|----------|--------------|----------------------------------|----------------------------------
+ name             | string   | Yes          |                                  | Name of the environment. Used for stage name and display name.
+ environment      | string   | Yes          |                                  | Azure DevOps environment name for the deployment.
+ containerAppName | string   | Yes          |                                  | Name of the Azure Container App to update.
+ azureSubscription| string   | Yes          |                                  | Azure Resource Manager subscription for the container app update.
+ resourceGroup    | string   | Yes          |                                  | Resource group containing the container app.
+ sourceServer     | string   | Yes          |                                  | Name of the server (from container.servers) that contains the image to publish. Used to construct the image reference.
+ containerAppArgs | string   | No           |                                  | Additional arguments to pass to the `az containerapp update` command.
+ deployAfter      | array    | No           |                                  | Array of environment names that must be published before this environment. Creates stage dependencies.
+
 ## Examples
 
 ### Minimum needed
@@ -272,6 +285,22 @@ stages:
           username: $(RegistryUsername)
           password: $(RegistryPassword)
           environment: prod
+      environments:
+        - name: Development
+          environment: dev
+          containerAppName: myapp-dev
+          azureSubscription: My-Azure-Subscription
+          resourceGroup: myapp-rg
+          sourceServer: Development
+          containerAppArgs: '--cpu 1.0 --memory 2.0Gi'
+        - name: Production
+          environment: prod
+          containerAppName: myapp-prod
+          azureSubscription: My-Azure-Subscription
+          resourceGroup: myapp-rg
+          sourceServer: Production
+          deployAfter:
+            - Development
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: env
