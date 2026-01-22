@@ -26,8 +26,7 @@ stages:
         - ${{ format('Build_{0}', parameters.build) }}
         - ${{ each after in environment.deployAfter }}:
             - ${{ format('Publish_{0}', after) }}
-        - ${{ each sourceServer in environment.sourceServer }}:
-            - ${{ format('Deploy_{0}', sourceServer.name) }}
+        - ${{ format('Deploy_{0}', environment.sourceServer) }}
       jobs:
         - template: publish_jobs.yml
           parameters:
@@ -36,6 +35,6 @@ stages:
             containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
             azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
             resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
-            image: ${{ format('{0}/{1}:{2}', parameters.container.name, coalesce(server.registry, parameters.container.repository), coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
+            image: ${{ format('{0}/{1}:{2}', environment.sourceServer, parameters.container.repository, coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
             registry: ${{ coalesce(environment.registry, parameters.container.registry) }}
             containerAppArgs: ${{ coalesce(environment.containerAppArgs, '') }}
