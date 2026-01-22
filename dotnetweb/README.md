@@ -126,6 +126,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  password         | string   | Yes          |                                  | Password for registry authentication.
  environment      | string   | No           | parameters.build                 | Environment to deploy to.
  latest           | bool     | No           | container.latest                 | Whether to tag the container as latest on this server.
+ deployAfter      | array    | No           |                                  | Array of environment names that must be published before this server deployment. Creates stage dependencies.
 
 ## Container Environments
 
