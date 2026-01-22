@@ -286,6 +286,8 @@ stages:
           username: $(RegistryUsername)
           password: $(RegistryPassword)
           environment: prod
+          deployAfter:
+            - Development
       environments:
         - name: Development
           environment: dev
