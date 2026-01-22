@@ -35,13 +35,13 @@ stages:
             registry: ${{ environment.registry }}
             username: ${{ coalesce(environment.acrUsername, environment.registryUsername) }}
             password: ${{ coalesce(environment.acrPassword, environment.registryPassword) }}
-            imageName: ${{ parameters.container.imageName )}}
+            imageName: ${{ parameters.container.imageName }}
             tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
-            artifact: ${{ parameters.container.imageName )}}
+            artifact: ${{ parameters.container.imageName }}
             environment: ${{ coalesce(environment.environment, environment.name, parameters.build) }}
             azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
             containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
             resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
-            image: ${{ format('{0}/{1}:{2}', environment.registry, parameters.container.imageName, coalesce(parameters.container.tag, '$(Build.BuildNumber)'))) }}
+            image: ${{ format('{0}/{1}:{2}', environment.registry, parameters.container.imageName, coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
             latest: ${{ eq(coalesce(coalesce(environment.latest, parameters.container.latest), true), true) }}
             
