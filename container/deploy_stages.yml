@@ -24,24 +24,18 @@ stages:
       condition: and(succeeded(), ${{ parameters.shouldDeploy }})
       dependsOn:
         - ${{ format('Build_{0}', parameters.build) }}
-        - ${{ each server in parameters.container.servers }}:
-          - ${{ format('Deploy_{0}', replace(replace(replace(server.name, ' ', '_'), '-', '_'), '.', '_')) }}
         - ${{ each after in environment.deployAfter }}:
             - ${{ format('Publish_{0}', after) }}
+        - ${{ each sourceServer in environment.sourceServer }}:
+            - ${{ format('Deploy_{0}', sourceServer) }}
       jobs:
         - template: publish_jobs.yml
           parameters:
             name: ${{ environment.name }}
-            registry: ${{ coalesce(environment.registry, parameters.container.registry) }}
-            username: ${{ coalesce(environment.acrUsername, environment.registryUsername) }}
-            password: ${{ coalesce(environment.acrPassword, environment.registryPassword) }}
-            imageName: ${{ parameters.container.imageName }}
-            tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
-            artifact: ${{ parameters.container.imageName }}
             environment: ${{ coalesce(environment.environment, environment.name, parameters.build) }}
-            azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
             containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
+            azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
             resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
-            image: ${{ format('{0}/{1}:{2}', environment.registry, parameters.container.imageName, coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
-            latest: ${{ eq(coalesce(coalesce(environment.latest, parameters.container.latest), true), true) }}
-            
+            image: ${{ format('{0}/{1}:{2}', parameters.container.name, coalesce(server.registry, parameters.container.repository), coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
+            registry: ${{ coalesce(environment.registry, parameters.container.registry) }}
+            containerAppArgs: ${{ coalesce(environment.containerAppArgs, '') }}
