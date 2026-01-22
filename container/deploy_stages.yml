@@ -33,7 +33,7 @@ stages:
         - template: publish_jobs.yml
           parameters:
             name: ${{ environment.name }}
-            environment: environment.environment
+            environment: ${{ coalesce(environment.environment, environment.name, parameters.build) }}
             containerAppName: environment.containerAppName
             azureSubscription: environment.azureSubscription
             resourceGroup: environment.resourceGroup
