@@ -32,10 +32,16 @@ stages:
         - template: publish_jobs.yml
           parameters:
             name: ${{ environment.name }}
+            registry: ${{ environment.registry }}
+            username: ${{ coalesce(environment.acrUsername, environment.registryUsername) }}
+            password: ${{ coalesce(environment.acrPassword, environment.registryPassword) }}
+            imageName: ${{ parameters.container.imageName )}}
+            tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
+            artifact: ${{ parameters.container.imageName )}}
             environment: ${{ coalesce(environment.environment, environment.name, parameters.build) }}
             azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
             containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
             resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
-            image: ${{ coalesce(environment.image, format('{0}/{1}:{2}', coalesce(environment.registry, parameters.container.repository), parameters.container.repository, coalesce(parameters.container.tag, '$(Build.BuildNumber)'))) }}
-            acrUsername: ${{ coalesce(environment.acrUsername, environment.username) }}
-            acrPassword: ${{ coalesce(environment.acrPassword, environment.password) }}
+            image: ${{ format('{0}/{1}:{2}', environment.registry, parameters.container.imageName, coalesce(parameters.container.tag, '$(Build.BuildNumber)'))) }}
+            latest: ${{ eq(coalesce(coalesce(environment.latest, parameters.container.latest), true), true) }}
+            

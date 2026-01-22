@@ -6,6 +6,23 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - download: current
+              artifact: ${{ parameters.artifact }}
+              displayName: Download ${{ parameters.artifact }} artifact
+
+            - script: |
+                echo '${{ parameters.password }}' | regctl registry login "${{ parameters.registry }}" -u "${{ parameters.username }}" --pass-stdin
+              displayName: Login to registry
+
+            - script: |
+                regctl image import "${{ parameters.registry }}/${{ parameters.imageName }}:${{ parameters.tag }}" "$(Pipeline.Workspace)/${{ parameters.imageName }}/${{ parameters.imageName }}.tar.gz"
+              displayName: Push ${{ parameters.repository }}:${{ parameters.tag }} to registry
+
+            - ${{ if eq(parameters.latest, true) }}:
+              - script: |
+                  regctl image import "${{ parameters.registry }}/${{ parameters.imageName }}:latest" "$(Pipeline.Workspace)/${{ parameters.imageName }}/${{ parameters.imageName }}.tar.gz"
+                displayName: Push ${{ parameters.repository }}:latest to registry
+
             - task: AzureCLI@2
               displayName: Update Container App ${{ parameters.name }}
               inputs:
