@@ -27,7 +27,7 @@ stages:
         - ${{ each after in environment.deployAfter }}:
             - ${{ format('Publish_{0}', after) }}
         - ${{ each sourceServer in environment.sourceServer }}:
-            - ${{ format('Deploy_{0}', sourceServer) }}
+            - ${{ format('Deploy_{0}', sourceServer.name) }}
       jobs:
         - template: publish_jobs.yml
           parameters:
