@@ -20,7 +20,7 @@ stages:
               environment: ${{ coalesce(server.environment, parameters.build) }}
   - ${{ each environment in parameters.container.environments }}:
     - stage: ${{ format('Publish_{0}', replace(replace(replace(environment.name, ' ', '_'), '-', '_'), '.', '_')) }}
-      displayName: ${{ format('Publish to Container App {0}', environment.name) }}
+      displayName: ${{ format('Publish to Container App {0} environment', environment.name) }}
       condition: and(succeeded(), ${{ parameters.shouldDeploy }})
       dependsOn:
         - ${{ format('Build_{0}', parameters.build) }}
