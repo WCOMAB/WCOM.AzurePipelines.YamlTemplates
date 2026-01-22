@@ -1,5 +1,5 @@
 jobs:
-  - deployment: ${{ format('{0}_Publish', replace(replace(replace(parameters.name, ' ', '_'), '-', '_'), '.', '_')) }}
+  - deployment: ${{ format('Publish_{0}', replace(replace(replace(parameters.name, ' ', '_'), '-', '_'), '.', '_')) }}
     displayName: ${{ parameters.name}} Publish
     environment: ${{ parameters.environment }}
     strategy:
