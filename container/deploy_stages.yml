@@ -34,8 +34,8 @@ stages:
           parameters:
             name: ${{ environment.name }}
             environment: ${{ coalesce(environment.environment, environment.name) }}
-            containerAppName: environment.containerAppName
-            azureSubscription: environment.azureSubscription
-            resourceGroup: environment.resourceGroup
+            containerAppName: ${{ coalesce(environment.containerAppName, environment.name) }}
+            azureSubscription: ${{ coalesce(environment.azureSubscription, parameters.azureSubscription) }}
+            resourceGroup: ${{ coalesce(environment.resourceGroup, parameters.resourceGroup) }}
             image: ${{ format('{0}/{1}:{2}', environment.sourceServer, parameters.container.repository, coalesce(parameters.container.tag, '$(Build.BuildNumber)')) }}
             containerAppArgs: ${{ coalesce(environment.containerAppArgs, '') }}
