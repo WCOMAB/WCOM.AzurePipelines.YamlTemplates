@@ -3,7 +3,7 @@ steps:
     - template: build_step.yml
       parameters:
         csproj: ${{ parameters.container.csproj }}
-        repository: ${{ parameters.container.repository }}
+        repository: ${{ coalesce(parameters.container.repository, parameters.container.artifact )}}
         artifact: ${{ coalesce(parameters.container.artifact, parameters.container.repository )}}
         baseimage: ${{ parameters.container.baseimage }}
         port: ${{ coalesce(parameters.container.port, '8080') }}
