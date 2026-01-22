@@ -6,6 +6,8 @@ stages:
         condition: and(succeeded(), ${{ parameters.shouldDeploy }})
         dependsOn:
           - ${{ format('Build_{0}', parameters.build) }}
+          - ${{ each after in server.deployAfter }}:
+            - ${{ format('Publish_{0}', after) }}
         jobs:
           - template: deploy_jobs.yml
             parameters:
