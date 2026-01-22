@@ -1,0 +1,19 @@
+jobs:
+  - deployment: ${{ format('Publish_{0}', replace(replace(replace(parameters.name, ' ', '_'), '-', '_'), '.', '_')) }}
+    displayName: ${{ parameters.name}} Publish
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureCLI@2
+              displayName: Update Container App ${{ parameters.containerAppName }}
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  az containerapp update \
+                    --name ${{ parameters.containerAppName }} \
+                    --resource-group ${{ parameters.resourceGroup }} \
+                    --image ${{ parameters.image }}${{ coalesce(format(' {0}', parameters.containerAppArgs), '') }}
