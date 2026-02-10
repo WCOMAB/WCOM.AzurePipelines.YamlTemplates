@@ -16,4 +16,4 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 appType: 'webApp'
                 WebAppName: ${{ parameters.webAppName }}
-                packageForLinux: '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/*.zip'
+                packageForLinux: '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)/$(Build.DefinitionName)-$(Build.BuildNumber).zip'
