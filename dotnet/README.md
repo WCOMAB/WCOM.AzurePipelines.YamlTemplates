@@ -72,13 +72,14 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 
 ## Source
 
- **Parameters** | **Type** | **Required** | **Default value** | **Description**
-----------------|----------|--------------|-------------------|------------------
- name           | string   | Yes          |                   | The source name.
- token          | string   | No           |                   | Access token.
- source         | string   | No           |                   | The source URL if the pipeline is adding sources.
- publish        | bool     | No           |                   | Allow update to NuGet source.
- onlyDeploy     | bool     | No           |                   | Decides of a source should be used to publish nugets or not.
+ **Parameters**   | **Type** | **Required** | **Default value**             | **Description**
+------------------|----------|--------------|-------------------------------|----------------------------------
+ name             | string   | Yes          |                               | The source name.
+ token            | string   | No           |                               | Access token.
+ source           | string   | No           |                               | The source URL if the pipeline is adding sources.
+ publish          | bool     | No           |                               | Allow update to NuGet source.
+ onlyDeploy       | bool     | No           |                               | Decides of a source should be used to publish nugets or not.
+ pushFilter       | string   | No           | *.$(Build.BuildNumber).nupkg  | Glob pattern for packages to push from the artifact (e.g. `*.nupkg` for all, or `*.$(Build.BuildNumber).nupkg` for build-numbered only).
 
 ## dpi
 

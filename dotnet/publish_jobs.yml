@@ -30,11 +30,12 @@ jobs:
                       $packagePath = "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)"
                       $apiKey = "${{ coalesce(source.token, '', '$(System.AccessToken)') }}"
                       $source = "${{ source.name }}"
+                      $packageFilter = "${{ coalesce(source.pushFilter, '*.$(Build.BuildNumber).nupkg') }}"
 
-                      $packages = Get-ChildItem -Path $packagePath -Filter "*.$(Build.BuildNumber).nupkg" -File
+                      $packages = Get-ChildItem -Path $packagePath -Filter $packageFilter -File
 
                       if ($packages.Count -eq 0) {
-                          Write-Host "No packages found matching pattern: $packagePath\*.$(Build.BuildNumber).nupkg"
+                          Write-Host "No packages found matching pattern: $packagePath\$packageFilter"
                           exit 1
                       }
 
