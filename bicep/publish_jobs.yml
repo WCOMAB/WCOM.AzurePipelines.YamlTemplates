@@ -18,20 +18,27 @@ jobs:
         scriptType: pscore
         scriptLocation: inlineScript
         inlineScript:  |
-          Write-Host "Ensuring bicep installed..."
-          az config set auto-upgrade.prompt=no
-          az config set auto-upgrade.all=no
-          az upgrade --yes
-          az bicep uninstall
-          az config set bicep.use_binary_from_path=false
-          az bicep install
-          az version
-          az bicep version
           [string] $version = '$(Build.BuildNumber)'
           [string] $RegistryName = '${{ parameters.acr}}'
           [string] $Path = '$(Pipeline.Workspace)/modules'
           Move-Item -Path '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)modules' -Destination '$(Pipeline.Workspace)/modules' -Force
           Move-Item -Path '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)internal' -Destination '$(Pipeline.Workspace)/internal' -Force
+          $bicepCmd = Get-Command bicep -ErrorAction SilentlyContinue
+          if ($bicepCmd) {
+            Write-Host "Using standalone bicep CLI..."
+            bicep --version
+          } else {
+            Write-Host "Ensuring bicep installed..."
+            az config set auto-upgrade.prompt=no
+            az config set auto-upgrade.all=no
+            az upgrade --yes
+            az bicep uninstall
+            az config set bicep.use_binary_from_path=false
+            az bicep install
+            az version
+            az bicep version
+          }
+          $useStandaloneBicep = [bool]$bicepCmd
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
           Push-Location
           Set-Location $Path
@@ -65,7 +72,11 @@ jobs:
           if ($modulesToPublish.Count -gt 0) {
               $firstModule = $modulesToPublish[0]
               Write-Host "Publishing first module $($firstModule.BaseName) to $($firstModule.Target) in single-threaded mode to validate configuration..."
-              az bicep publish --verbose --file $firstModule.File --target $firstModule.Target | Write-Host
+              if ($useStandaloneBicep) {
+                bicep publish $firstModule.File --target $firstModule.Target | Write-Host
+              } else {
+                az bicep publish --verbose --file $firstModule.File --target $firstModule.Target | Write-Host
+              }
               $firstExitCode = $LASTEXITCODE
               $ExitCodes.Add($firstExitCode)
               
@@ -76,7 +87,11 @@ jobs:
                   if ($modulesToPublish.Count -gt 1) {
                       $modulesToPublish[1..$($modulesToPublish.Count-1)] | ForEach-Object -Parallel {
                           Write-Host "Publishing $($_.BaseName) to $($_.Target)..."
-                          az bicep publish --verbose --file $_.File --target $_.Target | Write-Host
+                          if ($using:useStandaloneBicep) {
+                            bicep publish $_.File --target $_.Target | Write-Host
+                          } else {
+                            az bicep publish --verbose --file $_.File --target $_.Target | Write-Host
+                          }
                           ($using:ExitCodes).Add($LASTEXITCODE)
                           Write-Host "Published $($_.BaseName)."
                       }
