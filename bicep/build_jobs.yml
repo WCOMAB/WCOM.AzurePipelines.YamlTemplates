@@ -15,7 +15,11 @@ jobs:
         inlineScript: |
           [ -d ${{ parameters.projectRoot }}/modules ] || mkdir -p ${{ parameters.projectRoot }}/modules
           [ -d ${{ parameters.projectRoot }}/internal ] || mkdir -p ${{ parameters.projectRoot }}/internal
-          az bicep build --file ${{ parameters.projectRoot }}/main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
+          if command -v bicep &> /dev/null; then
+            bicep build ${{ parameters.projectRoot }}/main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
+          else
+            az bicep build --file ${{ parameters.projectRoot }}/main.bicep --outfile "$(build.artifactstagingdirectory)/azuredeploy.json"
+          fi
 
     - ${{ if eq(parameters.validateBicep, true) }}:
       - task: AzureCLI@2
@@ -49,10 +53,17 @@ jobs:
         script: |
           [string] $projectRoot = '${{ parameters.projectRoot }}'.Trim()
           [string] $Path = Join-Path $PWD $projectRoot 'modules'
-          Write-Host "Ensuring bicep installed..."
-          az bicep upgrade
-          az bicep version
+          $bicepCmd = Get-Command bicep -ErrorAction SilentlyContinue
+          if ($bicepCmd) {
+            Write-Host "Using standalone bicep CLI..."
+            bicep --version
+          } else {
+            Write-Host "Using az bicep..."
+            az bicep upgrade
+            az bicep version
+          }
           [System.Collections.Concurrent.ConcurrentBag[int]] $ExitCodes = [System.Collections.Concurrent.ConcurrentBag[int]]::new()
+          $useStandaloneBicep = [bool]$bicepCmd
           Push-Location
           Set-Location $Path
           Write-Host "Building modules..."
@@ -60,7 +71,11 @@ jobs:
               ForEach-Object -Parallel {
                   [string] $module = Resolve-Path -Relative $_.FullName
                   Write-Host "Building $module..."
-                  az bicep build --file $_.FullName  | Write-Host
+                  if ($using:useStandaloneBicep) {
+                    bicep build $_.FullName | Write-Host
+                  } else {
+                    az bicep build --file $_.FullName | Write-Host
+                  }
                   ($using:ExitCodes).Add($LASTEXITCODE)
                   Write-Host "Built $module."
               }
