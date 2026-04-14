@@ -15,3 +15,11 @@ stages:
               environment: ${{ environment }}
               projectSrc: ${{ coalesce(parameters.projectSrc, '$(Build.SourcesDirectory)') }}
               installAzd: ${{ coalesce(parameters.installAzd, false) }}
+              buildParameters: ${{ parameters.buildParameters }}
+              skipTests: ${{ parameters.skipTests }}
+              testMode: ${{ coalesce(parameters.testMode, 'solution') }}
+              toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
+              preBuildScript: ${{ parameters.preBuildScript }}
+              postBuildScript: ${{ parameters.postBuildScript }}
+              buildEnvironmentVariables: ${{ parameters.buildEnvironmentVariables }}
+              dpi: ${{ parameters.dpi }}
