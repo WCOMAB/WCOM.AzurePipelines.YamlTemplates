@@ -17,7 +17,7 @@ stages:
               installAzd: ${{ coalesce(parameters.installAzd, false) }}
               buildParameters: ${{ parameters.buildParameters }}
               skipTests: ${{ parameters.skipTests }}
-              testMode: ${{ coalesce(parameters.testMode, 'solution') }}
+              testMode: ${{ coalesce(parameters.testMode, 'vstest') }}
               toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
               preBuildScript: ${{ parameters.preBuildScript }}
               postBuildScript: ${{ parameters.postBuildScript }}

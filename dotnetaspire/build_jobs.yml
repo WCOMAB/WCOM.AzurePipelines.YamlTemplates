@@ -9,7 +9,7 @@ jobs:
   - template: ../dotnetcommon/dotnet_auth.yml
     parameters:
       sources: ${{ parameters.sources }}
-  
+
   - template: ../dotnetcommon/dotnet_tool.yml
     parameters:
       toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
