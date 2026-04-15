@@ -9,7 +9,39 @@ jobs:
   - template: ../dotnetcommon/dotnet_auth.yml
     parameters:
       sources: ${{ parameters.sources }}
-  
+
+  - template: ../dotnetcommon/dotnet_tool.yml
+    parameters:
+      toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
+
+  - template: ../dotnetcommon/prebuild_common.yml
+    parameters:
+      preBuildScript: ${{ parameters.preBuildScript }}
+
+  - script: dotnet build *.slnx /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
+    displayName: 'DotNet Build'
+    workingDirectory: ${{ parameters.projectSrc }}
+    env:
+      ${{ if parameters.buildEnvironmentVariables }}:
+        ${{ each envVar in parameters.buildEnvironmentVariables }}:
+          ${{ envVar.key }}: ${{ envVar.value }}
+
+  - template: ../dotnetcommon/dotnet_dpi.yml
+    parameters:
+      dpi: ${{ parameters.dpi }}
+      azureSubscription: ${{ parameters.azureSubscription }}
+
+  - template: ../dotnetcommon/dotnet_tests.yml
+    parameters:
+      skipTests: ${{ parameters.skipTests }}
+      testMode: ${{ parameters.testMode }}
+      projectSrc: '*.slnx'
+      buildParameters: ${{ parameters.buildParameters }}
+
+  - template: ../dotnetcommon/postbuild_common.yml
+    parameters:
+      postBuildScript: ${{ parameters.postBuildScript }}
+
   # Install azd
   - ${{ if eq(parameters.installAzd, true) }}:
     - task: Bash@3

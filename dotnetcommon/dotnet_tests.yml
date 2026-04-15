@@ -4,11 +4,11 @@ steps:
     displayName: Installing Report Generator
 
   - ${{ if eq(parameters.testMode, 'solution') }}:
-    - script: dotnet test --solution ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura
+    - script: dotnet test --solution ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura --report-trx 
       displayName: 'DotNet Test (Microsoft.Testing.Platform - Solution)'
 
   - ${{ if eq(parameters.testMode, 'project') }}:
-    - script: dotnet test --project ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura
+    - script: dotnet test --project ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura --report-trx 
       displayName: 'DotNet Test (Microsoft.Testing.Platform - Project)'
 
   - ${{ if and(ne(parameters.testMode, 'solution'), ne(parameters.testMode, 'project')) }}:
