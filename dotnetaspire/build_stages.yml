@@ -16,7 +16,7 @@ stages:
               projectSrc: ${{ coalesce(parameters.projectSrc, '$(Build.SourcesDirectory)') }}
               installAzd: ${{ coalesce(parameters.installAzd, false) }}
               buildParameters: ${{ parameters.buildParameters }}
-              skipTests: ${{ parameters.skipTests }}
+              skipTests: ${{ coalesce(parameters.skipTests, true) }}
               testMode: ${{ coalesce(parameters.testMode, 'vstest') }}
               toolRestore: ${{ coalesce(parameters.toolRestore, false) }}
               preBuildScript: ${{ parameters.preBuildScript }}
