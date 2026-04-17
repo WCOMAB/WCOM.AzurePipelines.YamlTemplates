@@ -39,3 +39,4 @@ stages:
               skipProfile: ${{ coalesce(parameters.skipProfile, false) }}
               useToken: ${{ coalesce(parameters.useToken, false) }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              sources: ${{ parameters.sources }}
