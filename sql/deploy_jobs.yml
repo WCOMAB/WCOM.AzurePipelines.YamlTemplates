@@ -13,10 +13,18 @@ jobs:
                   artifactName: 'global.json'
                   targetPath: '$(Pipeline.Workspace)'
             
+            - checkout: self
+              displayName: Checkout $(Build.Repository.Name)
+
             - template: ../dotnetcommon/dotnet_sdk.yml
               parameters:
-                workingDirectory: "$(Pipeline.Workspace)"
                 useDotNetSDK: ${{ parameters.useDotNetSDK }}
+
+            - template: ../dotnetcommon/dotnet_auth.yml
+              parameters:
+                sources: ${{ parameters.sources }}
+                onlyPublish: true
+                deploy: true
               
             - download: current
               artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).Dacpac
