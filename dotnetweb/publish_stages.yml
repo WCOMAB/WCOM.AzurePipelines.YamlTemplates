@@ -3,6 +3,8 @@ stages:
     - ${{ if eq(environment.name, parameters.build) }}:
       - stage: ${{ format('Build_{0}', environment.name) }}
         displayName: ${{ format('Build {0}', environment.name) }}
+        ${{ if environment.envPool }}:
+          pool: ${{ environment.pool }}
         dependsOn: ${{ parameters.dependsOn }}
         jobs:
           - template: publish_jobs.yml
