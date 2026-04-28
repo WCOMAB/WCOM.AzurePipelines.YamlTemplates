@@ -3,6 +3,8 @@ stages:
     - ${{ if eq(environment.name, parameters.build) }}:
       - stage: ${{ format('PublishTo_{0}', environment.name) }}
         condition: and(succeeded(), ${{ parameters.shouldPublish }})
+        ${{ if environment.pool }}:
+          pool: ${{ environment.pool }}
         displayName: ${{ format('Publish to {0}', environment.name) }}
         dependsOn:
           - ${{ each env in parameters.environments }}:
