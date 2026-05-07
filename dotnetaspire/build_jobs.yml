@@ -38,7 +38,7 @@ jobs:
       testMode: ${{ parameters.testMode }}
       projectSrc: '*.slnx'
       buildParameters: ${{ parameters.buildParameters }}
-      publishCodeCoverage: ${{ coalesce(parameters.publishCodeCoverage, true) }}
+      publishCodeCoverage: ${{ parameters.publishCodeCoverage }}
 
   - template: ../dotnetcommon/postbuild_common.yml
     parameters:

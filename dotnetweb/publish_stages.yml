@@ -23,4 +23,4 @@ stages:
               postBuildScript: ${{ parameters.postBuildScript }}
               container: ${{ parameters.container }}
               publishEnvironmentVariables: ${{ parameters.publishEnvironmentVariables }}
-              publishCodeCoverage: ${{ coalesce(parameters.publishCodeCoverage, true) }}
+              publishCodeCoverage: ${{ parameters.publishCodeCoverage }}
