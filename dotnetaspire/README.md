@@ -19,6 +19,7 @@ Azure DevOps Pipelines YAML template used to build, provision, and deploy .NET A
  dependsOn               | array    | No           |                                                                | Allows for build to depend on an optional stage.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  projectSrc              | string   | No           | $(Build.SourcesDirectory)                                      | Parameter to manually set the root directory for the Aspire project.
+ publishCodeCoverage     | bool     | No           | true                                                           | When false, skips merging and publishing code coverage.
 
 ## Use DotNet SDK
 
@@ -96,6 +97,7 @@ stages:
     azureSubscriptionFormat: 'azure-devops-deployment-myapp-{2}'
     shouldDeploy: eq(variables['Build.SourceBranch'], variables['deploy_branch'])
     projectSrc: $(Build.SourcesDirectory)
+    publishCodeCoverage: true/false
     sources:
       - name: NuGetFeed
     environments:
