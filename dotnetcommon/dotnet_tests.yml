@@ -1,7 +1,5 @@
 steps:
 - ${{ if ne(parameters.skipTests, true) }}:
-  - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.5.0
-    displayName: Installing Report Generator
 
   - ${{ if eq(parameters.testMode, 'solution') }}:
     - script: dotnet test --solution ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --coverage --coverage-output-format cobertura --report-trx 
@@ -16,7 +14,10 @@ steps:
     - script: dotnet test ${{ parameters.projectSrc }} ${{ join(' ', parameters.buildParameters) }} --no-build --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
       displayName: 'DotNet Test'
 
-  - ${{ if eq(coalesce(parameters.publishCodeCoverage, true), true) }}:
+  - ${{ if ne(parameters.publishCodeCoverage, false) }}:
+    - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.5.0
+      displayName: Installing Report Generator
+
     - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/*.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
       displayName: 'Merge code coverage reports'
       condition: succeededOrFailed()
