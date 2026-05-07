@@ -12,6 +12,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  publish             | bool      | No           |                   | Allow publish to Feed.
  skipTests           | bool      | No           |                   | Allow tests to be skipped.
  testMode            | string    | No           |                   | Test execution mode. Use 'solution' or 'project' for Microsoft.Testing.Platform (requires --solution or --project flag), otherwise uses default VSTest behavior.
+ publishCodeCoverage | bool      | No           | true              | When false, skips merging and publishing code coverage.
  build               | string    | Yes          |                   | The environment to build.
  onlyPublish         | bool      | No           | true              | Allow update to source feed.
  projectSrc          | string    | No           | src               | Source folder to build, pack and publish.
@@ -173,6 +174,7 @@ stages:
       - '-p:ToolCommandName=ToolCommandName'
     skipTests: true/false
     testMode: solution/project
+    publishCodeCoverage: true/false
     projectSrc: projectSrc
     toolRestore: true/false
     buildEnvironmentVariables:

@@ -36,6 +36,7 @@ jobs:
         testMode: ${{ parameters.testMode }}
         projectSrc: ${{ parameters.projectSrc }}
         buildParameters: ${{ parameters.buildParameters }}
+        publishCodeCoverage: ${{ parameters.publishCodeCoverage }}
 
     - script: dotnet pack ${{ parameters.projectSrc }} --no-build --no-restore --output "$(build.artifactstagingdirectory)" /p:Version=$(Build.BuildNumber) ${{ join(' ', parameters.buildParameters) }}
       displayName: 'DotNet Package'

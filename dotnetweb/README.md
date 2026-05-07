@@ -25,6 +25,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  artifactNamePrefix      | string   | No           |                                                                | Prefix for artifacts created by this pipeline.
  skipTests               | bool     | No           |  true                                                          | Allow tests to be skipped.
  testMode                | string   | No           |                                                                | Test execution mode. Use 'solution' or 'project' for Microsoft.Testing.Platform (requires --solution or --project flag), otherwise uses default VSTest behavior.
+ publishCodeCoverage     | bool     | No           | true                                                           | When false, skips merging and publishing code coverage.
  dpi                     | object   | No           |                                                                | Settings relating to Dependency reports using DPI tool
  toolRestore             | bool     | No           | false                                                          | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
  container               | object   | No           |                                                                | Container configuration for containerized deployments.
@@ -221,6 +222,7 @@ stages:
       - '-p:buildParameter=buildParameterValue'
     skipTests: true/false
     testMode: solution/project
+    publishCodeCoverage: true/false
     toolRestore: true/false
     preBuildScript:
       scriptType: scriptType
