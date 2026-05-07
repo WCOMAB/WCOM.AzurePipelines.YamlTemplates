@@ -31,6 +31,7 @@ jobs:
       testMode: ${{ parameters.testMode }}
       projectSrc: ${{ parameters.projectSrc }}
       buildParameters: ${{ parameters.buildParameters }}
+      publishCodeCoverage: ${{ coalesce(parameters.publishCodeCoverage, true) }}
 
   - template: ../dotnetcommon/dotnet_dpi.yml
     parameters:
