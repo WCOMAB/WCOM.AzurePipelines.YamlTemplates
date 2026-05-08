@@ -10,9 +10,23 @@ jobs:
               artifact: ${{ parameters.artifact }}
               displayName: Download ${{ parameters.artifact }} artifact
 
-            - script: |
-                echo '${{ parameters.password }}' | regctl registry login "${{ parameters.name }}" -u "${{ parameters.username }}" --pass-stdin
-              displayName: Login to registry
+            - ${{ if and(gt(length(coalesce(parameters.username, '')), 0), gt(length(coalesce(parameters.password, '')), 0)) }}:
+              - script: |
+                  echo '${{ parameters.password }}' | regctl registry login "${{ parameters.name }}" -u "${{ parameters.username }}" --pass-stdin
+                displayName: Login to registry
+
+            - ${{ if or(eq(length(coalesce(parameters.username, '')), 0), eq(length(coalesce(parameters.password, '')), 0)) }}:
+              - task: AzureCLI@2
+                displayName: ACR login (service connection)
+                inputs:
+                  azureSubscription: ${{ parameters.azureSubscription }}
+                  scriptType: bash
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    set -euo pipefail
+                    ACR_LOGIN_SERVER='${{ parameters.name }}'
+                    ACR_NAME="${ACR_LOGIN_SERVER%%.azurecr.io}"
+                    az acr login --name "${ACR_NAME}"
 
             - script: |
                 regctl image import "${{ parameters.name }}/${{ parameters.registry }}:${{ parameters.tag }}" "$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"

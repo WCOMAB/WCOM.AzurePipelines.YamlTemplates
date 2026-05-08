@@ -10,3 +10,12 @@ steps:
         tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
         pullRegistryUsername: ${{ parameters.container.pullRegistryUsername }}
         pullRegistryPassword: ${{ parameters.container.pullRegistryPassword }}
+  - ${{ elseif gt(length(coalesce(parameters.container.dockerfile, '')), 0) }}:
+    - template: build_step_dockerfile.yml
+      parameters:
+        dockerfile: ${{ parameters.container.dockerfile }}
+        dockerdirectory: ${{ parameters.container.dockerdirectory }}
+        repository: ${{ parameters.container.repository }}
+        artifact: ${{ coalesce(parameters.container.artifact, parameters.container.repository )}}
+        tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
+        tool: ${{ coalesce(parameters.container.tool, 'docker') }}
