@@ -14,8 +14,7 @@ jobs:
               - script: |
                   echo '${{ parameters.password }}' | regctl registry login "${{ parameters.name }}" -u "${{ parameters.username }}" --pass-stdin
                 displayName: Login to registry
-
-            - ${{ if or(eq(length(coalesce(parameters.username, '')), 0), eq(length(coalesce(parameters.password, '')), 0)) }}:
+            - ${{ elseif gt(length(coalesce(parameters.azureSubscription, '')), 0) }}:
               - task: AzureCLI@2
                 displayName: ACR login (service connection)
                 inputs:
