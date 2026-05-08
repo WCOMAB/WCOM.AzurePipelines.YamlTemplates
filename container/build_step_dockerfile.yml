@@ -2,7 +2,11 @@ steps:
   - bash: |
       mkdir -p '$(build.artifactstagingdirectory)/${{ parameters.artifact }}'
       if [ '${{ parameters.tool }}' = 'buildah' ]; then
-        buildah bud --isolation=chroot -f '${{ parameters.dockerfile }}' -t '${{ parameters.repository }}:${{ parameters.tag }}' '${{ coalesce(parameters.dockerdirectory, '.') }}' && \
+        export _BUILDAH_STARTED_IN_USERNS=''
+        export BUILDAH_ISOLATION=chroot
+        export BUILDAH_FORMAT=docker
+        export STORAGE_DRIVER=vfs
+        buildah bud -f '${{ parameters.dockerfile }}' -t '${{ parameters.repository }}:${{ parameters.tag }}' '${{ coalesce(parameters.dockerdirectory, '.') }}' && \
         buildah push '${{ parameters.repository }}:${{ parameters.tag }}' oci-archive:$(Build.ArtifactStagingDirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar:'${{ parameters.repository }}:${{ parameters.tag }}' && \
         gzip -9 '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar'
       else
