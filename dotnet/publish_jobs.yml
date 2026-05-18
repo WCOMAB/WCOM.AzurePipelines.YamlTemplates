@@ -48,7 +48,7 @@ jobs:
                           $source = $using:source
 
                           Write-Host "Pushing package: $($package.FullName)"
-                          dotnet nuget push --api-key $apiKey --source $source $package.FullName
+                          dotnet nuget push --skip-duplicate --api-key $apiKey --source $source $package.FullName
 
                           if ($LASTEXITCODE -ne 0) {
                               Write-Error "Failed to push $($package.FullName)"
