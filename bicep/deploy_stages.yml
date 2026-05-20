@@ -31,4 +31,5 @@ stages:
               resourceGroup: ${{ format(coalesce(coalesce(environment.resourceGroupFormat, parameters.resourceGroupFormat), '{0}-{1}-{2}'), parameters.system, environment.env, parameters.suffix, environment.name) }}
               extraParameters : ${{ environment.extraParameters }}
               artifactNamePrefix: ${{ parameters.artifactNamePrefix }}
-              postDeploymentScript: ${{ coalesce(environment.postDeploymentScript, parameters.postDeploymentScript, {}) }}
+              ${{ if or(environment.postDeploymentScript, parameters.postDeploymentScript) }}:
+                postDeploymentScript: ${{ coalesce(environment.postDeploymentScript, parameters.postDeploymentScript) }}
