@@ -1,0 +1,51 @@
+steps:
+- ${{ if in(coalesce(parameters.postDeploymentScript.scriptType, ''), 'pscore', 'bash') }}:
+  - ${{ if or(gt(length(coalesce(parameters.postDeploymentScript.azureSubscription, '')), 0), gt(length(coalesce(parameters.azureSubscription, '')), 0)) }}:
+    - task: AzureCLI@2
+      displayName: ${{ coalesce(parameters.postDeploymentScript.displayName, format('Post-Deployment Azure {0} {1} script', parameters.postDeploymentScript.scriptType, parameters.postDeploymentScript.targetType)) }}
+      inputs:
+        azureSubscription: ${{ coalesce(parameters.postDeploymentScript.azureSubscription, parameters.azureSubscription) }}
+        scriptType: ${{ parameters.postDeploymentScript.scriptType }}
+        scriptLocation: ${{ replace(replace(parameters.postDeploymentScript.targetType, 'filePath', 'scriptPath'), 'inline', 'inlineScript') }}
+        scriptPath: ${{ parameters.postDeploymentScript.filePath }}
+        inlineScript: ${{ parameters.postDeploymentScript.script }}
+        arguments: ${{ parameters.postDeploymentScript.arguments }}
+        failOnStandardError: ${{ parameters.postDeploymentScript.failOnStderr }}
+        workingDirectory: ${{ parameters.postDeploymentScript.workingDirectory }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ each var in parameters.postDeploymentScript.env }}:
+          ${{ var.key }}: ${{ var.value }}
+
+  - ${{ else }}:
+    - ${{ if eq(parameters.postDeploymentScript.scriptType, 'pscore') }}:
+      - task: Powershell@2
+        displayName: ${{ coalesce(parameters.postDeploymentScript.displayName, format('Post-Deployment PowerShell {0} script', parameters.postDeploymentScript.targetType)) }}
+        inputs:
+          targetType: ${{ parameters.postDeploymentScript.targetType }}
+          filePath: ${{ parameters.postDeploymentScript.filePath }}
+          script: ${{ parameters.postDeploymentScript.script }}
+          arguments: ${{ parameters.postDeploymentScript.arguments }}
+          failOnStderr: ${{ parameters.postDeploymentScript.failOnStderr }}
+          showWarnings: ${{ parameters.postDeploymentScript.showWarnings }}
+          pwsh: ${{ parameters.postDeploymentScript.pwsh }}
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ each var in parameters.postDeploymentScript.env }}:
+            ${{ var.key }}: ${{ var.value }}
+
+    - ${{ if eq(parameters.postDeploymentScript.scriptType, 'bash') }}:
+      - task: Bash@3
+        displayName: ${{ coalesce(parameters.postDeploymentScript.displayName, format('Post-Deployment Bash {0} script', parameters.postDeploymentScript.targetType)) }}
+        inputs:
+          targetType: ${{ parameters.postDeploymentScript.targetType }}
+          filePath: ${{ parameters.postDeploymentScript.filePath }}
+          script: ${{ parameters.postDeploymentScript.script }}
+          arguments: ${{ parameters.postDeploymentScript.arguments }}
+          failOnStderr: ${{ parameters.postDeploymentScript.failOnStderr }}
+          workingDirectory: ${{ parameters.postDeploymentScript.workingDirectory }}
+          bashEnvValue: ${{ parameters.postDeploymentScript.bashEnvValue }}
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ each var in parameters.postDeploymentScript.env }}:
+            ${{ var.key }}: ${{ var.value }}
