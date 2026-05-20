@@ -1,0 +1,16 @@
+steps:
+  - bash: |
+      mkdir -p '$(build.artifactstagingdirectory)/${{ parameters.artifact }}'
+      if [ '${{ parameters.tool }}' = 'buildah' ]; then
+        buildah bud --isolation chroot --storage-driver vfs -f '${{ parameters.dockerfile }}' -t '${{ parameters.repository }}:${{ parameters.tag }}' '${{ coalesce(parameters.dockerdirectory, '.') }}' && \
+        buildah push '${{ parameters.repository }}:${{ parameters.tag }}' oci-archive:$(Build.ArtifactStagingDirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar:'${{ parameters.repository }}:${{ parameters.tag }}' && \
+        gzip -9 '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar'
+      else
+        docker buildx build -f '${{ parameters.dockerfile }}' -o type=oci,dest=- '${{ coalesce(parameters.dockerdirectory, '.') }}' | gzip -9 > '$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz'
+      fi
+    displayName: 'Build ${{ parameters.artifact }} Image'
+    workingDirectory: '$(Build.Repository.LocalPath)'
+
+  - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"
+    displayName: 'Publish ${{ parameters.artifact }} Image'
+    artifact: ${{ parameters.artifact }}

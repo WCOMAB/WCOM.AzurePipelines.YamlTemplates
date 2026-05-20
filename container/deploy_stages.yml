@@ -19,6 +19,7 @@ stages:
               tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
               latest: ${{ eq(coalesce(coalesce(server.latest, parameters.container.latest), true), true) }}
               registry: ${{ coalesce(server.registry, parameters.container.repository) }}
+              azureSubscription: ${{ coalesce(server.azureSubscription, parameters.azureSubscription) }}
               username: ${{ server.username }}
               password: ${{ server.password }}
               environment: ${{ coalesce(server.environment, parameters.build) }}

@@ -1,0 +1,16 @@
+stages:
+  - stage: ${{ format('Build_{0}', replace(replace(replace(parameters.build, ' ', '_'), '-', '_'), '.', '_')) }}
+    displayName: ${{ format('Build {0}', parameters.build) }}
+    dependsOn: ${{ parameters.dependsOn }}
+    jobs:
+      - job: Build
+        displayName: ${{ format('{0} Build', parameters.build) }}
+        steps:
+          - checkout: self
+
+          - template: build_steps.yml
+            parameters:
+              container: ${{ parameters.container }}
+
+  - template: deploy_stages.yml
+    parameters: ${{ parameters }}
