@@ -10,3 +10,4 @@ steps:
         tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
         pullRegistryUsername: ${{ parameters.container.pullRegistryUsername }}
         pullRegistryPassword: ${{ parameters.container.pullRegistryPassword }}
+        publishEnvironmentVariables: ${{ parameters.publishEnvironmentVariables }}

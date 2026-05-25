@@ -15,6 +15,9 @@ steps:
     env:
       DOTNET_CONTAINER_PULL_REGISTRY_UNAME: ${{ parameters.pullRegistryUsername }}
       DOTNET_CONTAINER_PULL_REGISTRY_PWORD: ${{ parameters.pullRegistryPassword }}
+      ${{ if parameters.publishEnvironmentVariables }}:
+        ${{ each envVar in parameters.publishEnvironmentVariables }}:
+          ${{ envVar.key }}: ${{ envVar.value }}
 
   - publish: "$(build.artifactstagingdirectory)/${{ parameters.artifact }}/${{ parameters.repository }}.tar.gz"
     displayName: 'Publish ${{ parameters.artifact }} Image'
