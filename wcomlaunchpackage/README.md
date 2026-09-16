@@ -77,10 +77,10 @@ When **`writeManifest`** is `false` (default), uploading the ZIP can trigger **W
 | `blobContainer` | string | No | `wcomlaunch` | Blob container name. |
 | `azureSubscription` | string | Yes | | ADO service connection for storage upload. |
 | `signExecutables` | boolean | No | `false` | When `true`, run Trusted Signing on **`*.exe`** in `packageStagingFolder`. Use for **.NET publish** packages; leave `false` for script-only ZIPs. |
-| `signingAzureSubscription` | string | When signing | | Service connection for signing (app pipeline; required when `signExecutables` is `true`). |
-| `trustedSigningEndpoint` | string | When signing | | Trusted Signing endpoint (app pipeline). |
-| `trustedSigningAccountName` | string | When signing | | Trusted Signing account name (app pipeline). |
-| `trustedSigningCertificateProfileName` | string | When signing | | Certificate profile name (app pipeline). |
+| `signingAzureSubscription` | string | No | `''` | Omit for script apps. Set in app pipeline when `signExecutables` is `true` (no org-specific default in template). |
+| `trustedSigningEndpoint` | string | No | `''` | Same as `signingAzureSubscription`. |
+| `trustedSigningAccountName` | string | No | `''` | Same as `signingAzureSubscription`. |
+| `trustedSigningCertificateProfileName` | string | No | `''` | Same as `signingAzureSubscription`. |
 | `shouldSign` | object | No | main branch | Expression gating sign steps when `signExecutables` is `true`. |
 | `shouldPublish` | object | No | main branch | Expression for publish stage. |
 | `writeManifest` | boolean | No | `false` | Upload `{product}/manifest.json` when `true`. |
