@@ -1,0 +1,43 @@
+steps:
+- task: AzureCLI@3
+  displayName: Azure CLI (Trusted Signing credentials)
+  inputs:
+    azureSubscription: ${{ parameters.signingAzureSubscription }}
+    addSpnToEnvironment: true
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "##vso[task.setvariable variable=ARM_CLIENT_ID;issecret=true]$servicePrincipalId"
+      echo "##vso[task.setvariable variable=ARM_ID_TOKEN;issecret=true]$idToken"
+      echo "##vso[task.setvariable variable=ARM_TENANT_ID;issecret=true]$tenantId"
+  condition: ${{ parameters.shouldSign }}
+
+- bash: |
+    az login --service-principal -u $(ARM_CLIENT_ID) --tenant $(ARM_TENANT_ID) --allow-no-subscriptions --federated-token $(ARM_ID_TOKEN)
+  displayName: Azure Login (Trusted Signing)
+  condition: ${{ parameters.shouldSign }}
+
+- task: TrustedSigning@0
+  displayName: Sign with Trusted Signing
+  inputs:
+    Endpoint: ${{ parameters.trustedSigningEndpoint }}
+    TrustedSigningAccountName: ${{ parameters.trustedSigningAccountName }}
+    CertificateProfileName: ${{ parameters.trustedSigningCertificateProfileName }}
+    FilesFolder: ${{ parameters.packageStagingFolder }}
+    FilesFolderFilter: exe
+    FilesFolderRecurse: true
+    FilesFolderDepth: 10
+    FileDigest: SHA256
+    TimestampRfc3161: http://timestamp.acs.microsoft.com
+    TimestampDigest: SHA256
+    ExcludeEnvironmentCredential: true
+    ExcludeWorkloadIdentityCredential: true
+    ExcludeManagedIdentityCredential: true
+    ExcludeSharedTokenCacheCredential: true
+    ExcludeVisualStudioCredential: true
+    ExcludeVisualStudioCodeCredential: true
+    ExcludeAzureCliCredential: false
+    ExcludeAzurePowershellCredential: true
+    ExcludeAzureDeveloperCliCredential: true
+    ExcludeInteractiveBrowserCredential: true
+  condition: ${{ parameters.shouldSign }}

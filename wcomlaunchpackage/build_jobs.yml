@@ -1,0 +1,58 @@
+jobs:
+- job: Package
+  displayName: ${{ format('{0} — package release', parameters.build) }}
+  pool: ${{ parameters.pool }}
+  variables:
+    packageFileName: ${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
+    packageArtifactName: ${{ parameters.artifactNamePrefix }}${{ parameters.build }}
+  steps:
+  - pwsh: |
+      New-Item -ItemType Directory -Force -Path '${{ parameters.packageStagingFolder }}' | Out-Null
+    displayName: Prepare package staging folder
+
+  - template: ../dotnetcommon/prebuild_common.yml
+    parameters:
+      preBuildScript: ${{ parameters.preBuildScript }}
+
+  - ${{ if ne(parameters.entryPoint, '') }}:
+    - pwsh: |
+        $entry = Join-Path '${{ parameters.packageStagingFolder }}' '${{ parameters.entryPoint }}'
+        if (-not (Test-Path -LiteralPath $entry)) {
+          Write-Error "entryPoint not found after pre-build: $entry"
+          exit 1
+        }
+        Write-Host "entryPoint OK: $entry"
+      displayName: Verify entryPoint
+
+  - pwsh: |
+      $root = '${{ parameters.packageStagingFolder }}'
+      $files = @(Get-ChildItem -LiteralPath $root -Recurse -File -ErrorAction Stop)
+      if ($files.Count -eq 0) {
+        Write-Error "packageStagingFolder is empty (no files to zip): $root"
+        exit 1
+      }
+      Write-Host "Staged $($files.Count) file(s) under $root"
+    displayName: Verify staging folder is not empty
+
+  - ${{ if eq(parameters.signExecutables, true) }}:
+    - template: sign_steps.yml
+      parameters: ${{ parameters }}
+
+  - task: ArchiveFiles@2
+    displayName: Create release ZIP
+    inputs:
+      rootFolderOrFile: ${{ parameters.packageStagingFolder }}
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/$(packageFileName)
+      replaceExistingArchive: true
+
+  - template: ../dotnetcommon/postbuild_common.yml
+    parameters:
+      postBuildScript: ${{ parameters.postBuildScript }}
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish $(packageArtifactName) artifact
+    inputs:
+      targetPath: $(Build.ArtifactStagingDirectory)/$(packageFileName)
+      artifactName: $(packageArtifactName)

@@ -1,0 +1,75 @@
+stages:
+- stage: ${{ format('Publish_{0}', parameters.build) }}
+  displayName: ${{ format('Publish WCOM Launch package ({0})', parameters.build) }}
+  dependsOn:
+  - ${{ format('Package_{0}', parameters.build) }}
+  condition: and(succeeded(), ${{ parameters.shouldPublish }})
+  jobs:
+  - job: Publish
+    displayName: Upload to storage
+    pool: ${{ parameters.pool }}
+    variables:
+      packageFileName: ${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
+      packageBlobPath: ${{ parameters.product }}/${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
+      packageArtifactName: ${{ parameters.artifactNamePrefix }}${{ parameters.build }}
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download $(packageArtifactName) artifact
+      inputs:
+        artifact: $(packageArtifactName)
+        path: $(Pipeline.Workspace)/$(packageArtifactName)
+
+    - task: AzureCLI@2
+      displayName: Upload package ZIP to blob storage
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: |
+          $ErrorActionPreference = 'Stop'
+          $zipPath = Join-Path '$(Pipeline.Workspace)/$(packageArtifactName)' '$(packageFileName)'
+          if (-not (Test-Path -LiteralPath $zipPath)) {
+            throw "Package not found: $zipPath"
+          }
+          Write-Host "Uploading to $(packageBlobPath) in account ${{ parameters.storageAccountName }} / container ${{ parameters.blobContainer }}"
+          az storage blob upload `
+            --account-name '${{ parameters.storageAccountName }}' `
+            --container-name '${{ parameters.blobContainer }}' `
+            --name '$(packageBlobPath)' `
+            --file $zipPath `
+            --auth-mode login `
+            --overwrite true
+          if ($LASTEXITCODE -ne 0) {
+            throw "az storage blob upload failed with exit code $LASTEXITCODE"
+          }
+
+    - ${{ if eq(parameters.writeManifest, true) }}:
+      - task: AzureCLI@2
+        displayName: Upload manifest.json
+        inputs:
+          azureSubscription: ${{ parameters.azureSubscription }}
+          scriptType: pscore
+          scriptLocation: inlineScript
+          inlineScript: |
+            $ErrorActionPreference = 'Stop'
+            $manifest = @{
+              Product  = '${{ parameters.product }}'
+              Version  = '$(Build.BuildNumber)'
+              MinVersion = '$(Build.BuildNumber)'
+              Filename = '$(packageFileName)'
+            } | ConvertTo-Json -Compress
+            $manifestPath = Join-Path $env:AGENT_TEMPDIRECTORY 'manifest.json'
+            Set-Content -Path $manifestPath -Value $manifest -Encoding utf8NoBOM
+            $manifestBlob = '${{ parameters.product }}/manifest.json'
+            Write-Host "Uploading manifest to $manifestBlob"
+            az storage blob upload `
+              --account-name '${{ parameters.storageAccountName }}' `
+              --container-name '${{ parameters.blobContainer }}' `
+              --name $manifestBlob `
+              --file $manifestPath `
+              --auth-mode login `
+              --overwrite true `
+              --content-type 'application/json'
+            if ($LASTEXITCODE -ne 0) {
+              throw "az storage blob upload failed with exit code $LASTEXITCODE"
+            }
