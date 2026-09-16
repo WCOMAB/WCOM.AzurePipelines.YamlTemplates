@@ -32,12 +32,16 @@ parameters:
   default: false
 - name: signingAzureSubscription
   type: string
+  default: ''
 - name: trustedSigningEndpoint
   type: string
+  default: ''
 - name: trustedSigningAccountName
   type: string
+  default: ''
 - name: trustedSigningCertificateProfileName
   type: string
+  default: ''
 - name: shouldSign
   type: object
   default: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
