@@ -1,0 +1,6 @@
+stages:
+- stage: ${{ format('Package_{0}', parameters.build) }}
+  displayName: ${{ format('Package WCOM Launch release ({0})', parameters.build) }}
+  jobs:
+  - template: build_jobs.yml
+    parameters: ${{ parameters }}

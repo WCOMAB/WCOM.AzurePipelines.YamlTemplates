@@ -9,3 +9,4 @@ WCOM AB Common set of Azure Pipelines YAML Templates
 - [dotnet](dotnet/README.md) - .NET build and deploy to NuGet feed.
 - [dotnetweb](dotnetweb/README.md) - .NET Web build and deploy to Azure App Service / Azure Function App.
 - [sql](sql/README.md) - SQL SSDT build and deploy to Azure SQL.
+- [wcomlaunchpackage](wcomlaunchpackage/README.md) - Build, sign, and publish WCOM Launch application ZIPs to Azure Storage.
