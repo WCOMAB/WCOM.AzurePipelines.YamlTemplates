@@ -4,7 +4,7 @@ jobs:
   pool: ${{ parameters.pool }}
   variables:
     packageFileName: ${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
-    packageBlobPath: ${{ parameters.product }}/${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
+    packageArtifactName: ${{ parameters.artifactNamePrefix }}${{ parameters.build }}
   steps:
   - pwsh: |
       New-Item -ItemType Directory -Force -Path '${{ parameters.packageStagingFolder }}' | Out-Null
@@ -13,10 +13,6 @@ jobs:
   - template: ../dotnetcommon/prebuild_common.yml
     parameters:
       preBuildScript: ${{ parameters.preBuildScript }}
-
-  - template: ../dotnetcommon/postbuild_common.yml
-    parameters:
-      postBuildScript: ${{ parameters.postBuildScript }}
 
   - ${{ if ne(parameters.entryPoint, '') }}:
     - pwsh: |
@@ -41,8 +37,12 @@ jobs:
       archiveFile: $(Build.ArtifactStagingDirectory)/$(packageFileName)
       replaceExistingArchive: true
 
+  - template: ../dotnetcommon/postbuild_common.yml
+    parameters:
+      postBuildScript: ${{ parameters.postBuildScript }}
+
   - task: PublishPipelineArtifact@1
-    displayName: Publish WCOM Launch package artifact
+    displayName: Publish $(packageArtifactName) artifact
     inputs:
       targetPath: $(Build.ArtifactStagingDirectory)/$(packageFileName)
-      artifactName: WcomLaunchPackage
+      artifactName: $(packageArtifactName)

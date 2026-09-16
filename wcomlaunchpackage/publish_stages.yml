@@ -11,12 +11,13 @@ stages:
     variables:
       packageFileName: ${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
       packageBlobPath: ${{ parameters.product }}/${{ parameters.packageNamePrefix }}-$(Build.BuildNumber).zip
+      packageArtifactName: ${{ parameters.artifactNamePrefix }}${{ parameters.build }}
     steps:
     - task: DownloadPipelineArtifact@2
-      displayName: Download WCOM Launch package
+      displayName: Download $(packageArtifactName) artifact
       inputs:
-        artifact: WcomLaunchPackage
-        path: $(Pipeline.Workspace)/WcomLaunchPackage
+        artifact: $(packageArtifactName)
+        path: $(Pipeline.Workspace)/$(packageArtifactName)
 
     - task: AzureCLI@2
       displayName: Upload package ZIP to blob storage
@@ -26,7 +27,7 @@ stages:
         scriptLocation: inlineScript
         inlineScript: |
           $ErrorActionPreference = 'Stop'
-          $zipPath = Join-Path '$(Pipeline.Workspace)/WcomLaunchPackage' '$(packageFileName)'
+          $zipPath = Join-Path '$(Pipeline.Workspace)/$(packageArtifactName)' '$(packageFileName)'
           if (-not (Test-Path -LiteralPath $zipPath)) {
             throw "Package not found: $zipPath"
           }
@@ -38,6 +39,9 @@ stages:
             --file $zipPath `
             --auth-mode login `
             --overwrite true
+          if ($LASTEXITCODE -ne 0) {
+            throw "az storage blob upload failed with exit code $LASTEXITCODE"
+          }
 
     - ${{ if eq(parameters.writeManifest, true) }}:
       - task: AzureCLI@2
@@ -66,3 +70,6 @@ stages:
               --auth-mode login `
               --overwrite true `
               --content-type 'application/json'
+            if ($LASTEXITCODE -ne 0) {
+              throw "az storage blob upload failed with exit code $LASTEXITCODE"
+            }

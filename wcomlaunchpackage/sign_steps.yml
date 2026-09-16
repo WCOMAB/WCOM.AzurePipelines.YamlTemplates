@@ -20,9 +20,9 @@ steps:
 - task: TrustedSigning@0
   displayName: Sign with Trusted Signing
   inputs:
-    Endpoint: https://weu.codesigning.azure.net/
-    TrustedSigningAccountName: WCOMABTrustedSigning
-    CertificateProfileName: WCOMAB
+    Endpoint: ${{ parameters.trustedSigningEndpoint }}
+    TrustedSigningAccountName: ${{ parameters.trustedSigningAccountName }}
+    CertificateProfileName: ${{ parameters.trustedSigningCertificateProfileName }}
     FilesFolder: ${{ parameters.packageStagingFolder }}
     FilesFolderFilter: exe
     FilesFolderRecurse: true

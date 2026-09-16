@@ -1,6 +1,9 @@
 parameters:
 - name: build
   type: string
+- name: artifactNamePrefix
+  type: string
+  default: ''
 - name: product
   type: string
 - name: packageNamePrefix
@@ -29,7 +32,12 @@ parameters:
   default: false
 - name: signingAzureSubscription
   type: string
-  default: azdo-wcomab-trusted-signing
+- name: trustedSigningEndpoint
+  type: string
+- name: trustedSigningAccountName
+  type: string
+- name: trustedSigningCertificateProfileName
+  type: string
 - name: shouldSign
   type: object
   default: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))

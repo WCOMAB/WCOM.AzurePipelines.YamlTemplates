@@ -66,17 +66,21 @@ When **`writeManifest`** is `false` (default), uploading the ZIP can trigger **W
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `build` | string | Yes | | Stage name suffix (e.g. `SmartCLSManager`). Stage ids: `Package_{build}`, `Publish_{build}`. |
+| `artifactNamePrefix` | string | No | `''` | Prefix for the pipeline artifact name (same pattern as **dotnet** / **sql** templates). Published artifact is `{artifactNamePrefix}{build}`. Set distinct prefixes when this template is used more than once in the same `azure-pipelines.yml`. |
 | `product` | string | Yes | | Blob folder and API product id (no spaces). |
 | `packageNamePrefix` | string | Yes | | ZIP base name without version, e.g. `src-Synoptik.SmartCLS.Manager-Release`. |
 | `entryPoint` | string | No | `''` | If set, fails when this file is missing under `packageStagingFolder` after staging. |
 | `packageStagingFolder` | string | No | `$(Build.ArtifactStagingDirectory)/Package` | Folder that is signed (exes only) and zipped. |
 | `preBuildScript` | object | No | `{}` | **Staging / packaging** step(s). Required in practice for script apps. |
-| `postBuildScript` | object | No | `{}` | After staging, before signing (rare). |
+| `postBuildScript` | object | No | `{}` | After the release ZIP is created, before the pipeline artifact is published (rare). |
 | `storageAccountName` | string | Yes | | Target storage account; override for testing. |
 | `blobContainer` | string | No | `wcomlaunch` | Blob container name. |
 | `azureSubscription` | string | Yes | | ADO service connection for storage upload. |
 | `signExecutables` | boolean | No | `false` | When `true`, run Trusted Signing on **`*.exe`** in `packageStagingFolder`. Use for **.NET publish** packages; leave `false` for script-only ZIPs. |
-| `signingAzureSubscription` | string | No | `azdo-wcomab-trusted-signing` | Service connection for signing (ignored when `signExecutables` is `false`). |
+| `signingAzureSubscription` | string | When signing | | Service connection for signing (app pipeline; required when `signExecutables` is `true`). |
+| `trustedSigningEndpoint` | string | When signing | | Trusted Signing endpoint (app pipeline). |
+| `trustedSigningAccountName` | string | When signing | | Trusted Signing account name (app pipeline). |
+| `trustedSigningCertificateProfileName` | string | When signing | | Certificate profile name (app pipeline). |
 | `shouldSign` | object | No | main branch | Expression gating sign steps when `signExecutables` is `true`. |
 | `shouldPublish` | object | No | `false` | Expression for publish stage. |
 | `writeManifest` | boolean | No | `false` | Upload `{product}/manifest.json` when `true`. |
