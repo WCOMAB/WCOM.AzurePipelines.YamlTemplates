@@ -28,6 +28,16 @@ jobs:
     - template: sign_steps.yml
       parameters: ${{ parameters }}
 
+  - pwsh: |
+      $root = '${{ parameters.packageStagingFolder }}'
+      $files = @(Get-ChildItem -LiteralPath $root -Recurse -File -ErrorAction Stop)
+      if ($files.Count -eq 0) {
+        Write-Error "packageStagingFolder is empty (no files to zip): $root"
+        exit 1
+      }
+      Write-Host "Staged $($files.Count) file(s) under $root"
+    displayName: Verify staging folder is not empty
+
   - task: ArchiveFiles@2
     displayName: Create release ZIP
     inputs:
