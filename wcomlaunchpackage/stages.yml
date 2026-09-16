@@ -1,0 +1,60 @@
+parameters:
+- name: build
+  type: string
+- name: artifactNamePrefix
+  type: string
+  default: ''
+- name: product
+  type: string
+- name: packageNamePrefix
+  type: string
+- name: entryPoint
+  type: string
+  default: ''
+- name: packageStagingFolder
+  type: string
+  default: $(Build.ArtifactStagingDirectory)/Package
+- name: preBuildScript
+  type: object
+  default: {}
+- name: postBuildScript
+  type: object
+  default: {}
+- name: storageAccountName
+  type: string
+- name: blobContainer
+  type: string
+  default: wcomlaunch
+- name: azureSubscription
+  type: string
+- name: signExecutables
+  type: boolean
+  default: false
+- name: signingAzureSubscription
+  type: string
+- name: trustedSigningEndpoint
+  type: string
+- name: trustedSigningAccountName
+  type: string
+- name: trustedSigningCertificateProfileName
+  type: string
+- name: shouldSign
+  type: object
+  default: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+- name: shouldPublish
+  type: object
+  default: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+- name: writeManifest
+  type: boolean
+  default: false
+- name: pool
+  type: object
+  default:
+    vmImage: windows-latest
+
+stages:
+- template: build_stages.yml
+  parameters: ${{ parameters }}
+
+- template: publish_stages.yml
+  parameters: ${{ parameters }}
