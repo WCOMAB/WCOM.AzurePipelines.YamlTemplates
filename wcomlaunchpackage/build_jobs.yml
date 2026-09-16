@@ -24,10 +24,6 @@ jobs:
         Write-Host "entryPoint OK: $entry"
       displayName: Verify entryPoint
 
-  - ${{ if eq(parameters.signExecutables, true) }}:
-    - template: sign_steps.yml
-      parameters: ${{ parameters }}
-
   - pwsh: |
       $root = '${{ parameters.packageStagingFolder }}'
       $files = @(Get-ChildItem -LiteralPath $root -Recurse -File -ErrorAction Stop)
@@ -37,6 +33,10 @@ jobs:
       }
       Write-Host "Staged $($files.Count) file(s) under $root"
     displayName: Verify staging folder is not empty
+
+  - ${{ if eq(parameters.signExecutables, true) }}:
+    - template: sign_steps.yml
+      parameters: ${{ parameters }}
 
   - task: ArchiveFiles@2
     displayName: Create release ZIP

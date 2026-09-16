@@ -43,7 +43,7 @@ parameters:
   default: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 - name: shouldPublish
   type: object
-  default: false
+  default: eq(variables['Build.SourceBranch'], 'refs/heads/main')
 - name: writeManifest
   type: boolean
   default: false

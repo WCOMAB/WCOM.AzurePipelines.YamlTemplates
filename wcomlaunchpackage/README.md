@@ -82,7 +82,7 @@ When **`writeManifest`** is `false` (default), uploading the ZIP can trigger **W
 | `trustedSigningAccountName` | string | When signing | | Trusted Signing account name (app pipeline). |
 | `trustedSigningCertificateProfileName` | string | When signing | | Certificate profile name (app pipeline). |
 | `shouldSign` | object | No | main branch | Expression gating sign steps when `signExecutables` is `true`. |
-| `shouldPublish` | object | No | `false` | Expression for publish stage. |
+| `shouldPublish` | object | No | main branch | Expression for publish stage. |
 | `writeManifest` | boolean | No | `false` | Upload `{product}/manifest.json` when `true`. |
 | `pool` | object | No | `windows-latest` | Agent pool. |
 
@@ -108,7 +108,7 @@ stages:
       entryPoint: SmartCLS.ps1
       storageAccountName: wcomlaunchprodsynoptik
       azureSubscription: azdo-synoptik-wcomlaunch-storage
-      shouldPublish: false
+      shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
       writeManifest: false
       preBuildScript:
         scriptType: pscore
