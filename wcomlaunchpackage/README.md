@@ -25,17 +25,17 @@ name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 ### PowerShell / script apps (default expectation now)
 
-Examples: **SmartCLS Manager** — `.ps1` + `Include/` + `Functions/`, no MSBuild step.
+Examples: a script tree (`.ps1` plus support folders), no MSBuild step.
 
 - Implement **`preBuildScript`** only: copy or stage files into **`$(Build.ArtifactStagingDirectory)/Package`**.
-- **`entryPoint`**: primary file in the ZIP (e.g. `SmartCLS.ps1`) for a post-stage sanity check; WCOM Launch runtime config (e.g. `powershell.exe` + arguments) lives in the install shortcut / future client options.
-- Omit **`signExecutables`**, **`shouldSign`**, and **`signingAzureSubscription`** (defaults keep Trusted Signing **out of the pipeline**). There is nothing to Authenticode-sign in a script-only ZIP.
+- **`entryPoint`**: primary file in the ZIP (e.g. `Start.ps1`) for a post-stage sanity check; WCOM Launch runtime config (e.g. `powershell.exe` + arguments) lives in the install shortcut / future client options.
+- Omit **`signExecutables`** (default **`false`**) and signing parameters. There is nothing to Authenticode-sign in a script-only ZIP.
 
 Reuse **[dotnetcommon pre-build / post-build](../dotnet/README.md#pre-build)** only as the **script runner** shape (`preBuildScript` / `postBuildScript`), not the **[dotnet/stages.yml](../dotnet/README.md)** pipeline (no NuGet pack/publish here).
 
 ### .NET apps (later)
 
-Examples: VehicleTest-style folders with a published **`MyApp.exe`** at the ZIP root.
+Examples: a publish output folder with **`MyApp.exe`** at the ZIP root.
 
 Do **not** duplicate compile logic inside `wcomlaunchpackage`. When you add .NET WCOM Launch apps:
 
@@ -49,15 +49,15 @@ Same **`packageStagingFolder` → sign → ZIP → blob`** path for all app type
 
 | Item | Pattern |
 |------|---------|
-| Storage account | Parameter `storageAccountName` (override for test), e.g. `wcomlaunchprodsynoptik` |
+| Storage account | Parameter `storageAccountName` (per app / environment) |
 | Container | `blobContainer` (default `wcomlaunch`) |
-| Product folder | `product`, e.g. `SmartCLSManager` |
+| Product folder | `product` (WCOM Launch product id) |
 | Release ZIP | `{product}/{packageNamePrefix}-{Build.BuildNumber}.zip` |
 | Manifest | `{product}/manifest.json` (optional; see `writeManifest`) |
 
-Example blob path:
+Example blob path (placeholders):
 
-`wcomlaunch/SmartCLSManager/src-Synoptik.SmartCLS.Manager-Release-2026.9.16.1.zip`
+`{container}/{product}/{packageNamePrefix}-{Build.BuildNumber}.zip`
 
 When **`writeManifest`** is `false` (default), uploading the ZIP can trigger **Wcom.Launch.Api** `UpdateProduct` to refresh `manifest.json` (if configured on that storage account).
 
@@ -65,10 +65,10 @@ When **`writeManifest`** is `false` (default), uploading the ZIP can trigger **W
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `build` | string | Yes | | Stage name suffix (e.g. `SmartCLSManager`). Stage ids: `Package_{build}`, `Publish_{build}`. |
+| `build` | string | Yes | | Stage name suffix (e.g. `MyProduct`). Stage ids: `Package_{build}`, `Publish_{build}`. |
 | `artifactNamePrefix` | string | No | `''` | Prefix for the pipeline artifact name (same pattern as **dotnet** / **sql** templates). Published artifact is `{artifactNamePrefix}{build}`. Set distinct prefixes when this template is used more than once in the same `azure-pipelines.yml`. |
 | `product` | string | Yes | | Blob folder and API product id (no spaces). |
-| `packageNamePrefix` | string | Yes | | ZIP base name without version, e.g. `src-Synoptik.SmartCLS.Manager-Release`. |
+| `packageNamePrefix` | string | Yes | | ZIP base name without version, e.g. `src-ORG.Repo-Release`. |
 | `entryPoint` | string | No | `''` | If set, fails when this file is missing under `packageStagingFolder` after staging. |
 | `packageStagingFolder` | string | No | `$(Build.ArtifactStagingDirectory)/Package` | Folder that is signed (exes only) and zipped. |
 | `preBuildScript` | object | No | `{}` | **Staging / packaging** step(s). Required in practice for script apps. |
@@ -86,7 +86,7 @@ When **`writeManifest`** is `false` (default), uploading the ZIP can trigger **W
 | `writeManifest` | boolean | No | `false` | Upload `{product}/manifest.json` when `true`. |
 | `pool` | object | No | `windows-latest` | Agent pool. |
 
-## Example — PowerShell app (SmartCLS Manager)
+## Example — PowerShell app
 
 ```yaml
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
@@ -102,19 +102,19 @@ resources:
 stages:
   - template: wcomlaunchpackage/stages.yml@templates
     parameters:
-      build: SmartCLSManager
-      product: SmartCLSManager
-      packageNamePrefix: src-Synoptik.SmartCLS.Manager-Release
-      entryPoint: SmartCLS.ps1
-      storageAccountName: wcomlaunchprodsynoptik
-      azureSubscription: azdo-synoptik-wcomlaunch-storage
+      build: MyProduct
+      product: MyProduct
+      packageNamePrefix: src-ORG.MyRepo-Release
+      entryPoint: Start.ps1
+      storageAccountName: $(STORAGE_ACCOUNT_NAME)
+      azureSubscription: $(AZURE_SERVICE_CONNECTION)
       shouldPublish: eq(variables['Build.SourceBranch'], 'refs/heads/main')
       writeManifest: false
       preBuildScript:
         scriptType: pscore
         targetType: inline
         pwsh: true
-        displayName: Stage SmartCLS Manager files
+        displayName: Stage package files
         script: |
           & '$(Build.SourcesDirectory)/scripts/Build-WcomLaunchPackage.ps1' `
             -DestinationPath '$(Build.ArtifactStagingDirectory)/Package'
