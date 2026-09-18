@@ -32,10 +32,48 @@ jobs:
                       $source = "${{ source.name }}"
                       $packageFilter = "${{ coalesce(source.pushFilter, '*.$(Build.BuildNumber).nupkg') }}"
 
-                      $packages = Get-ChildItem -Path $packagePath -Filter $packageFilter -File
+                      function ConvertTo-OptionalStringArray {
+                          param([string]$Json)
+                          $trimmed = if ($null -eq $Json) { '' } else { $Json.Trim() }
+                          if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed -in @('null', '""', "''", '[]')) {
+                              return [string[]]@()
+                          }
+                          $parsed = $trimmed | ConvertFrom-Json
+                          if ($null -eq $parsed -or $parsed -eq '') {
+                              return [string[]]@()
+                          }
+                          return [string[]]@($parsed)
+                      }
+
+                      $pushInclude = ConvertTo-OptionalStringArray -Json $env:PUSH_INCLUDE_JSON
+                      $pushExclude = ConvertTo-OptionalStringArray -Json $env:PUSH_EXCLUDE_JSON
+
+                      $getChildItemParams = @{
+                          Path   = $packagePath
+                          Filter = $packageFilter
+                          File   = $true
+                      }
+                      if ($pushInclude.Count -gt 0 -or $pushExclude.Count -gt 0) {
+                          $getChildItemParams['Path'] = Join-Path $packagePath '*'
+                      }
+                      if ($pushInclude.Count -gt 0) {
+                          $getChildItemParams['Include'] = $pushInclude
+                      }
+                      if ($pushExclude.Count -gt 0) {
+                          $getChildItemParams['Exclude'] = $pushExclude
+                      }
+
+                      $packages = Get-ChildItem @getChildItemParams
 
                       if ($packages.Count -eq 0) {
-                          Write-Host "No packages found matching pattern: $packagePath\$packageFilter"
+                          $matchDescription = "filter: $packageFilter"
+                          if ($pushInclude.Count -gt 0) {
+                              $matchDescription += "; include: $($pushInclude -join ', ')"
+                          }
+                          if ($pushExclude.Count -gt 0) {
+                              $matchDescription += "; exclude: $($pushExclude -join ', ')"
+                          }
+                          Write-Host "No packages found matching $matchDescription under $packagePath"
                           exit 1
                       }
 
@@ -56,4 +94,7 @@ jobs:
                           }
                           Write-Host "Successfully pushed: $($package.FullName)"
                       } -ThrottleLimit 5
+                    env:
+                      PUSH_INCLUDE_JSON: ${{ convertToJson(coalesce(source.pushInclude, '')) }}
+                      PUSH_EXCLUDE_JSON: ${{ convertToJson(coalesce(source.pushExclude, '')) }}
                     displayName: 'Publish to ${{ source.name }} Feed'
