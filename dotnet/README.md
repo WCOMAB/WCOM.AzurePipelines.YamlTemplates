@@ -80,7 +80,9 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  source           | string   | No           |                               | The source URL if the pipeline is adding sources.
  publish          | bool     | No           |                               | Allow update to NuGet source.
  onlyDeploy       | bool     | No           |                               | Decides of a source should be used to publish nugets or not.
- pushFilter       | string   | No           | *.$(Build.BuildNumber).nupkg  | Glob pattern for packages to push from the artifact (e.g. `*.nupkg` for all, or `*.$(Build.BuildNumber).nupkg` for build-numbered only).
+ pushFilter       | string   | No           | *.$(Build.BuildNumber).nupkg  | Glob pattern for packages to push from the artifact (e.g. `*.nupkg` for all, or `*.$(Build.BuildNumber).nupkg` for build-numbered only). Combined with `pushInclude` / `pushExclude` when those are set.
+ pushInclude      | object   | No           |                               | Opt-in. `string[]` of glob patterns passed to `Get-ChildItem -Include`. Applied only when specified and non-empty. Combined with `pushFilter` (AND). Not recursive; omit rather than passing an empty array. If include should be the primary selector, also set `pushFilter` (e.g. `*` or `*.nupkg`).
+ pushExclude      | object   | No           |                               | Opt-in. `string[]` of glob patterns passed to `Get-ChildItem -Exclude`. Applied only when specified and non-empty. Combined with `pushFilter`. Not recursive; omit rather than passing an empty array.
 
 ## dpi
 
@@ -169,6 +171,15 @@ stages:
         source: SourceURL
         publish: true
         onlyDeploy: false
+      - name: authenticateAndPushFilteredSourceName
+        publish: true
+        pushFilter: '*.$(Build.BuildNumber).nupkg'
+        pushInclude:
+          - 'MyCompany.Core.*'
+          - 'MyCompany.Contracts.*'
+        pushExclude:
+          - '*Tests*'
+          - '*Dummy*'
     buildParameters:
       - '-p:PackAsTool=true/false'
       - '-p:ToolCommandName=ToolCommandName'
