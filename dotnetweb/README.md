@@ -117,6 +117,8 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  latest           | bool     | No           | true                             | Whether to tag the container as latest.
  servers          | array    | No           |                                  | Array of server configurations for container deployment.
 
+Registry deploy jobs use a default job timeout of **180** minutes (`container/deploy_jobs.yml`). Container app publish jobs use **120** minutes (`container/publish_jobs.yml`). Pass `timeoutInMinutes` into those job templates to override.
+
 ## Container Servers
 
  **Parameters**   | **Type** | **Required** | **Default value**                | **Description**
