@@ -2,6 +2,7 @@ jobs:
   - deployment: ${{ format('{0}_Deploy', replace(replace(replace(parameters.name, ' ', '_'), '-', '_'), '.', '_')) }}
     displayName: ${{ parameters.name}} Deploy
     environment: ${{ parameters.environment }}
+    timeoutInMinutes: ${{ coalesce(parameters.timeoutInMinutes, 180) }}
     strategy:
       runOnce:
         deploy:
