@@ -55,7 +55,10 @@ jobs:
 
         - template: ../dotnetcommon/postbuild_common.yml
           parameters:
-            postBuildScript: ${{ parameters.postBuildScript }}
+            postBuildScript: ${{ coalesce(site.postBuildScript, parameters.postBuildScript) }}
+            env:
+              SiteName: ${{ site.name }}
+              DocsOutputDir: $(build.artifactstagingdirectory)/output/${{ site.name }}
 
         - publish: $(build.artifactstagingdirectory)/output/${{ site.name }}
           displayName: Publish ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} Static Site Artifact

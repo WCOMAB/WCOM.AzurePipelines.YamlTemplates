@@ -18,32 +18,14 @@ jobs:
               parameters:
                 sources: ${{  parameters.sources  }}
 
+            - script: |
+                npm install -g @azure/static-web-apps-cli
+              displayName: Install SWA CLI
+
             - ${{ each site in parameters.sites }}:
               - download: current
                 artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}
                 displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} artifact
-
-              - script: |
-                  npm install -g @azure/static-web-apps-cli
-                displayName: Install SWA CLI
-
-              - script: dotnet tool install --global WCOM.Docs.Tools.SearchIndexUploader
-                displayName: Installing SearchIndex tool
-
-              - task: AzureCLI@2
-                displayName: Upload Search Index
-                inputs:
-                  azureSubscription: '${{ parameters.azureSubscription }}'
-                  scriptType: pscore
-                  scriptLocation: inlineScript
-                  inlineScript: |
-                    $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
-                    $ENV:SEARCH_SERVICE_NAME='${{ parameters.searchServiceName }}'
-                    $ENV:SEARCH_SERVICE_API_KEY=(az search admin-key show --resource-group $ENV:AZURE_RESOURCE_GROUP --service-name $ENV:SEARCH_SERVICE_NAME --query "primaryKey" --output tsv)
-                    dotnet wcom-docs-searchindexuploader upload ${{ site.name }} ${{ parameters.env }} $(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}/searchIndex.json
-                    [int] $Result = $LASTEXITCODE
-                    $Result
-                    exit $Result
 
               - task: AzureCLI@2
                 displayName: Deploy '${{ site.name }} in ${{ parameters.name }} environment' using SWA CLI
@@ -53,7 +35,7 @@ jobs:
                   scriptLocation: inlineScript
                   inlineScript: |
                     $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
-                    $ENV:SWA_CLI_APP_NAME='${{ parameters.webAppName }}'
+                    $ENV:SWA_CLI_APP_NAME='${{ coalesce(site.webAppName, parameters.webAppName) }}'
                     $ENV:SWA_CLI_DEPLOYMENT_TOKEN=(az staticwebapp secrets list --resource-group $ENV:AZURE_RESOURCE_GROUP --name $ENV:SWA_CLI_APP_NAME --query "properties.apiKey" -o tsv)
                     swa deploy $(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} --env Production
                     [int] $Result = $LASTEXITCODE
