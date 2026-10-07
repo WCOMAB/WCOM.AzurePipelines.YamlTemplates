@@ -1,6 +1,7 @@
 parameters:
   script: {}
   prefix: ''  # This will be either 'Pre-Build' or 'Post-Build'
+  env: {}
 
 steps:
 - ${{ if in(parameters.script.scriptType, 'pscore', 'bash') }}:
@@ -18,6 +19,8 @@ steps:
         workingDirectory: ${{ parameters.script.workingDirectory }}
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ each var in parameters.env }}:
+          ${{ var.key }}: ${{ var.value }}
         ${{ each var in parameters.script.env }}:
           ${{ var.key }}: ${{ var.value }}
 
@@ -35,6 +38,8 @@ steps:
           pwsh: ${{ parameters.script.pwsh }}
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ each var in parameters.env }}:
+            ${{ var.key }}: ${{ var.value }}
           ${{ each var in parameters.script.env }}:
             ${{ var.key }}: ${{ var.value }}
 
@@ -51,5 +56,7 @@ steps:
           bashEnvValue: ${{ parameters.script.bashEnvValue }}
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ each var in parameters.env }}:
+            ${{ var.key }}: ${{ var.value }}
           ${{ each var in parameters.script.env }}:
             ${{ var.key }}: ${{ var.value }} 
