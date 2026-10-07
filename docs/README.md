@@ -1,6 +1,6 @@
 # Overview
 
-Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure.
+Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure. Each site is built to HTML, indexed with Pagefind, then published as a static site artifact.
 
 ## Parameters
 
@@ -12,6 +12,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  build                   | string   | Yes          |                                                                         | The environment to build.
  sources                 | array    | No           |                                                                         | NuGet feeds to authenticate against and optionally push to.
  sites                   | array    | Yes          |                                                                         | Array of sites.
+ webAppName              | string   | No           |                                                                         | Name fragment used in the default web app name format.
  webAppNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                                   | The format for the web app name.
  webAppType              | string   | No           | 'stapp'                                                                 | The type/abbreviation for the web app.
  searchServiceName       | string   | No           | format('{0}-{1}-{2}-{3}', system, 'srch', env, suffix)                  | The Search Service name.
@@ -21,26 +22,51 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  azureSubscriptionFormat | string   | No           | 'azdo-{0}-{1}-{2}-{3}'                                                  | The format for the azureSubscription.
  resourceGroup           | string   | No           | format('{0}-{1}-{2}', system, env, suffix)                              | The resource group name.
  resourceGroupFormat     | string   | No           | '{0}-{1}-{2}'                                                           | The format for the resourceGroup name.
- preBuildScript          | object   | No           |                                                                         | Object containing pre-build parameters.
+ preBuildScript          | object   | No           |                                                                         | Object containing pre-build parameters. Runs once before tools are installed and sites are built.
+ postBuildScript         | object   | No           |                                                                         | Object containing post-build parameters. Runs once per site after Pagefind indexing, before the artifact is published.
+ shouldDeploy            | bool     | No           |                                                                         | Check if deploy stages should run.
  environments            | array    | Yes          |                                                                         | Array of environments and environment specific parameters.
- useDotNetSDK            | object   | No           |                   | Object containing parameters for specified dotnet SDK.
- artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
- projectRoot            | string   | No          |                                                                | For changing the root of the project, ie where input or other folders are located.
+ useDotNetSDK            | object   | No           |                                                                         | Object containing parameters for specified dotnet SDK.
+ artifactNamePrefix      | string   | No           |                                                                         | Prefix for artifacts created by this pipeline.
+ projectRoot             | string   | No           | '.'                                                                     | For changing the root of the project, ie where input or other folders are located.
 
 ## Pre-Build
 
- **Parameters**   | **Type** | **Required** | **Default value** | **Description**
-------------------|----------|--------------|-------------------|----------------------------------
- scriptType       | string   | No           |                   | The type of script. pscore or bash.
- targetType       | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
- filePath         | string   | No           |                   | The path of the script.
- script           | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
- arguments        | string   | No           |                   | Specifies the arguments passed to the script.
- failOnStderr     | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
- showWarnings     | bool     | No           | false             | Show warnings in pipeline logs.
- workingDirectory | string   | No           |                   | The working directory where the script is run.
- bashEnvValue     | string   | No           |                   | Value for BASH_ENV environment variable.
- pwsh             | bool     | No           | false             | Use PowerShell Core.
+ **Parameters**    | **Type** | **Required** | **Default value** | **Description**
+-------------------|----------|--------------|-------------------|----------------------------------
+ scriptType        | string   | No           |                   | The type of script. pscore or bash.
+ targetType        | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
+ filePath          | string   | No           |                   | The path of the script.
+ script            | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
+ arguments         | string   | No           |                   | Specifies the arguments passed to the script.
+ failOnStderr      | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
+ showWarnings      | bool     | No           | false             | Show warnings in pipeline logs.
+ workingDirectory  | string   | No           |                   | The working directory where the script is run.
+ bashEnvValue      | string   | No           |                   | Value for BASH_ENV environment variable.
+ pwsh              | bool     | No           | false             | Use PowerShell Core.
+ displayName       | string   | No           |                   | Custom display name for the task. If not specified, a default name will be generated.
+ azureSubscription | string   | No           |                   | Azure Resource Manager subscription for Azure CLI execution. If specified, script runs using Azure CLI task.
+ env               | object   | No           |                   | Dictionary of environment variables to pass to the script.
+
+## Post-Build
+
+Same script object shape as Pre-Build. Runs inside the site loop after Pagefind indexing and before the static site artifact is published.
+
+ **Parameters**    | **Type** | **Required** | **Default value** | **Description**
+-------------------|----------|--------------|-------------------|----------------------------------
+ scriptType        | string   | No           |                   | The type of script. pscore or bash.
+ targetType        | string   | No           | filePath          | Specifies the type of script for the task to run. inline or filePath.
+ filePath          | string   | No           |                   | The path of the script.
+ script            | string   | No           |                   | The contents of the script. Supports either a loose file or inline script depending on the targetType.
+ arguments         | string   | No           |                   | Specifies the arguments passed to the script.
+ failOnStderr      | bool     | No           | false             | Fails task if errors are written to the error pipeline or if any data is written to the Standard Error stream.
+ showWarnings      | bool     | No           | false             | Show warnings in pipeline logs.
+ workingDirectory  | string   | No           |                   | The working directory where the script is run.
+ bashEnvValue      | string   | No           |                   | Value for BASH_ENV environment variable.
+ pwsh              | bool     | No           | false             | Use PowerShell Core.
+ displayName       | string   | No           |                   | Custom display name for the task. If not specified, a default name will be generated.
+ azureSubscription | string   | No           |                   | Azure Resource Manager subscription for Azure CLI execution. If specified, script runs using Azure CLI task.
+ env               | object   | No           |                   | Dictionary of environment variables to pass to the script.
 
 ## Use DotNet SDK
 
@@ -50,6 +76,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  useGlobalJson    | bool     | No           | true              | Specifies if sdk should be installed from a globalJson file.
  workingDirectory | string   | No           |                   | The path to the globalJson file.
  version          | string   | No           |                   | Specifies a specific version of the dotnet sdk.
+ skipTask         | bool     | No           | false             | Bool if you want to skip this task or not.
 
 ## Source
 
@@ -60,14 +87,14 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
 
 ## Per environment
 
- **Parameters** | **Type** | **Required** | **Default value**                                                       | **Description**
-----------------|----------|--------------|-------------------------------------------------------------------------|----------------------------------------------
- env            | array    | Yes          |                                                                         | The target environment.
- name           | string   | Yes          |                                                                         | The target environment name.
- webAppName     | string   | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'stapp', env, suffix) | The Web App name.
- deploy         | bool     | No           | true                                                                    | Allow deploy to Resource group.
- deployAfter    | array    | No           |                                                                         | Object will be deployed after following env.
- dependsOn       | array     | No          |                   | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template. 
+ **Parameters**  | **Type**  | **Required** | **Default value**                                                       | **Description**
+-----------------|-----------|--------------|-------------------------------------------------------------------------|----------------------------------------------
+ env             | array     | Yes          |                                                                         | The target environment.
+ name            | string    | Yes          |                                                                         | The target environment name.
+ webAppName      | string    | No           | format('{0}-{1}-{2}-{3}-{4}', system, webAppName, 'stapp', env, suffix) | The Web App name.
+ deploy          | bool      | No           | true                                                                    | Allow deploy to Resource group.
+ deployAfter     | array     | No           |                                                                         | Object will be deployed after following env.
+ dependsOn       | array     | No           |                                                                         | Allows for deployment to depend on an optional stage, ie a Build stage fromm another template or outside the current template.
 
 
  ## Examples
@@ -156,6 +183,7 @@ stages:
         token: $(CustomerNugetFeedToken)
     sites:
       - name: 'siteName'
+    webAppName: webAppName
     preBuildScript:
       scriptType: scriptType
       targetType: targetType
@@ -169,6 +197,27 @@ stages:
       pwsh: true/false
       workingDirectory: workingDirectory
       bashEnvValue: bashEnvValue
+      displayName: Custom Pre-Build Step
+      azureSubscription: My-Azure-Connection
+      env:
+        KEY1: value1
+        KEY2: $(Pipeline.Variable)
+    postBuildScript:
+      scriptType: pscore
+      targetType: filePath
+      filePath: scripts/post-build.ps1
+      script: |
+        Write-Host "Post-build script"
+      arguments: -Environment Production
+      failOnStderr: true
+      showWarnings: true
+      pwsh: true
+      workingDirectory: $(Build.SourcesDirectory)
+      displayName: Custom Post-Build Step
+      azureSubscription: My-Azure-Connection
+      env:
+        KEY1: value1
+        KEY2: $(Pipeline.Variable)
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     environments:
       - env: dev
