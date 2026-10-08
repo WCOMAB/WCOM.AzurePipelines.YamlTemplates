@@ -1,28 +1,29 @@
 jobs:
-  - deployment: ${{ format('{0}_Deploy', parameters.name) }}
-    displayName: ${{ parameters.name}} Deploy
-    environment: ${{ parameters.name}}
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - checkout: self
-              fetchDepth: 0
-              displayName: Checkout $(Build.Repository.Name)
+  - ${{ each site in parameters.sites }}:
+    - deployment: ${{ format('{0}_{1}_Deploy', parameters.name, replace(site.name, '-', '_')) }}
+      displayName: ${{ format('{0} {1} Deploy', parameters.name, site.name) }}
+      environment: ${{ parameters.name }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+                fetchDepth: 0
+                displayName: Checkout $(Build.Repository.Name)
 
-            - template: ../dotnetcommon/dotnet_sdk.yml
-              parameters:
-                useDotNetSDK: ${{ parameters.useDotNetSDK }}
+              - template: ../dotnetcommon/dotnet_sdk.yml
+                parameters:
+                  useDotNetSDK: ${{ parameters.useDotNetSDK }}
 
-            - template: ../dotnetcommon/dotnet_auth.yml
-              parameters:
-                sources: ${{  parameters.sources  }}
+              - template: ../dotnetcommon/dotnet_auth.yml
+                parameters:
+                  sources: ${{  parameters.sources  }}
 
-            - script: |
-                npm install -g @azure/static-web-apps-cli
-              displayName: Install SWA CLI
+              - ${{ if eq(coalesce(parameters.installSwaCli, true), true) }}:
+                - script: |
+                    npm install -g @azure/static-web-apps-cli
+                  displayName: Install SWA CLI
 
-            - ${{ each site in parameters.sites }}:
               - download: current
                 artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}
                 displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} artifact
