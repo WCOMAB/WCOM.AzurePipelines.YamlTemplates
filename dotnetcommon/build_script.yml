@@ -20,7 +20,8 @@ steps:
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ each var in parameters.env }}:
-          ${{ var.key }}: ${{ var.value }}
+          ${{ if or(not(parameters.script.env), not(parameters.script.env[var.key])) }}:
+            ${{ var.key }}: ${{ var.value }}
         ${{ each var in parameters.script.env }}:
           ${{ var.key }}: ${{ var.value }}
 
@@ -39,7 +40,8 @@ steps:
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           ${{ each var in parameters.env }}:
-            ${{ var.key }}: ${{ var.value }}
+            ${{ if or(not(parameters.script.env), not(parameters.script.env[var.key])) }}:
+              ${{ var.key }}: ${{ var.value }}
           ${{ each var in parameters.script.env }}:
             ${{ var.key }}: ${{ var.value }}
 
@@ -57,6 +59,7 @@ steps:
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           ${{ each var in parameters.env }}:
-            ${{ var.key }}: ${{ var.value }}
+            ${{ if or(not(parameters.script.env), not(parameters.script.env[var.key])) }}:
+              ${{ var.key }}: ${{ var.value }}
           ${{ each var in parameters.script.env }}:
             ${{ var.key }}: ${{ var.value }} 
