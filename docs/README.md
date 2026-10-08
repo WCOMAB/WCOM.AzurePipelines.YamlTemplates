@@ -22,6 +22,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
  preBuildScript          | object   | No           |                                                                         | Object containing pre-build parameters. Runs once before tools are installed and sites are built.
  postBuildScript         | object   | No           |                                                                         | Default post-build hook. Used when a site does not set postBuildScript. Runs after Pagefind, before publish.
  shouldDeploy            | bool     | No           |                                                                         | Check if deploy stages should run.
+ installSwaCli           | bool     | No           | true                                                                    | Install @azure/static-web-apps-cli on the deploy agent. Set false when swa is already installed.
  environments            | array    | Yes          |                                                                         | Array of environments and environment specific parameters.
  useDotNetSDK            | object   | No           |                                                                         | Object containing parameters for specified dotnet SDK.
  artifactNamePrefix      | string   | No           |                                                                         | Prefix for artifacts created by this pipeline.
@@ -47,11 +48,13 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
 
 ## Sites
 
- **Parameter**    | **Type** | **Required** | **Default value** | **Description**
+ **Parameter**     | **Type** | **Required** | **Default value** | **Description**
 -------------------|----------|--------------|-------------------|----------------------------------
- name              | string   | Yes          |                   | Site name. Used as the input folder, artifact suffix, and SiteName env var.
+ name              | string   | Yes          |                   | Site name. Used as the input folder, artifact suffix, and SiteName env var. Must be job-id safe (letters, digits, underscore; hyphens are rewritten only in the deploy job id).
  webAppName        | string   | No           |                   | Exact Azure Static Web App resource name. When omitted, uses the environment-resolved web app name.
  postBuildScript   | object   | No           |                   | Site-specific post-build hook. When omitted, uses the template-level postBuildScript.
+
+Sites in one environment deploy as parallel jobs in `Deploy_{environment}`. The job id is `{environment}_{site}_Deploy`. Each job targets the same Azure DevOps Environment (`environment.name`). An exclusive lock on that Environment serializes the jobs. Each `deployment` job may request its own approval. For a single approval then parallel SWA deploys, use a gate `deployment` job plus regular jobs in a wrapper pipeline; this template keeps per-site deployment jobs.
 
 ## Post-Build
 
@@ -278,6 +281,7 @@ stages:
         KEY1: value1
         KEY2: $(Pipeline.Variable)
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    installSwaCli: true/false
     environments:
       - env: dev
         name: Development
