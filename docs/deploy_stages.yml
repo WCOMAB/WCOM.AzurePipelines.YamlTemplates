@@ -25,4 +25,5 @@ stages:
               projectRoot: ${{ coalesce(parameters.projectRoot, '.') }}
               useDotNetSDK: ${{ parameters.useDotNetSDK }}
               installSwaCli: ${{ parameters.installSwaCli }}
+              apiLocation: ${{ parameters.apiLocation }}
 
