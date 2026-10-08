@@ -55,7 +55,7 @@ Azure DevOps Pipelines Docs is used to publish and deploy Documentation to Azure
 
 ## Post-Build
 
-Same script object shape as Pre-Build. `coalesce(site.postBuildScript, parameters.postBuildScript)` runs inside the site loop after Pagefind indexing and before the static site artifact is published.
+Same script object shape as Pre-Build. A site-level `postBuildScript` is used when present, otherwise the template-level hook. If neither is set, the step is a no-op. Runs inside the site loop after Pagefind indexing and before the static site artifact is published.
 
 When the hook runs it always receives:
 
