@@ -38,7 +38,13 @@ jobs:
                     $ENV:AZURE_RESOURCE_GROUP='${{ parameters.resourceGroup }}'
                     $ENV:SWA_CLI_APP_NAME='${{ coalesce(site.webAppName, parameters.webAppName) }}'
                     $ENV:SWA_CLI_DEPLOYMENT_TOKEN=(az staticwebapp secrets list --resource-group $ENV:AZURE_RESOURCE_GROUP --name $ENV:SWA_CLI_APP_NAME --query "properties.apiKey" -o tsv)
-                    swa deploy $(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }} --env Production
+                    $apiLocation = '${{ coalesce(site.apiLocation, parameters.apiLocation) }}'
+                    $artifactPath = '$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName).${{ site.name }}'
+                    if ([string]::IsNullOrWhiteSpace($apiLocation)) {
+                      swa deploy $artifactPath --env Production
+                    } else {
+                      swa deploy $artifactPath --env Production --api-location $apiLocation
+                    }
                     [int] $Result = $LASTEXITCODE
                     $Result
                     exit $Result
