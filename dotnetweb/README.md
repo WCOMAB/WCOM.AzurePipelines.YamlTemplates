@@ -86,11 +86,19 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  
 ## dpi
 
- **Parameters** | **Type** | **Required** | **Default value**                | **Description**
-----------------|----------|--------------|----------------------------------|------------------
- report           | bool   | no           | false                            | Boolean to create report or not.
- WorkspaceId      | string (secret) | Yes |                                  | The Id of the log analytic workspace the reports gets sent to.
- SharedKey        | string (secret) | Yes |                                  | Shared/Primary Key to the workspace you want to send the reports to
+When `report` is true and `azureSubscription` is set, DPI runs inside `AzureCLI@2` and reports through the Logs Ingestion API (`DefaultAzureCredential` from the service connection). The service connection principal needs **Monitoring Metrics Publisher** on the data collection rule. Workload identity federation is preferred (no client secret). Do not set `WorkspaceId`/`SharedKey` together with Logs Ingestion settings.
+
+When `report` is true and `azureSubscription` is omitted, the existing Data Collector `pwsh` path is used. This is independent of the job/deploy `azureSubscription`.
+
+ **Parameters**     | **Type**          | **Required** | **Default value**     | **Description**
+--------------------|-------------------|--------------|-----------------------|------------------
+ report             | bool              | No           | false                 | Boolean to create report or not.
+ azureSubscription  | string            | No           |                       | ARM service connection for Logs Ingestion. When set, report uses Azure CLI instead of `pwsh`.
+ Endpoint           | string            | No           |                       | Logs Ingestion API endpoint. Required in practice when `azureSubscription` is set.
+ RuleId             | string            | No           |                       | Data collection rule immutable ID. Required in practice when `azureSubscription` is set.
+ Stream             | string            | No           | Custom-NuGetReport    | DCR **input** stream name (not the table stream `Custom-NuGetReport_CL`).
+ WorkspaceId        | string (secret)   | No           |                       | Deprecated. Log Analytics workspace id for the Data Collector path when `azureSubscription` is omitted.
+ SharedKey          | string (secret)   | No           |                       | Deprecated. Workspace shared key for the Data Collector path when `azureSubscription` is omitted.
 
 ## Per environment
 
@@ -266,9 +274,12 @@ stages:
       version: '9.0.x'
       skipTask: false
     dpi:
-      report: true/false
-      WorkspaceId: <secret string>
-      SharedKey: <secret string>
+      report: true
+      azureSubscription: dpi-logs-ingestion
+      Endpoint: $(NUGETREPORTSETTINGS_ENDPOINT)
+      RuleId: $(NUGETREPORTSETTINGS_RULEID)
+      # Stream: Custom-NuGetReport
+      # WorkspaceId / SharedKey: only when azureSubscription is omitted (deprecated Data Collector path)
     container:
       deploy: true
       csproj: src/MyProject/MyProject.csproj
