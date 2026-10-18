@@ -20,22 +20,7 @@ steps:
         azureSubscription: ${{ parameters.dpi.azureSubscription }}
         scriptType: pscore
         scriptLocation: inlineScript
-        inlineScript: |
-          # ADO maps pipeline/variable-group names to uppercase env vars; Linux is case-sensitive.
-          # DPI reads NuGetReportSettings_Endpoint / _RuleId / _Stream.
-          if ([string]::IsNullOrWhiteSpace($env:NuGetReportSettings_Endpoint) -and -not [string]::IsNullOrWhiteSpace($env:NUGETREPORTSETTINGS_ENDPOINT)) {
-            $env:NuGetReportSettings_Endpoint = $env:NUGETREPORTSETTINGS_ENDPOINT
-          }
-          if ([string]::IsNullOrWhiteSpace($env:NuGetReportSettings_RuleId) -and -not [string]::IsNullOrWhiteSpace($env:NUGETREPORTSETTINGS_RULEID)) {
-            $env:NuGetReportSettings_RuleId = $env:NUGETREPORTSETTINGS_RULEID
-          }
-          if ([string]::IsNullOrWhiteSpace($env:NuGetReportSettings_Stream) -and -not [string]::IsNullOrWhiteSpace($env:NUGETREPORTSETTINGS_STREAM)) {
-            $env:NuGetReportSettings_Stream = $env:NUGETREPORTSETTINGS_STREAM
-          }
-          if ([string]::IsNullOrWhiteSpace($env:NuGetReportSettings_Stream)) {
-            $env:NuGetReportSettings_Stream = 'Custom-NuGetReport'
-          }
-          dpi nuget -o table report
+        inlineScript: dpi nuget -o table report
   - ${{ else }}:
     - pwsh: dpi nuget -o table report
       continueOnError: true
