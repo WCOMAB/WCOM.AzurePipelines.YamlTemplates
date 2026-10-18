@@ -86,7 +86,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 
 ## dpi
 
-When `report` is true and `azureSubscription` is set, DPI runs inside `AzureCLI@2` and reports through the Logs Ingestion API (`DefaultAzureCredential` from the service connection). The service connection principal needs **Monitoring Metrics Publisher** on the data collection rule. Workload identity federation is preferred (no client secret). Do not set `WorkspaceId`/`SharedKey` together with Logs Ingestion settings.
+When `report` is true and `azureSubscription` is set, DPI runs inside `AzureCLI@2` and reports through the Logs Ingestion API (`DefaultAzureCredential` from the service connection). The service connection principal needs **Monitoring Metrics Publisher** on the data collection rule. Workload identity federation is preferred (no client secret). Do not set `WorkspaceId`/`SharedKey` together with Logs Ingestion settings. On Linux agents, put `NUGETREPORTSETTINGS_ENDPOINT` and `NUGETREPORTSETTINGS_RULEID` in a variable group (ADO exposes those as uppercase env vars); the template copies them onto the PascalCase names DPI reads.
 
 When `report` is true and `azureSubscription` is omitted, the existing Data Collector `pwsh` path is used.
 
