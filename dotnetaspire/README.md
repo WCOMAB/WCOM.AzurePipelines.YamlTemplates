@@ -20,6 +20,7 @@ Azure DevOps Pipelines YAML template used to build, provision, and deploy .NET A
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
  projectSrc              | string   | No           | $(Build.SourcesDirectory)                                      | Parameter to manually set the root directory for the Aspire project.
  publishCodeCoverage     | bool     | No           | true                                                           | When false, skips merging and publishing code coverage.
+ dpi                     | object   | No           |                                                                | Settings relating to Dependency reports using DPI tool. Use `dpi.azureSubscription`, not the job deploy connection.
 
 ## Use DotNet SDK
 
@@ -52,6 +53,24 @@ Azure DevOps Pipelines YAML template used to build, provision, and deploy .NET A
  deployAfter         | array    | No           |                   | List of environment names that should be deployed before this one.
  dependsOn           | array    | No           |                   | List of stage names that this deployment depends on.
  environmentVariables| array    | No           |                   | Collection of key-value pairs for environment variables to be passed to azd commands.
+
+## dpi
+
+When `report` is true and `dpi.azureSubscription` is set, DPI runs inside `AzureCLI@2` and reports through the Logs Ingestion API (`DefaultAzureCredential` from the service connection). The service connection principal needs **Monitoring Metrics Publisher** on the data collection rule. Workload identity federation is preferred (no client secret). Do not set `WorkspaceId`/`SharedKey` together with Logs Ingestion settings.
+
+The Aspire **job** `azureSubscription` (from `azureSubscriptionFormat`) is the azd deploy identity and is **not** used for DPI. Set a nested `dpi.azureSubscription` to opt in.
+
+When `report` is true and `dpi.azureSubscription` is omitted, the existing Data Collector `pwsh` path is used.
+
+ **Parameters**     | **Type**          | **Required** | **Default value**     | **Description**
+--------------------|-------------------|--------------|-----------------------|------------------
+ report             | bool              | No           | false                 | Boolean to create report or not.
+ azureSubscription  | string            | No           |                       | ARM service connection for Logs Ingestion. When set, report uses Azure CLI instead of `pwsh`. Independent of the Aspire deploy connection.
+ Endpoint           | string            | No           |                       | Logs Ingestion API endpoint. Required in practice when `azureSubscription` is set.
+ RuleId             | string            | No           |                       | Data collection rule immutable ID. Required in practice when `azureSubscription` is set.
+ Stream             | string            | No           | Custom-NuGetReport    | DCR **input** stream name (not the table stream `Custom-NuGetReport_CL`).
+ WorkspaceId        | string (secret)   | No           |                       | Deprecated. Log Analytics workspace id for the Data Collector path when `azureSubscription` is omitted.
+ SharedKey          | string (secret)   | No           |                       | Deprecated. Workspace shared key for the Data Collector path when `azureSubscription` is omitted.
 
 ## Example
 
@@ -98,6 +117,11 @@ stages:
     shouldDeploy: eq(variables['Build.SourceBranch'], variables['deploy_branch'])
     projectSrc: $(Build.SourcesDirectory)
     publishCodeCoverage: true/false
+    dpi:
+      report: true
+      azureSubscription: dpi-logs-ingestion
+      Endpoint: $(NUGETREPORTSETTINGS_ENDPOINT)
+      RuleId: $(NUGETREPORTSETTINGS_RULEID)
     sources:
       - name: NuGetFeed
     environments:

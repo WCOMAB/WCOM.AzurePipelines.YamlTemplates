@@ -8,12 +8,26 @@ steps:
   continueOnError: true
 
 - ${{ if eq(coalesce(parameters.dpi.report, false), true) }}:
-  - pwsh: dpi nuget -o table report
-    continueOnError: true
-    displayName: Creating DPI Report
-    env:
-      NuGetReportSettings_WorkspaceId: ${{ parameters.dpi.WorkspaceId }}
-      NuGetReportSettings_SharedKey: ${{ parameters.dpi.SharedKey }}
+  - ${{ if gt(length(coalesce(parameters.dpi.azureSubscription, '')), 0) }}:
+    - task: AzureCLI@2
+      continueOnError: true
+      displayName: Creating DPI Report
+      env:
+        NuGetReportSettings_Endpoint: ${{ coalesce(parameters.dpi.Endpoint, '') }}
+        NuGetReportSettings_RuleId: ${{ coalesce(parameters.dpi.RuleId, '') }}
+        NuGetReportSettings_Stream: ${{ coalesce(parameters.dpi.Stream, 'Custom-NuGetReport') }}
+      inputs:
+        azureSubscription: ${{ parameters.dpi.azureSubscription }}
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: dpi nuget -o table report
+  - ${{ else }}:
+    - pwsh: dpi nuget -o table report
+      continueOnError: true
+      displayName: Creating DPI Report
+      env:
+        NuGetReportSettings_WorkspaceId: ${{ parameters.dpi.WorkspaceId }}
+        NuGetReportSettings_SharedKey: ${{ parameters.dpi.SharedKey }}
 
 - ${{ if eq(coalesce(parameters.dpi.report, false), false) }}:
   - pwsh: dpi nuget -o table analyze
