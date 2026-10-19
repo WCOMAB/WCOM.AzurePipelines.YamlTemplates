@@ -24,13 +24,19 @@ Azure DevOps Pipelines YAML template used to build, provision, and deploy .NET A
 
 ## Use DotNet SDK
 
- **Parameters**   | **Type** | **Required** | **Default value** | **Description**
-------------------|----------|--------------|-------------------|----------------------------------
- packageType      | string   | No           | sdk               | Specifies if only the .NET runtime or the SDK should be installed.
- useGlobalJson    | bool     | No           | true              | Specifies if sdk should be installed from a globalJson file.
- workingDirectory | string   | No           |                   | The path to the globalJson file.
- version          | string   | No           |                   | Specifies a specific version of the dotnet sdk.
- skipTask         | bool     | No           | false             | Bool if you want to skip this task or not.
+ **Parameters**          | **Type** | **Required** | **Default value**                | **Description**
+-------------------------|----------|--------------|----------------------------------|----------------------------------
+ packageType             | string   | No           | sdk                              | Specifies if only the .NET runtime or the SDK should be installed.
+ useGlobalJson           | bool     | No           | true                             | Specifies if sdk should be installed from a globalJson file.
+ workingDirectory        | string   | No           |                                  | The path to the globalJson file.
+ version                 | string   | No           |                                  | Specifies a specific version of the dotnet sdk.
+ includePreviewVersions  | bool     | No           | false                            | Include preview SDKs or runtimes when resolving a version range. Emitted only when true. Applied when useGlobalJson is false or packageType is runtime; ignored for an exact version.
+ vsVersion               | string   | No           |                                  | Compatible Visual Studio version, for example 17.12.0. Emitted only when set.
+ installationPath        | string   | No           | $(Agent.ToolsDirectory)/dotnet   | Path to install .NET. Emitted only when set.
+ performMultiLevelLookup | bool     | No           | false                            | Search predefined global locations for a shared framework. Windows agents only. Emitted only when true.
+ checkForExistingVersion | bool     | No           | false                            | Detect an existing installation before download. Azure DevOps Services only. Use only when installationPath stays at the default. Emitted only when true.
+ requestTimeout          | string   | No           | 300000                           | HTTP request timeout in milliseconds, max 600000. Azure DevOps Services and Azure DevOps Server; not on Server 2022. Emitted only when set.
+ skipTask                | bool     | No           | false                            | Bool if you want to skip this task or not.
 
 ## Source
 
