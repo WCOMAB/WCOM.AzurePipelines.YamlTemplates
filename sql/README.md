@@ -24,11 +24,11 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
  projectRoot	           | string	  | No	         | src	                                                          | root folder to for the project.
  preBuildScript          | object   | No           |                                                                | Object containing pre-build parameters.
  environments            | array    | Yes          |                                                                | Array of environments and environment specific parameters.
- useDotNetSDK           | object   | No           |                   | Object containing parameters for specified dotnet SDK.
- artifactNamePrefix     | string   | No          |                                                                | Prefix for artifacts created by this pipeline.
- useFirewall            | bool     | No          |          true                                                      | Should SQL deployment create a temporary firewall rule or not.
- skipProfile            | bool     | No          |          false                                                      | Should SQL deployment ignore/don't require a publish.xml file from the database project
- useToken               | bool     | No          |          false                                                      | Use token to connect to SQL Server, especially usable when deploy host has Managed Identity activated.
+ useDotNetSDK            | object   | No           |                                                                | Object containing parameters for specified dotnet SDK.
+ artifactNamePrefix      | string   | No           |                                                                | Prefix for artifacts created by this pipeline.
+ useFirewall             | bool     | No           | true                                                           | Should SQL deployment create a temporary firewall rule or not.
+ skipProfile             | bool     | No           | false                                                          | Should SQL deployment ignore/don't require a publish.xml file from the database project
+ useToken                | bool     | No           | false                                                          | Use token to connect to SQL Server, especially usable when deploy host has Managed Identity activated.
 
 ## Pre-Build
 
@@ -47,13 +47,19 @@ Azure DevOps Pipelines YAML template used to build and deploy databases.
 
 ## Use DotNet SDK
 
- **Parameters**   | **Type** | **Required** | **Default value** | **Description**
-------------------|----------|--------------|-------------------|----------------------------------
- packageType      | string   | No           | sdk               | Specifies if only the .NET runtime or the SDK should be installed.
- useGlobalJson    | bool     | No           | true              | Specifies if sdk should be installed from a globalJson file.
- workingDirectory | string   | No           |                   | The path to the globalJson file.
- version          | string   | No           |                   | Specifies a specific version of the dotnet sdk.
- skipTask         | bool     | No           |  false            | Bool if you want to skip this task or not.
+ **Parameters**          | **Type** | **Required** | **Default value**                | **Description**
+--------------------------|----------|--------------|----------------------------------|----------------------------------
+ packageType             | string   | No           | sdk                              | Specifies if only the .NET runtime or the SDK should be installed.
+ useGlobalJson           | bool     | No           | true                             | Specifies if sdk should be installed from a globalJson file.
+ workingDirectory        | string   | No           |                                  | The path to the globalJson file.
+ version                 | string   | No           |                                  | Specifies a specific version of the dotnet sdk.
+ includePreviewVersions  | bool     | No           | false                            | Include preview SDKs or runtimes when resolving a version range. Emitted only when true. Applied when useGlobalJson is false or packageType is runtime; ignored for an exact version.
+ vsVersion               | string   | No           |                                  | Compatible Visual Studio version, for example 17.12.0. Emitted only when set.
+ installationPath        | string   | No           | $(Agent.ToolsDirectory)/dotnet   | Path to install .NET. Emitted only when set.
+ performMultiLevelLookup | bool     | No           | false                            | Search predefined global locations for a shared framework. Windows agents only. Emitted only when true.
+ checkForExistingVersion | bool     | No           | false                            | Detect an existing installation before download. Azure DevOps Services only. Use only when installationPath stays at the default. Emitted only when true.
+ requestTimeout          | string   | No           | 300000                           | HTTP request timeout in milliseconds, max 600000. Azure DevOps Services and Azure DevOps Server; not on Server 2022. Emitted only when set.
+ skipTask                | bool     | No           | false                            | Bool if you want to skip this task or not.
 
 ## Source
 
@@ -197,6 +203,12 @@ stages:
       useGlobalJson: true/false
       workingDirectory: workingDirectory
       version: '6.0.x'
+      includePreviewVersions: true/false
+      vsVersion: '17.12.0'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+      performMultiLevelLookup: true/false
+      checkForExistingVersion: true/false
+      requestTimeout: '300000'
       skipTask: false
     useFirewall: true/false
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')

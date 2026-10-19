@@ -1,9 +1,21 @@
 steps:
   - ${{ if eq(coalesce(parameters.useDotNetSDK.skipTask, false), false) }}:
     - task: UseDotNet@2
-      displayName: 'Install .NET SDK useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}, version: ${{ parameters.useDotNetSDK.version }}'
+      displayName: 'Install .NET SDK useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}, version: ${{ parameters.useDotNetSDK.version }}, includePreviewVersions: ${{ coalesce(parameters.useDotNetSDK.includePreviewVersions, false) }}'
       inputs:
         packageType: ${{ coalesce(parameters.useDotNetSDK.packageType, 'sdk') }}
         useGlobalJson: ${{ coalesce(parameters.useDotNetSDK.useGlobalJson, true) }}
         workingDirectory: ${{ coalesce(parameters.useDotNetSDK.workingDirectory, parameters.workingDirectory) }}
         version: ${{ parameters.useDotNetSDK.version }}
+        ${{ if eq(coalesce(parameters.useDotNetSDK.includePreviewVersions, false), true) }}:
+          includePreviewVersions: true
+        ${{ if ne(coalesce(parameters.useDotNetSDK.vsVersion, ''), '') }}:
+          vsVersion: ${{ parameters.useDotNetSDK.vsVersion }}
+        ${{ if ne(coalesce(parameters.useDotNetSDK.installationPath, ''), '') }}:
+          installationPath: ${{ parameters.useDotNetSDK.installationPath }}
+        ${{ if eq(coalesce(parameters.useDotNetSDK.performMultiLevelLookup, false), true) }}:
+          performMultiLevelLookup: true
+        ${{ if eq(coalesce(parameters.useDotNetSDK.checkForExistingVersion, false), true) }}:
+          checkForExistingVersion: true
+        ${{ if ne(coalesce(parameters.useDotNetSDK.requestTimeout, ''), '') }}:
+          requestTimeout: ${{ parameters.useDotNetSDK.requestTimeout }}
