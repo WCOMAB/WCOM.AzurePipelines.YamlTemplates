@@ -18,6 +18,9 @@ stages:
     artifactNamePrefix: DotNet
     buildParameters:
       - '-p:Configuration=Release'
+    sources:
+      - name: wcom
+        publish: true
     environments:
       - env: env
         name: DotNet_Development
@@ -35,6 +38,8 @@ stages:
       - '-p:ToolCommandName=dotnet-tool'
       - '-p:Configuration=Release'
     skipTests: true
+    sources:
+      - name: wcom
     environments:
       - env: env
         name: DotNetTool_Development
@@ -50,6 +55,8 @@ stages:
     projectSrc: src/dotnet/web
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     artifactNamePrefix: DotNetWeb
+    sources:
+      - name: wcom
     environments:
       - env: env
         name: DotNetWeb_Development
@@ -71,6 +78,8 @@ stages:
     artifactNamePrefix: SQL
     databases:
       - name: DevOps
+    sources:
+      - name: wcom
     environments:
       - env: env
         name: SQL_Development
@@ -120,6 +129,8 @@ stages:
             Copy-Item $_.FullName $TargetFile
           }
     shouldDeploy: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    sources:
+      - name: wcom
     environments:
       - env: dev
         name: Docs_Development
