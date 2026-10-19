@@ -1,100 +1,111 @@
 jobs:
-  - deployment: ${{ format('{0}_Publish', parameters.name) }}
-    displayName: ${{ parameters.name}} Publish
-    environment: ${{ parameters.name}}
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - checkout: self
-              displayName: Checkout $(Build.Repository.Name)
+  - ${{ if parameters.sources }}:
+    - ${{ each source in parameters.sources }}:
+      - deployment: ${{ format('{0}_{1}_Publish', parameters.name, replace(source.name, '-', '_')) }}
+        condition: ${{ eq(coalesce(source.publish, false), true) }}
+        displayName: ${{ format('{0} {1} Publish', parameters.name, source.name) }}
+        environment: ${{ parameters.name }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: Checkout $(Build.Repository.Name)
 
-            - template: ../dotnetcommon/dotnet_sdk.yml
-              parameters:
-                useDotNetSDK: ${{ parameters.useDotNetSDK }}
+                - template: ../dotnetcommon/dotnet_sdk.yml
+                  parameters:
+                    useDotNetSDK: ${{ parameters.useDotNetSDK }}
 
-            - template: ../dotnetcommon/dotnet_auth.yml
-              parameters:
-                sources: ${{ parameters.sources }}
-                onlyPublish: true
-                deploy: true
+                - template: ../dotnetcommon/dotnet_auth.yml
+                  parameters:
+                    sources:
+                      - name: ${{ source.name }}
+                        token: ${{ source.token }}
+                        source: ${{ source.source }}
+                        publish: ${{ source.publish }}
+                        onlyDeploy: ${{ source.onlyDeploy }}
+                    onlyPublish: true
+                    deploy: true
 
-            - download: current
-              displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact
-              artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
+                - download: current
+                  displayName: Download ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName) Artifact
+                  artifact: ${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)
 
-            - ${{ if parameters.sources }}:
-              - ${{ each source in parameters.sources }}:
-                - ${{ if eq(source.publish, true) }}:
-                  - pwsh: |
-                      $packagePath = "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)"
-                      $apiKey = "${{ coalesce(source.token, '', '$(System.AccessToken)') }}"
-                      $source = "${{ source.name }}"
-                      $packageFilter = "${{ coalesce(source.pushFilter, '*.$(Build.BuildNumber).nupkg') }}"
+                - pwsh: |
+                    $packagePath = "$(Pipeline.Workspace)/${{ parameters.artifactNamePrefix }}$(Build.DefinitionName)"
+                    $apiKey = "${{ coalesce(source.token, '', '$(System.AccessToken)') }}"
+                    $source = "${{ source.name }}"
+                    $packageFilter = "${{ coalesce(source.pushFilter, '*.$(Build.BuildNumber).nupkg') }}"
 
-                      function ConvertTo-OptionalStringArray {
-                          param([string]$Json)
-                          $trimmed = if ($null -eq $Json) { '' } else { $Json.Trim() }
-                          if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed -in @('null', '""', "''", '[]')) {
-                              return [string[]]@()
-                          }
-                          $parsed = $trimmed | ConvertFrom-Json
-                          if ($null -eq $parsed -or $parsed -eq '') {
-                              return [string[]]@()
-                          }
-                          return [string[]]@($parsed)
-                      }
+                    function ConvertTo-OptionalStringArray {
+                        param([string]$Json)
+                        $trimmed = if ($null -eq $Json) { '' } else { $Json.Trim() }
+                        if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed -in @('null', '""', "''", '[]')) {
+                            return [string[]]@()
+                        }
+                        $parsed = $trimmed | ConvertFrom-Json
+                        if ($null -eq $parsed -or $parsed -eq '') {
+                            return [string[]]@()
+                        }
+                        return [string[]]@($parsed)
+                    }
 
-                      $pushInclude = ConvertTo-OptionalStringArray -Json $env:PUSH_INCLUDE_JSON
-                      $pushExclude = ConvertTo-OptionalStringArray -Json $env:PUSH_EXCLUDE_JSON
+                    $pushInclude = ConvertTo-OptionalStringArray -Json $env:PUSH_INCLUDE_JSON
+                    $pushExclude = ConvertTo-OptionalStringArray -Json $env:PUSH_EXCLUDE_JSON
 
-                      $getChildItemParams = @{
-                          Path   = $packagePath
-                          Filter = $packageFilter
-                          File   = $true
-                      }
-                      if ($pushInclude.Count -gt 0 -or $pushExclude.Count -gt 0) {
-                          $getChildItemParams['Path'] = Join-Path $packagePath '*'
-                      }
-                      if ($pushInclude.Count -gt 0) {
-                          $getChildItemParams['Include'] = $pushInclude
-                      }
-                      if ($pushExclude.Count -gt 0) {
-                          $getChildItemParams['Exclude'] = $pushExclude
-                      }
+                    $getChildItemParams = @{
+                        Path   = $packagePath
+                        Filter = $packageFilter
+                        File   = $true
+                    }
+                    if ($pushInclude.Count -gt 0 -or $pushExclude.Count -gt 0) {
+                        $getChildItemParams['Path'] = Join-Path $packagePath '*'
+                    }
+                    if ($pushInclude.Count -gt 0) {
+                        $getChildItemParams['Include'] = $pushInclude
+                    }
+                    if ($pushExclude.Count -gt 0) {
+                        $getChildItemParams['Exclude'] = $pushExclude
+                    }
 
-                      $packages = Get-ChildItem @getChildItemParams
+                    $packages = Get-ChildItem @getChildItemParams
 
-                      if ($packages.Count -eq 0) {
-                          $matchDescription = "filter: $packageFilter"
-                          if ($pushInclude.Count -gt 0) {
-                              $matchDescription += "; include: $($pushInclude -join ', ')"
-                          }
-                          if ($pushExclude.Count -gt 0) {
-                              $matchDescription += "; exclude: $($pushExclude -join ', ')"
-                          }
-                          Write-Host "No packages found matching $matchDescription under $packagePath"
-                          exit 1
-                      }
+                    if ($packages.Count -eq 0) {
+                        $matchDescription = "filter: $packageFilter"
+                        if ($pushInclude.Count -gt 0) {
+                            $matchDescription += "; include: $($pushInclude -join ', ')"
+                        }
+                        if ($pushExclude.Count -gt 0) {
+                            $matchDescription += "; exclude: $($pushExclude -join ', ')"
+                        }
+                        Write-Host "No packages found matching $matchDescription under $packagePath"
+                        exit 1
+                    }
 
-                      Write-Host "Found $($packages.Count) package(s) to push:"
-                      $packages | ForEach-Object { Write-Host "  - $($_.FullName)" }
+                    Write-Host "Found $($packages.Count) package(s) to push:"
+                    $packages | ForEach-Object { Write-Host "  - $($_.FullName)" }
 
-                      $packages | ForEach-Object -Parallel {
-                          $package = $_
-                          $apiKey = $using:apiKey
-                          $source = $using:source
+                    $packages | ForEach-Object -Parallel {
+                        $package = $_
+                        $apiKey = $using:apiKey
+                        $source = $using:source
 
-                          Write-Host "Pushing package: $($package.FullName)"
-                          dotnet nuget push --skip-duplicate --api-key $apiKey --source $source $package.FullName
+                        Write-Host "Pushing package: $($package.FullName)"
+                        dotnet nuget push --skip-duplicate --api-key $apiKey --source $source $package.FullName
 
-                          if ($LASTEXITCODE -ne 0) {
-                              Write-Error "Failed to push $($package.FullName)"
-                              exit $LASTEXITCODE
-                          }
-                          Write-Host "Successfully pushed: $($package.FullName)"
-                      } -ThrottleLimit 5
-                    env:
-                      PUSH_INCLUDE_JSON: ${{ convertToJson(coalesce(source.pushInclude, '')) }}
-                      PUSH_EXCLUDE_JSON: ${{ convertToJson(coalesce(source.pushExclude, '')) }}
-                    displayName: 'Publish to ${{ source.name }} Feed'
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Failed to push $($package.FullName)"
+                            exit $LASTEXITCODE
+                        }
+                        Write-Host "Successfully pushed: $($package.FullName)"
+                    } -ThrottleLimit 5
+                  env:
+                    PUSH_INCLUDE_JSON: ${{ convertToJson(coalesce(source.pushInclude, '')) }}
+                    PUSH_EXCLUDE_JSON: ${{ convertToJson(coalesce(source.pushExclude, '')) }}
+                  displayName: 'Publish to ${{ source.name }} Feed'
+  - ${{ else }}:
+    - job: ${{ format('{0}_Publish', parameters.name) }}
+      displayName: ${{ format('{0} Publish', parameters.name) }}
+      condition: false
+      steps:
+        - checkout: none

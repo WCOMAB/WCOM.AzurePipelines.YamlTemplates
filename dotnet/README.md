@@ -81,7 +81,7 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
 
  **Parameters**   | **Type** | **Required** | **Default value**             | **Description**
 ------------------|----------|--------------|-------------------------------|----------------------------------
- name             | string   | Yes          |                               | The source name.
+ name             | string   | Yes          |                               | The source name. Must be job-id safe (letters, digits, underscore; hyphens are rewritten only in the publish job id).
  token            | string   | No           |                               | Access token.
  source           | string   | No           |                               | The source URL if the pipeline is adding sources.
  publish          | bool     | No           |                               | Allow update to NuGet source.
@@ -89,6 +89,8 @@ Azure DevOps Pipelines YAML template used to build, test, pack, and publish .NET
  pushFilter       | string   | No           | *.$(Build.BuildNumber).nupkg  | Glob pattern for packages to push from the artifact (e.g. `*.nupkg` for all, or `*.$(Build.BuildNumber).nupkg` for build-numbered only). Combined with `pushInclude` / `pushExclude` when those are set.
  pushInclude      | object   | No           |                               | Opt-in. `string[]` of glob patterns passed to `Get-ChildItem -Include`. Applied only when specified and non-empty. Combined with `pushFilter` (AND). Not recursive; omit rather than passing an empty array. If include should be the primary selector, also set `pushFilter` (e.g. `*` or `*.nupkg`).
  pushExclude      | object   | No           |                               | Opt-in. `string[]` of glob patterns passed to `Get-ChildItem -Exclude`. Applied only when specified and non-empty. Combined with `pushFilter`. Not recursive; omit rather than passing an empty array.
+
+When `sources` is set, each source in `PublishTo_{environment}` becomes a job `{environment}_{source}_Publish`. Jobs with `publish: true` run; others are skipped (`condition: false`). When `sources` is omitted, a skipped `{environment}_Publish` placeholder job is emitted so the stage can compile. Each publish job targets the same Azure DevOps Environment (`environment.name`). An exclusive lock on that Environment serializes the jobs. Each `deployment` job may request its own approval. For a single approval then parallel NuGet pushes, use a gate `deployment` job plus regular jobs in a wrapper pipeline; this template keeps per-feed deployment jobs.
 
 ## dpi
 
