@@ -18,6 +18,10 @@ stages:
     artifactNamePrefix: DotNet
     buildParameters:
       - '-p:Configuration=Release'
+    sources:
+      - name: wcom
+        source: https://pkgs.dev.azure.com/wcom-public/Public/_packaging/wcom/nuget/v3/index.json
+        publish: true
     environments:
       - env: env
         name: DotNet_Development
