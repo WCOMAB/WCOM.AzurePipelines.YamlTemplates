@@ -11,7 +11,7 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  devopsOrg               | string   | Yes          |                                                                | The devops organisation.
  build                   | string   | Yes          |                                                                | The environment to build.
  sources                 | array    | No           |                                                                | NuGet feeds to authenticate against.
- buildParameters         | object   | No           |                                                                | Build Parameters.
+ buildParameters         | object   | No           |                                                                | Build Parameters. Passed to the build, publish and test steps, see [Build, publish and test](#build-publish-and-test).
  shouldDeploy            | bool     | No           |                                                                | Check if deploy stage should run.
  webAppNameFormat        | string   | No           | '{0}-{1}-{2}-{3}-{4}'                                          | The format for the web app name.
  webAppType              | string   | No           | 'web'                                                          | The type/abbreviation for the web app.
@@ -29,7 +29,21 @@ Azure DevOps YAML template is used to deploy and publish web applications.
  dpi                     | object   | No           |                                                                | Settings relating to Dependency reports using DPI tool
  toolRestore             | bool     | No           | false                                                          | Flag to be able to dotnet restore tools before prebuild script in the build pipeline.
  container               | object   | No           |                                                                | Container configuration for containerized deployments.
- publishEnvironmentVariables | object | No         |                                                                | Dictionary of environment variables to pass to the publish task.
+ publishEnvironmentVariables | object | No         |                                                                | Dictionary of environment variables to pass to the build and publish tasks.
+
+## Build, publish and test
+
+The build job runs `preBuildScript`, then:
+
+1. `dotnet build` of `projectSrc`, which compiles every project including test projects with `IsPublishable=false`.
+2. `dotnet publish` of `projectSrc` with `--no-build`, into the artifact staging directory.
+3. `dotnet test` with `--no-build --no-restore` (unless `skipTests` is true).
+
+`buildParameters` are passed to all three steps, so they must be valid for build, publish and test. Do not put `--output` in `buildParameters`; the template sets it on the publish step.
+
+When `buildParameters` don't set a configuration (`-c`, `--configuration` or `-p:Configuration=`), the template adds `-p:Configuration=Release` to all three steps, matching the `dotnet publish` default. When they do, that configuration is used for all three.
+
+A `preBuildScript` that only runs `dotnet build` is no longer needed and can be removed. An existing one still works; the solution is just built twice.
 
 ## Pre-Build
 
