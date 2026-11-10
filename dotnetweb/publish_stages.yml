@@ -10,6 +10,9 @@ stages:
               name: ${{ environment.name }}
               sources: ${{ parameters.sources }} #Needs to be accounted for in pipeline.
               buildParameters: ${{ parameters.buildParameters }}
+              # dotnet build defaults to Debug and dotnet publish to Release, so pin Release unless buildParameters set a configuration.
+              ${{ if not(or(contains(lower(format(' {0} ', join(' ', parameters.buildParameters))), 'configuration='), contains(lower(format(' {0} ', join(' ', parameters.buildParameters))), ' --configuration'), contains(format(' {0} ', join(' ', parameters.buildParameters)), ' -c '), contains(format(' {0} ', join(' ', parameters.buildParameters)), ' -c:'), contains(format(' {0} ', join(' ', parameters.buildParameters)), ' -c='))) }}:
+                configurationParameter: '-p:Configuration=Release'
               projectRoot: ${{ parameters.projectRoot }}
               projectSrc: "${{ parameters.projectRoot }}${{ coalesce(parameters.projectSrc, 'src') }}"
               preBuildScript: ${{ parameters.preBuildScript }}
