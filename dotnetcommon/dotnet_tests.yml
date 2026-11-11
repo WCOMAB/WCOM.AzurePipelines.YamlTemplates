@@ -15,7 +15,12 @@ steps:
       displayName: 'DotNet Test'
 
   - ${{ if ne(parameters.publishCodeCoverage, false) }}:
-    - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.6.0
+    - pwsh: |
+        if (Get-Command reportgenerator -ErrorAction SilentlyContinue) {
+          Write-Host "reportgenerator already available, skipping install"
+        } else {
+          dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.6.0
+        }
       displayName: Installing Report Generator
 
     - script: reportgenerator -reports:$(Agent.WorkFolder)/**/TestResults/**/*.cobertura.xml -targetdir:$(build.artifactstagingdirectory)/Report -reporttypes:"Cobertura"
