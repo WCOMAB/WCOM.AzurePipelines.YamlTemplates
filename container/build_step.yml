@@ -1,8 +1,7 @@
 steps:
   - bash: |
         dotnet publish '${{ parameters.csproj }}' \
-            --os linux \
-            --arch x64 \
+            --runtime '${{ coalesce(parameters.runtime, 'linux-x64') }}' \
             -p:Version=$(Build.BuildNumber) \
             -t:PublishContainer \
             -p ContainerBaseImage='${{ parameters.baseimage }}' \
