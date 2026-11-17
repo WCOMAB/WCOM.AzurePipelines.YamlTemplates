@@ -140,6 +140,8 @@ When `report` is true and `azureSubscription` is omitted, the existing Data Coll
  repository       | string   | Yes          |                                  | Container repository name.
  artifact         | string   | No           | repository                       | Name of the container artifact.
  baseimage        | string   | No           |                                  | Base image for the container.
+ runtime          | string   | No           | 'linux-x64'                      | Runtime identifier (RID) to publish the container for. Must match the base image, e.g. `linux-musl-x64` for Alpine or `linux-arm64` for Arm64 images.
+ selfContained    | bool     | No           | false                            | Publish the container as self-contained (adds `--self-contained`), for use with `runtime-deps` base images. When false, no flag is passed and the project's own setting applies.
  port             | string   | No           | '8080'                           | Port exposed by the container.
  tag              | string   | No           | $(Build.BuildNumber)             | Tag for the container image.
  latest           | bool     | No           | true                             | Whether to tag the container as latest.

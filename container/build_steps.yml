@@ -6,6 +6,8 @@ steps:
         repository: ${{ parameters.container.repository }}
         artifact: ${{ coalesce(parameters.container.artifact, parameters.container.repository )}}
         baseimage: ${{ parameters.container.baseimage }}
+        runtime: ${{ parameters.container.runtime }}
+        selfContained: ${{ parameters.container.selfContained }}
         port: ${{ coalesce(parameters.container.port, '8080') }}
         tag: ${{ coalesce(parameters.container.tag, '$(Build.BuildNumber)') }}
         pullRegistryUsername: ${{ parameters.container.pullRegistryUsername }}
