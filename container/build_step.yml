@@ -2,6 +2,7 @@ steps:
   - bash: |
         dotnet publish '${{ parameters.csproj }}' \
             --runtime '${{ coalesce(parameters.runtime, 'linux-x64') }}' \
+            $CONTAINER_SELF_CONTAINED_ARG \
             -p:Version=$(Build.BuildNumber) \
             -t:PublishContainer \
             -p ContainerBaseImage='${{ parameters.baseimage }}' \
@@ -14,6 +15,8 @@ steps:
     env:
       DOTNET_CONTAINER_PULL_REGISTRY_UNAME: ${{ parameters.pullRegistryUsername }}
       DOTNET_CONTAINER_PULL_REGISTRY_PWORD: ${{ parameters.pullRegistryPassword }}
+      ${{ if eq(parameters.selfContained, true) }}:
+        CONTAINER_SELF_CONTAINED_ARG: '--self-contained'
       ${{ if parameters.publishEnvironmentVariables }}:
         ${{ each envVar in parameters.publishEnvironmentVariables }}:
           ${{ envVar.key }}: ${{ envVar.value }}
