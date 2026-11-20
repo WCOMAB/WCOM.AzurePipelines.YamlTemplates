@@ -9,7 +9,7 @@ steps:
       scriptLocation: inlineScript
       inlineScript:  |
         # Base command
-        cmd='./tools/sqlpackage'
+        cmd='$(SqlPackageCmd)'
 
         # Common parameters
         cmd+=' /Action:Publish'
