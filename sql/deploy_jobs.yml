@@ -36,7 +36,12 @@ jobs:
                 displayName: 'Get Agent Public IP'
 
             - bash: |
-                [ -f ./tools/sqlpackage ] || [ -f ./tools/sqlpackage.exe ] || dotnet tool install --tool-path ./tools microsoft.sqlpackage
+                if command -v sqlpackage >/dev/null 2>&1; then
+                  echo "##vso[task.setvariable variable=SqlPackageCmd;]sqlpackage"
+                else
+                  [ -f ./tools/sqlpackage ] || [ -f ./tools/sqlpackage.exe ] || dotnet tool install --tool-path ./tools microsoft.sqlpackage
+                  echo "##vso[task.setvariable variable=SqlPackageCmd;]./tools/sqlpackage"
+                fi
               displayName: Install SqlPackage
 
             - ${{ each database in parameters.databases }}:
